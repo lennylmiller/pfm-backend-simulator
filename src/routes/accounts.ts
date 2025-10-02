@@ -6,6 +6,11 @@ const router = Router({ mergeParams: true });
 // GET /users/:userId/accounts/all
 router.get('/all', accountsController.getAllAccounts);
 
+// GET /users/:userId/accounts/potential_cashflow (must be before /:id to avoid conflict)
+router.get('/potential_cashflow', (req, res) => {
+  res.json({ accounts: [] });
+});
+
 // GET /users/:userId/accounts/:id
 router.get('/:id', accountsController.getAccount);
 

@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { authenticateJWT } from '../middleware/auth';
 import accountsRoutes from './accounts';
 import { prisma } from '../config/database';
+import { serialize } from '../utils/serializers';
 
 const router = Router();
 
@@ -22,16 +23,16 @@ router.get('/current', authenticateJWT, async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Convert BigInt to string for JSON
-    res.json({
-      id: user.id.toString(),
-      partnerId: user.partnerId.toString(),
+    // Serialize with BigInt handling and snake_case conversion
+    res.json(serialize({
+      id: user.id,
+      partnerId: user.partnerId,
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt
-    });
+    }));
   } catch (error) {
     console.error('Error fetching current user:', error);
     res.status(500).json({ error: 'Internal server error' });

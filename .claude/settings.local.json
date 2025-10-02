@@ -30,7 +30,16 @@
       "mcp__serena__activate_project",
       "mcp__serena__check_onboarding_performed",
       "mcp__serena__get_symbols_overview",
-      "mcp__sequential-thinking__sequentialthinking"
+      "mcp__sequential-thinking__sequentialthinking",
+      "mcp__chrome-devtools__get_network_request",
+      "Bash(npm start)",
+      "mcp__chrome-devtools__list_pages",
+      "mcp__chrome-devtools__wait_for",
+      "Bash(lsof:*)",
+      "Bash(xargs kill:*)",
+      "mcp__chrome-devtools__new_page",
+      "mcp__chrome-devtools__select_page",
+      "Bash(nc localhost 3000)"
     ],
     "deny": [],
     "ask": []

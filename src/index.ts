@@ -12,11 +12,7 @@ import migrateRoutes from './routes/migrate';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// CORS configuration
+// CORS configuration - MUST be first to handle preflight requests
 if (process.env.ENABLE_CORS === 'true') {
   const origins = process.env.CORS_ORIGINS?.split(',') || ['*'];
   app.use(
@@ -26,6 +22,30 @@ if (process.env.ENABLE_CORS === 'true') {
     })
   );
 }
+
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Disable ETags and caching to prevent 304 responses during development
+app.set('etag', false);
+
+// Add cache-control headers and remove ETag from responses
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+
+  // Override res.send to remove ETag header
+  const originalSend = res.send;
+  res.send = function(data) {
+    res.removeHeader('ETag');
+    res.removeHeader('etag');
+    return originalSend.call(this, data);
+  };
+
+  next();
+});
 
 // Request logging
 app.use(requestLogger);

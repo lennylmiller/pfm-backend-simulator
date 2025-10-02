@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { accountService } from '../services/accountService';
 import { logger } from '../config/logger';
+import { serialize, wrapInArray } from '../utils/serializers';
 
 export const getAllAccounts = async (req: Request, res: Response) => {
   try {
@@ -13,7 +14,7 @@ export const getAllAccounts = async (req: Request, res: Response) => {
 
     const accounts = await accountService.getAllAccounts(userId);
 
-    return res.json({ accounts });
+    return res.json(serialize({ accounts }));
   } catch (error) {
     logger.error({ error }, 'Failed to get all accounts');
     return res.status(500).json({ error: 'Internal server error' });
@@ -34,7 +35,9 @@ export const getAccount = async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Account not found' });
     }
 
-    return res.json({ account });
+    // Wrap single account in array for frontend compatibility
+    const wrapped = wrapInArray(account, 'accounts');
+    return res.json(serialize(wrapped));
   } catch (error) {
     logger.error({ error }, 'Failed to get account');
     return res.status(500).json({ error: 'Internal server error' });
@@ -52,7 +55,8 @@ export const updateAccount = async (req: Request, res: Response) => {
 
     const updated = await accountService.updateAccount(userId, id, account);
 
-    return res.json({ account: updated });
+    const wrapped = wrapInArray(updated, 'accounts');
+    return res.json(serialize(wrapped));
   } catch (error) {
     logger.error({ error }, 'Failed to update account');
     return res.status(500).json({ error: 'Internal server error' });
@@ -69,7 +73,8 @@ export const archiveAccount = async (req: Request, res: Response) => {
 
     const account = await accountService.archiveAccount(userId, id);
 
-    return res.json({ account });
+    const wrapped = wrapInArray(account, 'accounts');
+    return res.json(serialize(wrapped));
   } catch (error) {
     logger.error({ error }, 'Failed to archive account');
     return res.status(500).json({ error: 'Internal server error' });
