@@ -6,6 +6,20 @@ Lightweight Node.js/Express backend that simulates the Geezeo PFM API (`/api/v2`
 
 This project provides a minimal, standalone backend implementing 135+ API endpoints required by the responsive-tiles frontend. It uses PostgreSQL with Prisma ORM and includes tools for data migration and test data generation.
 
+## 📚 Documentation
+
+Comprehensive documentation is available in the [`docs/`](./docs) directory:
+
+- **[API Reference](./docs/API.md)** - Complete endpoint documentation
+- **[Architecture](./docs/ARCHITECTURE.md)** - System design and patterns
+- **[Development Guide](./docs/DEVELOPMENT_GUIDE.md)** - Development workflows
+- **[Migration Tool](./docs/MIGRATION_TOOL.md)** - Data import guide
+- **[Documentation Index](./docs/INDEX.md)** - Full documentation map
+
+**Quick References**:
+- [CLAUDE.md](./CLAUDE.md) - AI-optimized development guide
+- [Getting Started](./docs/GETTING_STARTED.md) - Detailed setup instructions
+
 ## Features
 
 - ✅ All 135+ `/api/v2` endpoints for responsive-tiles
