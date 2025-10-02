@@ -12,6 +12,7 @@ Comprehensive documentation for PFM Backend Simulator.
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | System design and patterns | Backend developers |
 | [DEVELOPMENT_GUIDE.md](./DEVELOPMENT_GUIDE.md) | Development workflows | Contributors |
 | [MIGRATION_TOOL.md](./MIGRATION_TOOL.md) | Data migration guide | DevOps, QA |
+| [POSTGRESQL_TUTORIAL.md](./POSTGRESQL_TUTORIAL.md) | PostgreSQL guide (terminal & VS Code) | All developers |
 
 ## Documentation Overview
 
@@ -26,7 +27,12 @@ Comprehensive documentation for PFM Backend Simulator.
    - Use [MIGRATION_TOOL.md](./MIGRATION_TOOL.md) to import from Geezeo API
    - Or generate test data: `npm run seed -- generate --scenario realistic`
 
-3. **Developing features?**
+3. **Working with PostgreSQL?**
+   - Read [POSTGRESQL_TUTORIAL.md](./POSTGRESQL_TUTORIAL.md) for complete guide
+   - Covers both terminal (psql) and VS Code setup
+   - Includes practical queries for your database schema
+
+4. **Developing features?**
    - Read [ARCHITECTURE.md](./ARCHITECTURE.md) to understand system design
    - Follow patterns in [DEVELOPMENT_GUIDE.md](./DEVELOPMENT_GUIDE.md)
    - Reference [API.md](./API.md) for endpoint specifications
@@ -186,6 +192,27 @@ Comprehensive documentation for PFM Backend Simulator.
 - Troubleshooting common issues
 
 **When to use**: Active development, adding features, debugging
+
+---
+
+### POSTGRESQL_TUTORIAL.md
+**Location**: `/docs/POSTGRESQL_TUTORIAL.md`
+**Length**: ~1,100 lines
+**Purpose**: Comprehensive PostgreSQL guide for terminal and VS Code
+
+**Contents**:
+- Terminal tools (psql, pg_dump, pg_restore, etc.)
+- Connection methods and environment setup
+- 50+ psql meta-commands with examples
+- 100+ practical SQL queries using project schema
+- VS Code extensions (PostgreSQL, SQLTools)
+- Extension setup and configuration
+- Daily development workflows
+- Query debugging and optimization
+- Database maintenance operations
+- Quick reference cheat sheets
+
+**When to use**: Learning PostgreSQL, database operations, query writing, VS Code setup
 
 ---
 
