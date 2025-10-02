@@ -1,0 +1,218 @@
+:root {
+  --max-width: 800px;
+  --spacing: 1.5rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+}
+
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+header {
+  text-align: center;
+  color: white;
+  margin-bottom: 2rem;
+}
+
+header h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+header p {
+  margin: 0;
+  font-size: 1.125rem;
+  opacity: 0.9;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing);
+}
+
+wa-card {
+  --border-radius: 12px;
+}
+
+wa-card h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+form wa-input {
+  margin-bottom: 1rem;
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+.entity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.entity-list wa-checkbox {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  border: 1px solid var(--wa-color-neutral-200);
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.entity-list wa-checkbox:hover {
+  border-color: var(--wa-color-brand-500);
+  background-color: var(--wa-color-brand-50);
+}
+
+.entity-description {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--wa-color-neutral-600);
+  margin-top: 0.25rem;
+  margin-left: 1.75rem;
+}
+
+.status-message {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-message.success {
+  background-color: var(--wa-color-success-50);
+  color: var(--wa-color-success-700);
+  border: 1px solid var(--wa-color-success-200);
+}
+
+.status-message.error {
+  background-color: var(--wa-color-danger-50);
+  color: var(--wa-color-danger-700);
+  border: 1px solid var(--wa-color-danger-200);
+}
+
+.progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.progress-header h2 {
+  margin: 0;
+}
+
+.progress-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.progress-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.progress-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.progress-item-header strong {
+  font-size: 1rem;
+}
+
+.progress-item-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--wa-color-neutral-600);
+}
+
+.progress-item-status wa-icon {
+  font-size: 1.25rem;
+}
+
+.progress-item-status.pending {
+  color: var(--wa-color-neutral-500);
+}
+
+.progress-item-status.fetching {
+  color: var(--wa-color-brand-600);
+}
+
+.progress-item-status.complete {
+  color: var(--wa-color-success-600);
+}
+
+.progress-item-status.error {
+  color: var(--wa-color-danger-600);
+}
+
+wa-progress-bar {
+  width: 100%;
+}
+
+.completion-message {
+  text-align: center;
+  padding: 2rem;
+}
+
+.completion-message h3 {
+  margin: 1rem 0 0.5rem 0;
+  color: var(--wa-color-success-700);
+}
+
+.completion-message p {
+  margin: 0;
+  color: var(--wa-color-neutral-600);
+}
+
+.error-message {
+  padding: 1rem;
+  background-color: var(--wa-color-danger-50);
+  border: 1px solid var(--wa-color-danger-200);
+  border-radius: 8px;
+  color: var(--wa-color-danger-700);
+}
+
+@media (max-width: 640px) {
+  .button-group {
+    flex-direction: column;
+  }
+
+  header h1 {
+    font-size: 2rem;
+  }
+}

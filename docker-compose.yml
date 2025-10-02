@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: pfm-simulator-db
+    environment:
+      POSTGRES_USER: pfm_user
+      POSTGRES_PASSWORD: pfm_password
+      POSTGRES_DB: pfm_simulator
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pfm_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pfm-network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pfm-simulator-api
+    environment:
+      DATABASE_URL: postgresql://pfm_user:pfm_password@postgres:5432/pfm_simulator
+      JWT_SECRET: dev-secret-key-change-in-production
+      NODE_ENV: development
+      PORT: 3000
+      LOG_LEVEL: debug
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./src:/app/src
+      - ./prisma:/app/prisma
+    command: npm run dev
+    networks:
+      - pfm-network
+
+volumes:
+  postgres_data:
+
+networks:
+  pfm-network:
+    driver: bridge

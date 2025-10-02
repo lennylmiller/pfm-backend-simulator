@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PFM Backend Simulator - Data Migration Tool</title>
+
+  <!-- WebAwesome Styles -->
+  <link rel="stylesheet" href="vendor/webawesome/styles/webawesome.css">
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- WebAwesome Components -->
+  <script type="module" src="vendor/webawesome/webawesome.js"></script>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>PFM Backend Simulator</h1>
+      <p>Import data from Geezeo API into your local simulator</p>
+    </header>
+
+    <main>
+      <!-- Step 1: Configuration Form -->
+      <wa-card id="config-card">
+        <h2 slot="header">
+          <wa-icon name="key"></wa-icon>
+          API Configuration
+        </h2>
+
+        <form id="config-form">
+          <wa-input
+            name="apiKey"
+            type="password"
+            label="API Key"
+            hint="Your Geezeo API key for JWT signing"
+            required
+            clearable>
+          </wa-input>
+
+          <wa-input
+            name="partnerDomain"
+            label="Partner Domain"
+            value="geezeo.geezeo.banno-staging.com"
+            hint="The Geezeo API host domain"
+            required>
+          </wa-input>
+
+          <wa-input
+            name="pcid"
+            label="PCID (User ID)"
+            value="dpotockitest"
+            hint="The user identifier to import data for"
+            required>
+          </wa-input>
+
+          <wa-input
+            name="partnerId"
+            label="Partner ID"
+            value="1"
+            hint="Your partner ID (usually '1')"
+            required>
+          </wa-input>
+
+          <div class="button-group">
+            <wa-button type="button" id="test-connection-btn" variant="neutral">
+              <wa-icon slot="start" name="wifi"></wa-icon>
+              Test Connection
+            </wa-button>
+            <wa-button type="button" id="continue-btn" variant="brand" disabled>
+              Continue to Data Selection
+              <wa-icon slot="end" name="arrow-right"></wa-icon>
+            </wa-button>
+          </div>
+        </form>
+
+        <div id="connection-status" class="status-message" style="display: none;"></div>
+      </wa-card>
+
+      <!-- Step 2: Data Selection -->
+      <wa-card id="selection-card" style="display: none;">
+        <h2 slot="header">
+          <wa-icon name="list-check"></wa-icon>
+          Select Data to Import
+        </h2>
+
+        <div class="entity-list">
+          <wa-checkbox name="user" checked>
+            <strong>Current User</strong>
+            <span class="entity-description">Basic user information and settings</span>
+          </wa-checkbox>
+
+          <wa-checkbox name="accounts" checked>
+            <strong>Accounts</strong>
+            <span class="entity-description">All financial accounts (checking, savings, credit cards, etc.)</span>
+          </wa-checkbox>
+
+          <wa-checkbox name="transactions">
+            <strong>Transactions</strong>
+            <span class="entity-description">Transaction history for selected accounts (may take time)</span>
+          </wa-checkbox>
+
+          <wa-checkbox name="budgets">
+            <strong>Budgets</strong>
+            <span class="entity-description">Budget definitions and allocations</span>
+          </wa-checkbox>
+
+          <wa-checkbox name="goals">
+            <strong>Goals</strong>
+            <span class="entity-description">Savings goals and payoff goals</span>
+          </wa-checkbox>
+
+          <wa-checkbox name="alerts">
+            <strong>Alerts</strong>
+            <span class="entity-description">Alert rules and notifications</span>
+          </wa-checkbox>
+
+          <wa-checkbox name="tags">
+            <strong>Tags</strong>
+            <span class="entity-description">Transaction tags and categories</span>
+          </wa-checkbox>
+        </div>
+
+        <div class="button-group">
+          <wa-button type="button" id="back-btn" variant="neutral">
+            <wa-icon slot="start" name="arrow-left"></wa-icon>
+            Back
+          </wa-button>
+          <wa-button type="button" id="start-import-btn" variant="brand">
+            <wa-icon slot="start" name="download"></wa-icon>
+            Start Import
+          </wa-button>
+        </div>
+      </wa-card>
+    </main>
+
+    <!-- Progress Dialog -->
+    <wa-dialog id="progress-dialog" label="Import Progress" no-header>
+      <div class="progress-header">
+        <h2>Importing Data</h2>
+        <wa-spinner></wa-spinner>
+      </div>
+
+      <div id="progress-list" class="progress-list"></div>
+
+      <div id="completion-message" class="completion-message" style="display: none;">
+        <wa-icon name="check-circle" style="color: var(--wa-color-success-600); font-size: 48px;"></wa-icon>
+        <h3>Import Complete!</h3>
+        <p>All selected data has been successfully imported into your local database.</p>
+      </div>
+
+      <div id="error-message" class="error-message" style="display: none;"></div>
+
+      <wa-button slot="footer" id="close-dialog-btn" variant="brand" disabled>
+        Close
+      </wa-button>
+    </wa-dialog>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
