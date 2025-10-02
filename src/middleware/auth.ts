@@ -14,15 +14,26 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
   const token = authHeader.substring(7);
 
   try {
-    const payload = jwt.verify(token, authConfig.jwtSecret) as JWTPayload;
+    const payload = jwt.verify(token, authConfig.jwtSecret) as any;
+
+    // Support both JWT formats:
+    // 1. Standard format: { userId, partnerId }
+    // 2. Responsive-tiles format: { sub, iss, aud } where sub=userId, iss=partnerId
+    const userId = payload.userId || payload.sub;
+    const partnerId = payload.partnerId || payload.iss;
+
+    if (!userId || !partnerId) {
+      logger.warn({ payload }, 'JWT missing required claims');
+      return res.status(401).json({ error: 'Invalid token claims' });
+    }
 
     // Attach to request context
     req.context = {
-      userId: payload.userId,
-      partnerId: payload.partnerId,
+      userId: userId,
+      partnerId: partnerId,
     };
 
-    logger.debug({ userId: payload.userId }, 'Authenticated request');
+    logger.debug({ userId }, 'Authenticated request');
     next();
   } catch (error) {
     logger.warn({ error }, 'JWT verification failed');
@@ -40,11 +51,18 @@ export const optionalAuth = (req: Request, res: Response, next: NextFunction) =>
   const token = authHeader.substring(7);
 
   try {
-    const payload = jwt.verify(token, authConfig.jwtSecret) as JWTPayload;
-    req.context = {
-      userId: payload.userId,
-      partnerId: payload.partnerId,
-    };
+    const payload = jwt.verify(token, authConfig.jwtSecret) as any;
+
+    // Support both JWT formats
+    const userId = payload.userId || payload.sub;
+    const partnerId = payload.partnerId || payload.iss;
+
+    if (userId && partnerId) {
+      req.context = {
+        userId: userId,
+        partnerId: partnerId,
+      };
+    }
   } catch (error) {
     // Continue without auth context
   }
