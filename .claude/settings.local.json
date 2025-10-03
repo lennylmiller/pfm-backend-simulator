@@ -39,7 +39,13 @@
       "Bash(xargs kill:*)",
       "mcp__chrome-devtools__new_page",
       "mcp__chrome-devtools__select_page",
-      "Bash(nc localhost 3000)"
+      "Bash(nc localhost 3000)",
+      "Bash(PORT=8080 npm start)",
+      "Bash(npm run build:*)",
+      "Bash(for file in src/services/*.ts)",
+      "Bash(do sed -i '' 's|../../../../banno/responsive-tiles|../../../../../banno/responsive-tiles|g' \"$file\")",
+      "Bash(done)",
+      "Bash(do)"
     ],
     "deny": [],
     "ask": []

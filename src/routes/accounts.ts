@@ -7,9 +7,13 @@ const router = Router({ mergeParams: true });
 router.get('/all', accountsController.getAllAccounts);
 
 // GET /users/:userId/accounts/potential_cashflow (must be before /:id to avoid conflict)
-router.get('/potential_cashflow', (req, res) => {
-  res.json({ accounts: [] });
-});
+router.get('/potential_cashflow', accountsController.getPotentialCashflowAccounts);
+
+// GET /users/:userId/accounts/:id/investments
+router.get('/:id/investments', accountsController.getAccountInvestments);
+
+// GET /users/:userId/accounts/:id/transactions
+router.get('/:id/transactions', accountsController.getAccountTransactions);
 
 // GET /users/:userId/accounts/:id
 router.get('/:id', accountsController.getAccount);

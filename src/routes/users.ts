@@ -1,8 +1,14 @@
 import { Router, Request, Response } from 'express';
 import { authenticateJWT } from '../middleware/auth';
 import accountsRoutes from './accounts';
+import budgetsRoutes from './budgets';
+import transactionsRoutes from './transactions';
+import notificationsRoutes from './notifications';
+import tagsRoutes from './tags';
+import expensesRoutes from './expenses';
 import { prisma } from '../config/database';
 import { serialize } from '../utils/serializers';
+import { logger } from '../config/logger';
 
 const router = Router();
 
@@ -42,6 +48,21 @@ router.get('/current', authenticateJWT, async (req: Request, res: Response) => {
 // Nested account routes
 router.use('/:userId/accounts', authenticateJWT, accountsRoutes);
 
+// Nested budget routes
+router.use('/:userId/budgets', authenticateJWT, budgetsRoutes);
+
+// Nested transaction routes
+router.use('/:userId/transactions', authenticateJWT, transactionsRoutes);
+
+// Nested notifications routes (under /users/:userId/alerts/notifications)
+router.use('/:userId/alerts/notifications', authenticateJWT, notificationsRoutes);
+
+// Nested tags routes
+router.use('/:userId/tags', authenticateJWT, tagsRoutes);
+
+// Nested expenses routes
+router.use('/:userId/expenses', authenticateJWT, expensesRoutes);
+
 // Stub endpoints for responsive-tiles compatibility
 // These return empty responses to prevent frontend errors
 
@@ -50,14 +71,27 @@ router.get('/:userId/informational_messages', authenticateJWT, (req: Request, re
   res.json({ informational_messages: [] });
 });
 
-// Alert notifications
-router.get('/:userId/alerts/notifications', authenticateJWT, (req: Request, res: Response) => {
-  res.json({ notifications: [] });
-});
+// Track login activity
+router.post('/current/track_login', authenticateJWT, async (req: Request, res: Response) => {
+  try {
+    const userId = req.context?.userId;
 
-// Track login activity (no-op for simulator)
-router.post('/current/track_login', authenticateJWT, (req: Request, res: Response) => {
-  res.json({ success: true });
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    // Update last login timestamp
+    await prisma.user.update({
+      where: { id: BigInt(userId) },
+      data: { updatedAt: new Date() }
+    });
+
+    logger.info({ userId }, 'User login tracked');
+    return res.json({ success: true });
+  } catch (error) {
+    logger.error({ error }, 'Failed to track login');
+    return res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 // Harvest status (account aggregation from financial institutions)

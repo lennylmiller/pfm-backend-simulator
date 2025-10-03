@@ -97,3 +97,52 @@ export const deleteAccount = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+export const getAccountInvestments = async (req: Request, res: Response) => {
+  try {
+    const { userId, id } = req.params;
+
+    if (userId !== req.context?.userId) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    const investments = await accountService.getAccountInvestments(userId, id);
+    return res.json(serialize(investments));
+  } catch (error) {
+    logger.error({ error }, 'Failed to get account investments');
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+export const getAccountTransactions = async (req: Request, res: Response) => {
+  try {
+    const { userId, id } = req.params;
+    const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
+
+    if (userId !== req.context?.userId) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    const result = await accountService.getAccountTransactions(userId, id, page);
+    return res.json(serialize(result));
+  } catch (error) {
+    logger.error({ error }, 'Failed to get account transactions');
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+export const getPotentialCashflowAccounts = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    if (userId !== req.context?.userId) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    const accounts = await accountService.getPotentialCashflowAccounts(userId);
+    return res.json(serialize({ accounts }));
+  } catch (error) {
+    logger.error({ error }, 'Failed to get potential cashflow accounts');
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
