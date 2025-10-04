@@ -182,3 +182,23 @@ export function serializeGoal(goal: any, type: 'payoff' | 'savings', calculatePr
     };
   }
 }
+
+// =============================================================================
+// TAG SERIALIZATION
+// =============================================================================
+
+export function serializeTag(tag: any, transactionCount?: number): any {
+  const serialized: any = {
+    id: serializeBigInt(tag.id),
+    name: tag.name,
+    parent_tag_id: tag.parentTagId ? serializeBigInt(tag.parentTagId) : null,
+    tag_type: tag.tagType
+  };
+
+  // Only include transaction_count if provided
+  if (transactionCount !== undefined) {
+    serialized.transaction_count = transactionCount;
+  }
+
+  return serialized;
+}

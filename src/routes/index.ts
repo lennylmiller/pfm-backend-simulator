@@ -6,6 +6,7 @@ import budgetsRoutes from './budgets';
 import tagsRoutes from './tags';
 import goalImagesRoutes from './goalImages';
 import stubRoutes from './stubs';
+import * as tagsController from '../controllers/tagsController';
 
 const router = Router();
 
@@ -13,8 +14,8 @@ const router = Router();
 router.use('/users', usersRoutes);
 router.use('/partners', partnersRoutes);
 
-// Mount default tags route (no userId)
-router.use('/tags', tagsRoutes);
+// Mount global system tags endpoint (no authentication)
+router.get('/tags', tagsController.listSystemTags);
 
 // Mount goal images routes (no authentication, static data)
 router.use('/', goalImagesRoutes);

@@ -32,15 +32,6 @@ router.get('/users/:userId/expenses', authenticateJWT, (req: Request, res: Respo
   res.json({ expenses: [] });
 });
 
-// Tags endpoints
-router.get('/tags', authenticateJWT, (req: Request, res: Response) => {
-  res.json({ tags: [] });
-});
-
-router.get('/users/:userId/tags', authenticateJWT, (req: Request, res: Response) => {
-  res.json({ tags: [] });
-});
-
 // Net worth endpoint
 router.get('/users/:userId/networth', authenticateJWT, (req: Request, res: Response) => {
   res.json({

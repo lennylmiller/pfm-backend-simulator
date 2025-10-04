@@ -48,7 +48,8 @@
       "Bash(do)",
       "mcp__serena__list_memories",
       "mcp__serena__read_memory",
-      "mcp__context7__resolve-library-id"
+      "mcp__context7__resolve-library-id",
+      "Bash(npm test:*)"
     ],
     "deny": [],
     "ask": []
