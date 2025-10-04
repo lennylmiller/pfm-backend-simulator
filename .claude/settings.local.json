@@ -54,7 +54,8 @@
       "Read(//Users/LenMiller/code/banno/geezeo/app/controllers/**)",
       "Read(//Users/LenMiller/code/banno/geezeo/app/views/api/v2/users/accounts/**)",
       "Read(//Users/LenMiller/code/banno/geezeo/app/views/api/v2/users/**)",
-      "Read(//Users/LenMiller/code/banno/geezeo/db/**)"
+      "Read(//Users/LenMiller/code/banno/geezeo/db/**)",
+      "mcp__serena__write_memory"
     ],
     "deny": [],
     "ask": []
