@@ -6,6 +6,7 @@ import budgetsRoutes from './budgets';
 import tagsRoutes from './tags';
 import goalImagesRoutes from './goalImages';
 import cashflowRoutes from './cashflow';
+import alertsRoutes from './alerts';
 import stubRoutes from './stubs';
 import * as tagsController from '../controllers/tagsController';
 
@@ -23,6 +24,9 @@ router.use('/', goalImagesRoutes);
 
 // Mount cashflow routes
 router.use('/', cashflowRoutes);
+
+// Mount alert routes
+router.use('/', alertsRoutes);
 
 // Mount stub routes for endpoints not yet implemented
 router.use('/', stubRoutes);

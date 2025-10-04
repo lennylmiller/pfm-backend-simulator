@@ -295,3 +295,124 @@ export function serializeCashflowSummary(summary: any): any {
     }
   };
 }
+
+// =============================================================================
+// ALERT SERIALIZATION
+// =============================================================================
+
+/**
+ * Serialize alert to API response format with type-specific fields
+ */
+export function serializeAlert(alert: any): any {
+  const conditions = alert.conditions as any;
+
+  const base = {
+    id: serializeBigInt(alert.id),
+    user_id: serializeBigInt(alert.userId),
+    alert_type: alert.alertType.toLowerCase(),
+    name: alert.name,
+    email_delivery: alert.emailDelivery,
+    sms_delivery: alert.smsDelivery,
+    active: alert.active,
+    last_triggered_at: alert.lastTriggeredAt ? serializeDate(alert.lastTriggeredAt) : null,
+    created_at: serializeDate(alert.createdAt),
+    updated_at: serializeDate(alert.updatedAt),
+    links: {}
+  };
+
+  // Add type-specific fields
+  switch (alert.alertType) {
+    case 'account_threshold':
+      return {
+        ...base,
+        account_id: alert.sourceId ? serializeBigInt(alert.sourceId) : null,
+        threshold: conditions.threshold,
+        direction: conditions.direction,
+        links: {
+          account: alert.sourceId ? serializeBigInt(alert.sourceId) : null
+        }
+      };
+
+    case 'goal':
+      return {
+        ...base,
+        goal_id: alert.sourceId ? serializeBigInt(alert.sourceId) : null,
+        milestone_percentage: conditions.milestone_percentage,
+        links: {
+          goal: alert.sourceId ? serializeBigInt(alert.sourceId) : null
+        }
+      };
+
+    case 'merchant_name':
+      return {
+        ...base,
+        merchant_pattern: conditions.merchant_pattern,
+        match_type: conditions.match_type,
+        links: {}
+      };
+
+    case 'spending_target':
+      return {
+        ...base,
+        budget_id: alert.sourceId ? serializeBigInt(alert.sourceId) : null,
+        threshold_percentage: conditions.threshold_percentage,
+        links: {
+          budget: alert.sourceId ? serializeBigInt(alert.sourceId) : null
+        }
+      };
+
+    case 'transaction_limit':
+      return {
+        ...base,
+        account_id: alert.sourceId ? serializeBigInt(alert.sourceId) : null,
+        amount: conditions.amount,
+        links: {
+          ...(alert.sourceId && { account: serializeBigInt(alert.sourceId) })
+        }
+      };
+
+    case 'upcoming_bill':
+      return {
+        ...base,
+        bill_id: alert.sourceId ? serializeBigInt(alert.sourceId) : null,
+        days_before: conditions.days_before,
+        links: {
+          bill: alert.sourceId ? serializeBigInt(alert.sourceId) : null
+        }
+      };
+
+    default:
+      return base;
+  }
+}
+
+/**
+ * Serialize notification to API response format
+ */
+export function serializeNotification(notification: any): any {
+  const metadata = notification.metadata as any;
+
+  return {
+    id: serializeBigInt(notification.id),
+    user_id: serializeBigInt(notification.userId),
+    alert_id: notification.alertId ? serializeBigInt(notification.alertId) : null,
+    title: notification.title,
+    message: notification.message,
+    read: notification.read,
+    read_at: notification.readAt ? serializeDate(notification.readAt) : null,
+    email_sent: notification.emailSent,
+    email_sent_at: notification.emailSentAt ? serializeDate(notification.emailSentAt) : null,
+    sms_sent: notification.smsSent,
+    sms_sent_at: notification.smsSentAt ? serializeDate(notification.smsSentAt) : null,
+    created_at: serializeDate(notification.createdAt),
+    metadata: metadata || {},
+    links: {
+      alert: notification.alertId ? serializeBigInt(notification.alertId) : null,
+      ...(metadata.account_id && { account: serializeBigInt(BigInt(metadata.account_id)) }),
+      ...(metadata.goal_id && { goal: serializeBigInt(BigInt(metadata.goal_id)) }),
+      ...(metadata.budget_id && { budget: serializeBigInt(BigInt(metadata.budget_id)) }),
+      ...(metadata.transaction_id && { transaction: serializeBigInt(BigInt(metadata.transaction_id)) }),
+      ...(metadata.bill_id && { bill: serializeBigInt(BigInt(metadata.bill_id)) })
+    }
+  };
+}
