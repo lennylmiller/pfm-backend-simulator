@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import * as accountService from '../services/accountService';
+import * as transactionService from '../services/transactionService';
 import { logger } from '../config/logger';
 import { serialize, wrapInArray } from '../utils/serializers';
+import { validateAccountCreate } from '../validators/accountSchemas';
 
 export const getAllAccounts = async (req: Request, res: Response) => {
   try {
@@ -12,7 +14,10 @@ export const getAllAccounts = async (req: Request, res: Response) => {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const accounts = await accountService.getAllAccounts(userId);
+    const userIdBigInt = BigInt(req.context!.userId);
+    const partnerIdBigInt = BigInt(req.context!.partnerId);
+
+    const accounts = await accountService.getAllAccounts(userIdBigInt, partnerIdBigInt);
 
     return res.json(serialize({ accounts }));
   } catch (error) {
@@ -29,7 +34,10 @@ export const getAccount = async (req: Request, res: Response) => {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const account = await accountService.getAccountById(userId, id);
+    const userIdBigInt = BigInt(req.context!.userId);
+    const accountIdBigInt = BigInt(id);
+
+    const account = await accountService.getAccountById(userIdBigInt, accountIdBigInt);
 
     if (!account) {
       return res.status(404).json({ error: 'Account not found' });
@@ -53,7 +61,10 @@ export const updateAccount = async (req: Request, res: Response) => {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const updated = await accountService.updateAccount(userId, id, account);
+    const userIdBigInt = BigInt(req.context!.userId);
+    const accountIdBigInt = BigInt(id);
+
+    const updated = await accountService.updateAccount(userIdBigInt, accountIdBigInt, account);
 
     const wrapped = wrapInArray(updated, 'accounts');
     return res.json(serialize(wrapped));
@@ -71,7 +82,10 @@ export const archiveAccount = async (req: Request, res: Response) => {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const account = await accountService.archiveAccount(userId, id);
+    const userIdBigInt = BigInt(req.context!.userId);
+    const accountIdBigInt = BigInt(id);
+
+    const account = await accountService.archiveAccount(userIdBigInt, accountIdBigInt);
 
     const wrapped = wrapInArray(account, 'accounts');
     return res.json(serialize(wrapped));
@@ -89,7 +103,10 @@ export const deleteAccount = async (req: Request, res: Response) => {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    await accountService.deleteAccount(userId, id);
+    const userIdBigInt = BigInt(req.context!.userId);
+    const accountIdBigInt = BigInt(id);
+
+    await accountService.deleteAccount(userIdBigInt, accountIdBigInt);
 
     return res.status(204).send();
   } catch (error) {
@@ -106,7 +123,10 @@ export const getAccountInvestments = async (req: Request, res: Response) => {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const investments = await accountService.getAccountInvestments(userId, id);
+    const userIdBigInt = BigInt(req.context!.userId);
+    const accountIdBigInt = BigInt(id);
+
+    const investments = await accountService.getAccountInvestments(userIdBigInt, accountIdBigInt);
     return res.json(serialize(investments));
   } catch (error) {
     logger.error({ error }, 'Failed to get account investments');
@@ -123,7 +143,10 @@ export const getAccountTransactions = async (req: Request, res: Response) => {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const result = await accountService.getAccountTransactions(userId, id, page);
+    const userIdBigInt = BigInt(req.context!.userId);
+    const accountIdBigInt = BigInt(id);
+
+    const result = await transactionService.getAccountTransactions(userIdBigInt, accountIdBigInt, page);
     return res.json(serialize(result));
   } catch (error) {
     logger.error({ error }, 'Failed to get account transactions');
@@ -139,10 +162,55 @@ export const getPotentialCashflowAccounts = async (req: Request, res: Response) 
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const accounts = await accountService.getPotentialCashflowAccounts(userId);
+    const userIdBigInt = BigInt(req.context!.userId);
+    const partnerIdBigInt = BigInt(req.context!.partnerId);
+
+    const accounts = await accountService.getPotentialCashflowAccounts(userIdBigInt, partnerIdBigInt);
     return res.json(serialize({ accounts }));
   } catch (error) {
     logger.error({ error }, 'Failed to get potential cashflow accounts');
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+export const createAccount = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const { account } = req.body;
+
+    if (userId !== req.context?.userId) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    const userIdBigInt = BigInt(req.context!.userId);
+    const partnerIdBigInt = BigInt(req.context!.partnerId);
+
+    // Validate request body
+    const validated = validateAccountCreate(account);
+
+    // Map validated data to CreateAccountData interface
+    const accountData = {
+      name: validated.name,
+      displayName: validated.display_name,
+      accountType: validated.account_type,
+      aggregationType: validated.aggregation_type,
+      balance: validated.balance,
+      number: validated.number,
+      description: validated.description,
+      includeInNetworth: validated.include_in_networth,
+      includeInCashflow: validated.include_in_cashflow,
+      includeInExpenses: validated.include_in_expenses,
+      includeInBudget: validated.include_in_budget,
+      includeInGoals: validated.include_in_goals,
+      includeInDashboard: validated.include_in_dashboard,
+      ordering: validated.ordering,
+    };
+
+    const created = await accountService.createAccount(userIdBigInt, partnerIdBigInt, accountData);
+    const wrapped = wrapInArray(created, 'accounts');
+    return res.status(201).json(serialize(wrapped));
+  } catch (error) {
+    logger.error({ error }, 'Failed to create account');
     return res.status(500).json({ error: 'Internal server error' });
   }
 };

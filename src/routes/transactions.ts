@@ -4,6 +4,9 @@ import * as transactionsController from '../controllers/transactionsController';
 
 const router = Router({ mergeParams: true });
 
+// POST /users/:userId/transactions
+router.post('/', authenticateJWT, transactionsController.createTransaction);
+
 // GET /users/:userId/transactions/search
 router.get('/search', authenticateJWT, transactionsController.searchTransactions);
 

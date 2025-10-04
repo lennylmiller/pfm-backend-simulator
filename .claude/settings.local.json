@@ -50,7 +50,11 @@
       "mcp__serena__read_memory",
       "mcp__context7__resolve-library-id",
       "Bash(npm test:*)",
-      "Bash(npx prisma migrate dev:*)"
+      "Bash(npx prisma migrate dev:*)",
+      "Read(//Users/LenMiller/code/banno/geezeo/app/controllers/**)",
+      "Read(//Users/LenMiller/code/banno/geezeo/app/views/api/v2/users/accounts/**)",
+      "Read(//Users/LenMiller/code/banno/geezeo/app/views/api/v2/users/**)",
+      "Read(//Users/LenMiller/code/banno/geezeo/db/**)"
     ],
     "deny": [],
     "ask": []

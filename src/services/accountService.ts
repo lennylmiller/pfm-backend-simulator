@@ -229,3 +229,46 @@ export async function updateAccountBalance(
     },
   });
 }
+
+/**
+ * Get investment holdings for an account
+ */
+export async function getAccountInvestments(
+  userId: bigint,
+  accountId: bigint
+): Promise<any> {
+  // Verify ownership
+  const account = await prisma.account.findFirst({
+    where: { id: accountId, userId },
+  });
+
+  if (!account) {
+    throw new Error('Account not found');
+  }
+
+  // Return empty structure for now (investment tracking not implemented)
+  // Future: query Investment model when implemented
+  return {
+    positions: [],
+    other_balances: [],
+  };
+}
+
+/**
+ * Get accounts that can be used for cashflow
+ */
+export async function getPotentialCashflowAccounts(
+  userId: bigint,
+  partnerId: bigint
+): Promise<Account[]> {
+  return await prisma.account.findMany({
+    where: {
+      userId,
+      partnerId,
+      includeInCashflow: true,
+      archivedAt: null,
+      state: AccountState.active,
+    },
+    orderBy: [{ ordering: 'asc' }, { createdAt: 'desc' }],
+  });
+}

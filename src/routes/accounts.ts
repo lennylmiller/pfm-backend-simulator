@@ -3,6 +3,9 @@ import * as accountsController from '../controllers/accountsController';
 
 const router = Router({ mergeParams: true });
 
+// POST /users/:userId/accounts
+router.post('/', accountsController.createAccount);
+
 // GET /users/:userId/accounts/all
 router.get('/all', accountsController.getAllAccounts);
 
