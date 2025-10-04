@@ -9,23 +9,7 @@ import { authenticateJWT } from '../middleware/auth';
 
 const router = Router();
 
-// Cashflow endpoints
-router.get('/users/:userId/cashflow', authenticateJWT, (req: Request, res: Response) => {
-  res.json({
-    cashflow: {
-      balance: "0.00",
-      projected_balance: "0.00",
-      income: "0.00",
-      expenses: "0.00"
-    }
-  });
-});
-
-router.get('/users/:userId/cashflow/events', authenticateJWT, (req: Request, res: Response) => {
-  res.json({ cashflow_events: [] });
-});
-
-// potential_cashflow moved to accounts.ts router to avoid conflict with /:id route
+// Cashflow endpoints now implemented in cashflow.ts
 
 // Expenses endpoint
 router.get('/users/:userId/expenses', authenticateJWT, (req: Request, res: Response) => {
