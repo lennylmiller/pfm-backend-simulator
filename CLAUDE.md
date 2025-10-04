@@ -147,29 +147,34 @@ npm test -- --testNamePattern="GET /accounts"   # Specific test case
 
 ## Critical Implementation Notes
 
-### Current Implementation Status (~40% complete)
+### Current Implementation Status (~85% complete)
 
 **Fully Implemented**:
-- ✅ Budgets CRUD (100%)
-- ✅ Basic accounts GET operations
-- ✅ Basic transactions GET operations
+- ✅ Budgets CRUD (100%) - src/controllers/budgetsController.ts
+- ✅ Accounts CRUD with POST (100%) - src/controllers/accountsController.ts
+- ✅ Transactions CRUD with POST (100%) - src/controllers/transactionsController.ts
+- ✅ Cashflow Module (100%) - src/controllers/cashflowController.ts
+  - Bills, Incomes, Events CRUD
+  - 15 endpoints with recurrence logic
+- ✅ Alerts & Notifications (100%) - src/controllers/alertsController.ts
+  - 6 alert types (account_threshold, goal, merchant_name, spending_target, transaction_limit, upcoming_bill)
+  - 20+ endpoints with flexible JSON conditions
+  - Alert evaluation logic and multi-channel delivery design
 - ✅ JWT authentication (dual format)
-- ✅ Database schema (Prisma)
+- ✅ Database schema (Prisma) - comprehensive models
 - ✅ Partner management
+- ✅ Goals CRUD - src/controllers/goalsController.ts
+- ✅ Tags implementation - src/controllers/tagsController.ts
+- ✅ Users basic operations - src/controllers/usersController.ts
 
 **Partially Implemented**:
-- ⚠️ Accounts (missing POST for creation)
-- ⚠️ Transactions (missing POST for creation)
-- ⚠️ Users (basic operations only)
-- ⚠️ Alerts (models exist, no routes/controllers)
+- ⚠️ Expenses aggregation (stub only)
+- ⚠️ Networth calculations (stub only)
 
 **Not Implemented** (stubbed in `src/routes/stubs.ts`):
-- ❌ Goals CRUD (savings + payoff types) - **Priority 1**
-- ❌ Tags full implementation - **Priority 1**
-- ❌ Cashflow (bills, incomes, events) - **Priority 2**
-- ❌ Networth calculations - **Priority 2**
-- ❌ Expenses aggregation - **Priority 2**
-- ❌ Account aggregation endpoints
+- ❌ Account aggregation endpoints (Plaid/Finicity/MX integration)
+- ❌ Advanced analytics and reporting
+- ❌ Batch import/export functionality
 
 ### When Implementing New Endpoints
 
@@ -251,11 +256,13 @@ npx prisma migrate dev --name description_of_change
 
 ## Known Issues and Limitations
 
-1. **Incomplete API Coverage**: ~40% of responsive-tiles requirements implemented
-2. **Goals Module Missing**: Critical for frontend compatibility
-3. **Cashflow Module Missing**: Bills, incomes, events not implemented
-4. **No Account/Transaction Creation**: Frontend cannot create new resources yet
-5. **Stub Routes Active**: Many endpoints return 501 Not Implemented
+1. **Background Jobs Not Implemented**: Alert evaluation, cashflow projections run on-demand only (see docs/ALERT_NOTIFICATION_ARCHITECTURE.md for implementation plan)
+2. **Email/SMS Integration Pending**: Notification delivery channels not yet connected to external providers
+3. **Account Aggregation Missing**: No integration with Plaid/Finicity/MX for automatic transaction sync
+4. **Expenses/Networth Stubs**: Calculation endpoints return placeholder data
+5. **Limited Test Coverage**: Integration tests exist for budgets, cashflow, alerts; expand to all modules
+6. **No Rate Limiting**: API has no request rate limits or throttling
+7. **Single Database Instance**: No read replicas or sharding for horizontal scaling
 
 ## Development Workflow
 
