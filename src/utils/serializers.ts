@@ -202,3 +202,96 @@ export function serializeTag(tag: any, transactionCount?: number): any {
 
   return serialized;
 }
+
+// =============================================================================
+// CASHFLOW SERIALIZATION
+// =============================================================================
+
+/**
+ * Serialize cashflow bill to API response format
+ */
+export function serializeBill(bill: any): any {
+  return {
+    id: serializeBigInt(bill.id),
+    name: bill.name,
+    amount: bill.amount.toFixed(2),
+    due_date: bill.dueDate,
+    recurrence: bill.recurrence,
+    category_id: bill.categoryId ? serializeBigInt(bill.categoryId) : null,
+    account_id: bill.accountId ? serializeBigInt(bill.accountId) : null,
+    active: bill.active,
+    stopped_at: bill.stoppedAt ? bill.stoppedAt.toISOString() : null,
+    created_at: bill.createdAt.toISOString(),
+    updated_at: bill.updatedAt.toISOString(),
+    links: {
+      category: bill.categoryId ? serializeBigInt(bill.categoryId) : null,
+      account: bill.accountId ? serializeBigInt(bill.accountId) : null
+    }
+  };
+}
+
+/**
+ * Serialize cashflow income to API response format
+ */
+export function serializeIncome(income: any): any {
+  return {
+    id: serializeBigInt(income.id),
+    name: income.name,
+    amount: income.amount.toFixed(2),
+    receive_date: income.receiveDate,
+    recurrence: income.recurrence,
+    category_id: income.categoryId ? serializeBigInt(income.categoryId) : null,
+    account_id: income.accountId ? serializeBigInt(income.accountId) : null,
+    active: income.active,
+    stopped_at: income.stoppedAt ? income.stoppedAt.toISOString() : null,
+    created_at: income.createdAt.toISOString(),
+    updated_at: income.updatedAt.toISOString(),
+    links: {
+      category: income.categoryId ? serializeBigInt(income.categoryId) : null,
+      account: income.accountId ? serializeBigInt(income.accountId) : null
+    }
+  };
+}
+
+/**
+ * Serialize cashflow event to API response format
+ */
+export function serializeEvent(event: any): any {
+  return {
+    id: event.id ? serializeBigInt(event.id) : null,
+    source_type: event.sourceType,
+    source_id: event.sourceId ? serializeBigInt(event.sourceId) : null,
+    name: event.name,
+    amount: event.amount.toFixed(2),
+    event_date: event.eventDate instanceof Date
+      ? event.eventDate.toISOString().split('T')[0]
+      : event.eventDate,
+    event_type: event.eventType,
+    account_id: event.accountId ? serializeBigInt(event.accountId) : null,
+    processed: event.processed,
+    metadata: event.metadata || {}
+  };
+}
+
+/**
+ * Serialize cashflow summary to API response format
+ */
+export function serializeCashflowSummary(summary: any): any {
+  return {
+    total_income: summary.totalIncome,
+    total_bills: summary.totalBills,
+    net_cashflow: summary.netCashflow,
+    start_date: summary.startDate,
+    end_date: summary.endDate,
+    bills_count: summary.billsCount,
+    incomes_count: summary.incomesCount,
+    events_count: summary.eventsCount,
+    average_income: summary.averageIncome,
+    average_bills: summary.averageBills,
+    settings: {
+      auto_categorize: true,
+      show_projections: true,
+      projection_days: 90
+    }
+  };
+}

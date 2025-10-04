@@ -5,6 +5,7 @@ import partnersRoutes from './partners';
 import budgetsRoutes from './budgets';
 import tagsRoutes from './tags';
 import goalImagesRoutes from './goalImages';
+import cashflowRoutes from './cashflow';
 import stubRoutes from './stubs';
 import * as tagsController from '../controllers/tagsController';
 
@@ -19,6 +20,9 @@ router.get('/tags', tagsController.listSystemTags);
 
 // Mount goal images routes (no authentication, static data)
 router.use('/', goalImagesRoutes);
+
+// Mount cashflow routes
+router.use('/', cashflowRoutes);
 
 // Mount stub routes for endpoints not yet implemented
 router.use('/', stubRoutes);

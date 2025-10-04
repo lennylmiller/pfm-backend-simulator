@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { transactionService } from '../services/transactionService';
+import * as transactionService from '../services/transactionService';
 import { logger } from '../config/logger';
 import { serialize, wrapInArray } from '../utils/serializers';
 

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { accountService } from '../services/accountService';
+import * as accountService from '../services/accountService';
 import { logger } from '../config/logger';
 import { serialize, wrapInArray } from '../utils/serializers';
 
