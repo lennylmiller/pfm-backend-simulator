@@ -4,6 +4,7 @@ import usersRoutes from './users';
 import partnersRoutes from './partners';
 import budgetsRoutes from './budgets';
 import tagsRoutes from './tags';
+import goalImagesRoutes from './goalImages';
 import stubRoutes from './stubs';
 
 const router = Router();
@@ -14,6 +15,9 @@ router.use('/partners', partnersRoutes);
 
 // Mount default tags route (no userId)
 router.use('/tags', tagsRoutes);
+
+// Mount goal images routes (no authentication, static data)
+router.use('/', goalImagesRoutes);
 
 // Mount stub routes for endpoints not yet implemented
 router.use('/', stubRoutes);

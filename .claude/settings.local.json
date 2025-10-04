@@ -47,7 +47,8 @@
       "Bash(done)",
       "Bash(do)",
       "mcp__serena__list_memories",
-      "mcp__serena__read_memory"
+      "mcp__serena__read_memory",
+      "mcp__context7__resolve-library-id"
     ],
     "deny": [],
     "ask": []

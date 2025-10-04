@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { authenticateJWT } from '../middleware/auth';
 import accountsRoutes from './accounts';
 import budgetsRoutes from './budgets';
+import goalsRoutes from './goals';
 import transactionsRoutes from './transactions';
 import notificationsRoutes from './notifications';
 import tagsRoutes from './tags';
@@ -50,6 +51,9 @@ router.use('/:userId/accounts', authenticateJWT, accountsRoutes);
 
 // Nested budget routes
 router.use('/:userId/budgets', authenticateJWT, budgetsRoutes);
+
+// Nested goals routes (payoff_goals and savings_goals)
+router.use('/:userId', authenticateJWT, goalsRoutes);
 
 // Nested transaction routes
 router.use('/:userId/transactions', authenticateJWT, transactionsRoutes);
