@@ -60,7 +60,8 @@
       "Bash(npm run lint:*)",
       "Bash(npx tsc:*)",
       "Bash(timeout 30 npm test:*)",
-      "Bash(for:*)"
+      "Bash(for:*)",
+      "mcp__context7__get-library-docs"
     ],
     "deny": [],
     "ask": []
