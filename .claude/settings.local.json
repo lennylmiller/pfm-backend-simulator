@@ -55,7 +55,9 @@
       "Read(//Users/LenMiller/code/banno/geezeo/app/views/api/v2/users/accounts/**)",
       "Read(//Users/LenMiller/code/banno/geezeo/app/views/api/v2/users/**)",
       "Read(//Users/LenMiller/code/banno/geezeo/db/**)",
-      "mcp__serena__write_memory"
+      "mcp__serena__write_memory",
+      "Bash(npm install:*)",
+      "Bash(npm run lint:*)"
     ],
     "deny": [],
     "ask": []

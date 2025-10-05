@@ -416,3 +416,105 @@ export function serializeNotification(notification: any): any {
     }
   };
 }
+
+// =============================================================================
+// EXPENSES SERIALIZATION
+// =============================================================================
+
+/**
+ * Serialize expenses summary to API response format
+ */
+export function serializeExpensesSummary(summary: any): any {
+  return {
+    total: summary.total,
+    count: summary.count,
+    average: summary.average,
+    period: summary.period,
+    period_start: summary.startDate,
+    period_end: summary.endDate,
+    categories: summary.breakdown
+  };
+}
+
+/**
+ * Serialize category expenses array
+ */
+export function serializeExpensesByCategory(categories: any[]): any[] {
+  return categories.map(cat => ({
+    tag_id: cat.tagId,
+    tag_name: cat.tagName || cat.category,
+    amount: cat.total,
+    transaction_count: cat.count,
+    average_amount: cat.average,
+    percent_of_total: cat.percentage
+  }));
+}
+
+/**
+ * Serialize merchant expenses array
+ */
+export function serializeExpensesByMerchant(merchants: any[]): any[] {
+  return merchants.map(m => ({
+    merchant: m.merchant,
+    amount: m.total,
+    transaction_count: m.count,
+    average_amount: m.average,
+    percent_of_total: m.percentage,
+    last_transaction_date: m.lastDate
+  }));
+}
+
+/**
+ * Serialize tag expenses with transaction list
+ */
+export function serializeExpensesByTag(expenses: any): any {
+  return {
+    tag_id: expenses.tagId,
+    tag_name: expenses.tagName,
+    total: expenses.total,
+    count: expenses.count,
+    average: expenses.average,
+    transactions: expenses.transactions.map((t: any) => ({
+      id: serializeBigInt(t.id),
+      account_id: serializeBigInt(t.accountId),
+      description: t.description,
+      merchant_name: t.merchantName,
+      amount: serializeDecimal(t.amount),
+      posted_at: serializeDate(t.postedAt),
+      primary_tag_id: t.primaryTagId ? serializeBigInt(t.primaryTagId) : null
+    }))
+  };
+}
+
+/**
+ * Serialize monthly trends array
+ */
+export function serializeExpensesTrends(trends: any[]): any[] {
+  return trends.map(t => ({
+    month: t.month,
+    year: t.year,
+    total: t.total,
+    count: t.count,
+    average: t.average
+  }));
+}
+
+/**
+ * Serialize expenses comparison
+ */
+export function serializeExpensesComparison(comparison: any): any {
+  return {
+    this_month: {
+      total: comparison.thisMonth.total,
+      count: comparison.thisMonth.count,
+      average: comparison.thisMonth.average
+    },
+    last_month: {
+      total: comparison.lastMonth.total,
+      count: comparison.lastMonth.count,
+      average: comparison.lastMonth.average
+    },
+    difference: comparison.difference,
+    percentage_change: comparison.percentageChange
+  };
+}

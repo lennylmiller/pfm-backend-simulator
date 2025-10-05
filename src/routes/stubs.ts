@@ -10,11 +10,7 @@ import { authenticateJWT } from '../middleware/auth';
 const router = Router();
 
 // Cashflow endpoints now implemented in cashflow.ts
-
-// Expenses endpoint
-router.get('/users/:userId/expenses', authenticateJWT, (req: Request, res: Response) => {
-  res.json({ expenses: [] });
-});
+// Expenses endpoints now implemented in expenses.ts
 
 // Net worth endpoint
 router.get('/users/:userId/networth', authenticateJWT, (req: Request, res: Response) => {

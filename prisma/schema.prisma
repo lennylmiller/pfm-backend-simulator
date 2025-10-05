@@ -229,6 +229,10 @@ model Transaction {
   user                    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   account                 Account         @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
+  @@index([userId, transactionType, postedAt])
+  @@index([userId, primaryTagId, postedAt])
+  @@index([userId, merchantName, postedAt])
+  @@index([accountId, postedAt])
   @@map("transactions")
 }
 
