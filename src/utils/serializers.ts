@@ -518,3 +518,46 @@ export function serializeExpensesComparison(comparison: any): any {
     percentage_change: comparison.percentageChange
   };
 }
+
+// =============================================================================
+// NETWORTH SERIALIZATION
+// =============================================================================
+
+/**
+ * Serialize networth summary to API response format
+ */
+export function serializeNetworth(networth: any): any {
+  return {
+    assets: networth.assets,
+    liabilities: networth.liabilities,
+    networth: networth.networth,
+    as_of_date: networth.asOfDate
+  };
+}
+
+/**
+ * Serialize account breakdown for networth details
+ */
+function serializeAccountBreakdown(account: any): any {
+  return {
+    account_id: account.accountId,
+    account_name: account.accountName,
+    account_type: account.accountType,
+    balance: account.balance,
+    contribution: account.contribution
+  };
+}
+
+/**
+ * Serialize detailed networth with account breakdown
+ */
+export function serializeNetworthDetailed(detailed: any): any {
+  return {
+    assets: detailed.assets,
+    liabilities: detailed.liabilities,
+    networth: detailed.networth,
+    as_of_date: detailed.asOfDate,
+    asset_accounts: detailed.breakdown.assets.map(serializeAccountBreakdown),
+    liability_accounts: detailed.breakdown.liabilities.map(serializeAccountBreakdown)
+  };
+}

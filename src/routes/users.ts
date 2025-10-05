@@ -10,6 +10,7 @@ import expensesRoutes from './expenses';
 import { prisma } from '../config/database';
 import { serialize } from '../utils/serializers';
 import { logger } from '../config/logger';
+import * as networthController from '../controllers/networthController';
 
 const router = Router();
 
@@ -66,6 +67,10 @@ router.use('/:userId/tags', authenticateJWT, tagsRoutes);
 
 // Nested expenses routes
 router.use('/:userId/expenses', authenticateJWT, expensesRoutes);
+
+// Networth routes
+router.get('/:userId/networth', authenticateJWT, networthController.getNetworth);
+router.get('/:userId/networth/details', authenticateJWT, networthController.getNetworthDetails);
 
 // Stub endpoints for responsive-tiles compatibility
 // These return empty responses to prevent frontend errors

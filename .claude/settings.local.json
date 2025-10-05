@@ -57,7 +57,9 @@
       "Read(//Users/LenMiller/code/banno/geezeo/db/**)",
       "mcp__serena__write_memory",
       "Bash(npm install:*)",
-      "Bash(npm run lint:*)"
+      "Bash(npm run lint:*)",
+      "Bash(npx tsc:*)",
+      "Bash(timeout 30 npm test:*)"
     ],
     "deny": [],
     "ask": []

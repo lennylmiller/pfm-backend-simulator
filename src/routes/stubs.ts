@@ -11,17 +11,7 @@ const router = Router();
 
 // Cashflow endpoints now implemented in cashflow.ts
 // Expenses endpoints now implemented in expenses.ts
-
-// Net worth endpoint
-router.get('/users/:userId/networth', authenticateJWT, (req: Request, res: Response) => {
-  res.json({
-    networth: {
-      assets: "0.00",
-      debts: "0.00",
-      total: "0.00"
-    }
-  });
-});
+// Networth endpoints now implemented in users.ts
 
 // Transactions endpoint
 router.get('/users/:userId/transactions/search', authenticateJWT, (req: Request, res: Response) => {
