@@ -101,9 +101,8 @@ afterAll(async () => {
   await prisma.goal.deleteMany({ where: { userId: testUserId } });
   await prisma.budget.deleteMany({ where: { userId: testUserId } });
   await prisma.account.deleteMany({ where: { userId: testUserId } });
-  await prisma.user.delete({ where: { id: testUserId } });
-  await prisma.partner.delete({ where: { id: testPartnerId } });
-  await prisma.$disconnect();
+  await prisma.user.deleteMany({ where: { id: testUserId } });
+  await prisma.partner.deleteMany({ where: { id: testPartnerId } });
 });
 
 // =============================================================================

@@ -12,19 +12,8 @@ const router = Router();
 // Cashflow endpoints now implemented in cashflow.ts
 // Expenses endpoints now implemented in expenses.ts
 // Networth endpoints now implemented in users.ts
-
-// Transactions endpoint
-router.get('/users/:userId/transactions/search', authenticateJWT, (req: Request, res: Response) => {
-  res.json({
-    transactions: [],
-    total_count: 0
-  });
-});
-
-// Budgets endpoint
-router.get('/users/:userId/budgets', authenticateJWT, (req: Request, res: Response) => {
-  res.json({ budgets: [] });
-});
+// Transactions search endpoint now implemented in transactions.ts
+// Budgets endpoints now implemented in budgets.ts and users.ts
 
 // Ads endpoint
 router.get('/users/:userId/ads', authenticateJWT, (req: Request, res: Response) => {

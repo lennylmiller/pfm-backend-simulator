@@ -83,8 +83,8 @@ describe('Tags API', () => {
         ],
       },
     });
-    await prisma.user.delete({ where: { id: BigInt(userId) } });
-    await prisma.partner.delete({ where: { id: BigInt(partnerId) } });
+    await prisma.user.deleteMany({ where: { id: BigInt(userId) } });
+    await prisma.partner.deleteMany({ where: { id: BigInt(partnerId) } });
   });
 
   describe('GET /api/v2/tags', () => {
@@ -339,7 +339,7 @@ describe('Tags API', () => {
 
       // Cleanup
       await prisma.tag.delete({ where: { id: otherUserTag.id } });
-      await prisma.user.delete({ where: { id: otherUser.id } });
+      await prisma.user.deleteMany({ where: { id: otherUser.id } });
     });
 
     it('should not allow deleting tags from other users', async () => {
@@ -384,7 +384,7 @@ describe('Tags API', () => {
 
       // Cleanup
       await prisma.tag.delete({ where: { id: otherUserTag.id } });
-      await prisma.user.delete({ where: { id: otherUser.id } });
+      await prisma.user.deleteMany({ where: { id: otherUser.id } });
     });
 
     it('should return 401 without authentication', async () => {

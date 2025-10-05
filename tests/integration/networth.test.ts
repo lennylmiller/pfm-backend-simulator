@@ -139,8 +139,8 @@ describe('Networth API', () => {
   afterAll(async () => {
     // Cleanup
     await prisma.account.deleteMany({ where: { userId: BigInt(userId) } });
-    await prisma.user.delete({ where: { id: BigInt(userId) } });
-    await prisma.partner.delete({ where: { id: BigInt(partnerId) } });
+    await prisma.user.deleteMany({ where: { id: BigInt(userId) } });
+    await prisma.partner.deleteMany({ where: { id: BigInt(partnerId) } });
   });
 
   describe('GET /users/:userId/networth', () => {
@@ -248,8 +248,8 @@ describe('Networth API', () => {
 
       // Cleanup
       await prisma.account.deleteMany({ where: { userId: zeroUser.id } });
-      await prisma.user.delete({ where: { id: zeroUser.id } });
-      await prisma.partner.delete({ where: { id: zeroPartner.id } });
+      await prisma.user.deleteMany({ where: { id: zeroUser.id } });
+      await prisma.partner.deleteMany({ where: { id: zeroPartner.id } });
     });
 
     it('should handle all assets (no liabilities)', async () => {
@@ -294,8 +294,8 @@ describe('Networth API', () => {
 
       // Cleanup
       await prisma.account.deleteMany({ where: { userId: assetUser.id } });
-      await prisma.user.delete({ where: { id: assetUser.id } });
-      await prisma.partner.delete({ where: { id: assetPartner.id } });
+      await prisma.user.deleteMany({ where: { id: assetUser.id } });
+      await prisma.partner.deleteMany({ where: { id: assetPartner.id } });
     });
 
     it('should handle all liabilities (negative networth)', async () => {

@@ -57,8 +57,8 @@ describe('Accounts API', () => {
   afterAll(async () => {
     // Cleanup
     await prisma.account.deleteMany({ where: { userId: BigInt(userId) } });
-    await prisma.user.delete({ where: { id: BigInt(userId) } });
-    await prisma.partner.delete({ where: { id: BigInt(partnerId) } });
+    await prisma.user.deleteMany({ where: { id: BigInt(userId) } });
+    await prisma.partner.deleteMany({ where: { id: BigInt(partnerId) } });
   });
 
   describe('GET /users/:userId/accounts/all', () => {
@@ -120,7 +120,7 @@ describe('Accounts API', () => {
         .expect(200);
 
       expect(response.body.account.name).toBe('Updated Account Name');
-      expect(response.body.account.includeInNetworth).toBe(false);
+      expect(response.body.account.include_in_networth).toBe(false);
     });
   });
 
@@ -131,7 +131,7 @@ describe('Accounts API', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .expect(200);
 
-      expect(response.body.account.archivedAt).toBeDefined();
+      expect(response.body.account.archived_at).toBeDefined();
     });
   });
 });

@@ -60,8 +60,8 @@ describe('Goals API', () => {
     // Cleanup
     await prisma.goal.deleteMany({ where: { userId: BigInt(userId) } });
     await prisma.account.deleteMany({ where: { userId: BigInt(userId) } });
-    await prisma.user.delete({ where: { id: BigInt(userId) } });
-    await prisma.partner.delete({ where: { id: BigInt(partnerId) } });
+    await prisma.user.deleteMany({ where: { id: BigInt(userId) } });
+    await prisma.partner.deleteMany({ where: { id: BigInt(partnerId) } });
   });
 
   describe('Payoff Goals', () => {

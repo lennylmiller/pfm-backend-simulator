@@ -63,8 +63,8 @@ describe('Cashflow API', () => {
     await prisma.cashflowIncome.deleteMany({ where: { userId: BigInt(userId) } });
     await prisma.cashflowBill.deleteMany({ where: { userId: BigInt(userId) } });
     await prisma.account.deleteMany({ where: { userId: BigInt(userId) } });
-    await prisma.user.delete({ where: { id: BigInt(userId) } });
-    await prisma.partner.delete({ where: { id: BigInt(partnerId) } });
+    await prisma.user.deleteMany({ where: { id: BigInt(userId) } });
+    await prisma.partner.deleteMany({ where: { id: BigInt(partnerId) } });
   });
 
   // =============================================================================

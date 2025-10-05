@@ -26,6 +26,7 @@ describe('goalService', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+    jest.useRealTimers();
   });
 
   describe('calculateProgress', () => {
@@ -134,7 +135,8 @@ describe('goalService', () => {
       const targetDate = new Date('2024-12-31');
       const now = new Date('2024-07-01');
 
-      jest.spyOn(global, 'Date').mockImplementation(() => now as any);
+      jest.useFakeTimers();
+      jest.setSystemTime(now);
 
       const goal = {
         goalType: 'savings',
@@ -148,7 +150,7 @@ describe('goalService', () => {
       const status = goalService.calculateStatus(goal);
       expect(status).toBe('under');
 
-      jest.restoreAllMocks();
+      jest.useRealTimers();
     });
   });
 
