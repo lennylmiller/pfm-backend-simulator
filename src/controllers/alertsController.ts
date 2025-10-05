@@ -16,6 +16,12 @@ import {
   validateAlertDestination,
 } from '../validators/alertSchemas';
 import { serializeAlert, serializeNotification } from '../utils/serializers';
+import { AuthContext } from '../types/auth';
+
+interface AuthenticatedRequest extends Request {
+  context?: AuthContext;
+}
+
 
 // =============================================================================
 // GENERIC ALERT ENDPOINTS
@@ -27,7 +33,8 @@ import { serializeAlert, serializeNotification } from '../utils/serializers';
  */
 export async function listAlerts(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     const includeInactive = req.query.include_inactive === 'true';
 
     const alerts = await alertService.getAllAlerts(userId, { includeInactive });
@@ -43,7 +50,8 @@ export async function listAlerts(req: Request, res: Response): Promise<void> {
  */
 export async function getAlert(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     const alertId = BigInt(req.params.id);
 
     const alert = await alertService.getAlertById(userId, alertId);
@@ -65,7 +73,8 @@ export async function getAlert(req: Request, res: Response): Promise<void> {
  */
 export async function updateAlert(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     const alertId = BigInt(req.params.id);
     const validated = validateAlertUpdate(req.body.alert || req.body);
 
@@ -92,7 +101,8 @@ export async function updateAlert(req: Request, res: Response): Promise<void> {
  */
 export async function deleteAlert(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     const alertId = BigInt(req.params.id);
 
     const deleted = await alertService.deleteAlert(userId, alertId);
@@ -114,7 +124,8 @@ export async function deleteAlert(req: Request, res: Response): Promise<void> {
  */
 export async function enableAlert(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     const alertId = BigInt(req.params.id);
 
     const alert = await alertService.enableAlert(userId, alertId);
@@ -136,7 +147,8 @@ export async function enableAlert(req: Request, res: Response): Promise<void> {
  */
 export async function disableAlert(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     const alertId = BigInt(req.params.id);
 
     const alert = await alertService.disableAlert(userId, alertId);
@@ -162,7 +174,8 @@ export async function disableAlert(req: Request, res: Response): Promise<void> {
  */
 export async function createAccountThresholdAlert(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     const validated = validateAccountThresholdAlert(req.body.alert || req.body);
 
     const alert = await alertService.createAccountThresholdAlert(userId, {
@@ -190,7 +203,8 @@ export async function createAccountThresholdAlert(req: Request, res: Response): 
  */
 export async function updateAccountThresholdAlert(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     const alertId = BigInt(req.params.id);
     const validated = validateAccountThresholdAlert(req.body.alert || req.body);
 
@@ -230,7 +244,8 @@ export async function updateAccountThresholdAlert(req: Request, res: Response): 
  */
 export async function createGoalAlert(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     const validated = validateGoalAlert(req.body.alert || req.body);
 
     const alert = await alertService.createGoalAlert(userId, {
@@ -261,7 +276,8 @@ export async function createGoalAlert(req: Request, res: Response): Promise<void
  */
 export async function createMerchantNameAlert(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     const validated = validateMerchantNameAlert(req.body.alert || req.body);
 
     const alert = await alertService.createMerchantNameAlert(userId, {
@@ -292,7 +308,8 @@ export async function createMerchantNameAlert(req: Request, res: Response): Prom
  */
 export async function createSpendingTargetAlert(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     const validated = validateSpendingTargetAlert(req.body.alert || req.body);
 
     const alert = await alertService.createSpendingTargetAlert(userId, {
@@ -323,7 +340,8 @@ export async function createSpendingTargetAlert(req: Request, res: Response): Pr
  */
 export async function createTransactionLimitAlert(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     const validated = validateTransactionLimitAlert(req.body.alert || req.body);
 
     const alert = await alertService.createTransactionLimitAlert(userId, {
@@ -354,7 +372,8 @@ export async function createTransactionLimitAlert(req: Request, res: Response): 
  */
 export async function createUpcomingBillAlert(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     const validated = validateUpcomingBillAlert(req.body.alert || req.body);
 
     const alert = await alertService.createUpcomingBillAlert(userId, {
@@ -385,7 +404,8 @@ export async function createUpcomingBillAlert(req: Request, res: Response): Prom
  */
 export async function listNotifications(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     const read = req.query.read === 'true' ? true : req.query.read === 'false' ? false : undefined;
     const page = parseInt(req.query.page as string) || 1;
     const perPage = parseInt(req.query.per_page as string) || 25;
@@ -417,7 +437,8 @@ export async function listNotifications(req: Request, res: Response): Promise<vo
  */
 export async function getNotification(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     const notificationId = BigInt(req.params.id);
 
     const notification = await alertService.getNotificationById(userId, notificationId);
@@ -439,7 +460,8 @@ export async function getNotification(req: Request, res: Response): Promise<void
  */
 export async function markNotificationRead(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     const notificationId = BigInt(req.params.id);
 
     const notification = await alertService.markNotificationAsRead(userId, notificationId);
@@ -461,7 +483,8 @@ export async function markNotificationRead(req: Request, res: Response): Promise
  */
 export async function deleteNotification(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     const notificationId = BigInt(req.params.id);
 
     const deleted = await alertService.deleteNotification(userId, notificationId);
@@ -487,7 +510,8 @@ export async function deleteNotification(req: Request, res: Response): Promise<v
  */
 export async function getAlertDestinations(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     const destinations = await alertService.getAlertDestinations(userId);
     res.json({ destinations });
   } catch (error: any) {
@@ -501,7 +525,8 @@ export async function getAlertDestinations(req: Request, res: Response): Promise
  */
 export async function updateAlertDestinations(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     const validated = validateAlertDestination(req.body.destinations || req.body);
 
     const destinations = await alertService.updateAlertDestinations(userId, {

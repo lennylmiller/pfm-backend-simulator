@@ -8,6 +8,12 @@ import * as tagService from '../services/tagService';
 import { validateBulkTagOperations } from '../validators/tagSchemas';
 import { serializeTag } from '../utils/serializers';
 import { logger } from '../config/logger';
+import { AuthContext } from '../types/auth';
+
+interface AuthenticatedRequest extends Request {
+  context?: AuthContext;
+}
+
 
 // =============================================================================
 // SYSTEM TAGS (Global - No Authentication)
@@ -44,9 +50,10 @@ export async function listSystemTags(
  */
 export async function listUserTags(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const userId = BigInt(req.params.userId);
 
-    if (req.params.userId !== req.context?.userId) {
+    if (req.params.userId !== authReq.context?.userId) {
       res.status(403).json({ error: 'Forbidden' });
       return;
     }
@@ -75,10 +82,11 @@ export async function bulkUpdateTags(
   next: NextFunction
 ): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const userId = BigInt(req.params.userId);
     const operations = req.body.tags;
 
-    if (req.params.userId !== req.context?.userId) {
+    if (req.params.userId !== authReq.context?.userId) {
       res.status(403).json({ error: 'Forbidden' });
       return;
     }

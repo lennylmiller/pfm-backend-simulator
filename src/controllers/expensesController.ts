@@ -9,6 +9,11 @@ import {
   serializeExpensesTrends,
   serializeExpensesComparison,
 } from '../utils/serializers';
+import { AuthContext } from '../types/auth';
+
+interface AuthenticatedRequest extends Request {
+  context?: AuthContext;
+}
 
 /**
  * GET /users/:userId/expenses
@@ -16,16 +21,17 @@ import {
  */
 export const getExpensesSummary = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId } = req.params;
     const { period, start_date, end_date, group_by, include_tags, exclude_tags } = req.query;
 
     // Verify user authorization
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const userIdBigInt = BigInt(req.context!.userId);
-    const partnerIdBigInt = BigInt(req.context!.partnerId);
+    const userIdBigInt = BigInt(authReq.context!.userId);
+    const partnerIdBigInt = BigInt(authReq.context!.partnerId);
 
     // Parse tag filtering
     const includeTagIds = include_tags
@@ -64,15 +70,16 @@ export const getExpensesSummary = async (req: Request, res: Response) => {
  */
 export const getExpensesByCategory = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId } = req.params;
     const { start_date, end_date } = req.query;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const userIdBigInt = BigInt(req.context!.userId);
-    const partnerIdBigInt = BigInt(req.context!.partnerId);
+    const userIdBigInt = BigInt(authReq.context!.userId);
+    const partnerIdBigInt = BigInt(authReq.context!.partnerId);
 
     // Default to current month if no dates provided
     const startDate = start_date
@@ -103,15 +110,16 @@ export const getExpensesByCategory = async (req: Request, res: Response) => {
  */
 export const getExpensesByMerchant = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId } = req.params;
     const { start_date, end_date, limit } = req.query;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const userIdBigInt = BigInt(req.context!.userId);
-    const partnerIdBigInt = BigInt(req.context!.partnerId);
+    const userIdBigInt = BigInt(authReq.context!.userId);
+    const partnerIdBigInt = BigInt(authReq.context!.partnerId);
 
     // Default to current month
     const startDate = start_date
@@ -145,15 +153,16 @@ export const getExpensesByMerchant = async (req: Request, res: Response) => {
  */
 export const getExpensesByTag = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId, tagId } = req.params;
     const { start_date, end_date } = req.query;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const userIdBigInt = BigInt(req.context!.userId);
-    const partnerIdBigInt = BigInt(req.context!.partnerId);
+    const userIdBigInt = BigInt(authReq.context!.userId);
+    const partnerIdBigInt = BigInt(authReq.context!.partnerId);
     const tagIdBigInt = BigInt(tagId);
 
     // Default to current month
@@ -191,15 +200,16 @@ export const getExpensesByTag = async (req: Request, res: Response) => {
  */
 export const getExpensesTrends = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId } = req.params;
     const { months } = req.query;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const userIdBigInt = BigInt(req.context!.userId);
-    const partnerIdBigInt = BigInt(req.context!.partnerId);
+    const userIdBigInt = BigInt(authReq.context!.userId);
+    const partnerIdBigInt = BigInt(authReq.context!.partnerId);
 
     const monthsNum = months ? parseInt(months as string) : 6;
 
@@ -218,14 +228,15 @@ export const getExpensesTrends = async (req: Request, res: Response) => {
  */
 export const getExpensesComparison = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId } = req.params;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const userIdBigInt = BigInt(req.context!.userId);
-    const partnerIdBigInt = BigInt(req.context!.partnerId);
+    const userIdBigInt = BigInt(authReq.context!.userId);
+    const partnerIdBigInt = BigInt(authReq.context!.partnerId);
 
     const comparison = await expenseService.getExpensesComparison(userIdBigInt, partnerIdBigInt);
 

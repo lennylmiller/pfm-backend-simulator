@@ -2,6 +2,12 @@ import { Request, Response } from 'express';
 import * as networthService from '../services/networthService';
 import { logger } from '../config/logger';
 import { serializeNetworth, serializeNetworthDetailed } from '../utils/serializers';
+import { AuthContext } from '../types/auth';
+
+interface AuthenticatedRequest extends Request {
+  context?: AuthContext;
+}
+
 
 /**
  * GET /users/:userId/networth
@@ -23,16 +29,17 @@ import { serializeNetworth, serializeNetworthDetailed } from '../utils/serialize
  */
 export const getNetworth = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId } = req.params;
     const { as_of_date } = req.query;
 
     // Verify user ownership
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const userIdBigInt = BigInt(req.context!.userId);
-    const partnerIdBigInt = BigInt(req.context!.partnerId);
+    const userIdBigInt = BigInt(authReq.context!.userId);
+    const partnerIdBigInt = BigInt(authReq.context!.partnerId);
 
     // Parse optional date parameter
     const asOfDate = as_of_date ? new Date(as_of_date as string) : undefined;
@@ -89,16 +96,17 @@ export const getNetworth = async (req: Request, res: Response) => {
  */
 export const getNetworthDetails = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId } = req.params;
     const { as_of_date } = req.query;
 
     // Verify user ownership
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const userIdBigInt = BigInt(req.context!.userId);
-    const partnerIdBigInt = BigInt(req.context!.partnerId);
+    const userIdBigInt = BigInt(authReq.context!.userId);
+    const partnerIdBigInt = BigInt(authReq.context!.partnerId);
 
     // Parse optional date parameter
     const asOfDate = as_of_date ? new Date(as_of_date as string) : undefined;

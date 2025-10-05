@@ -103,6 +103,13 @@ function getPeriodDates(
   const now = new Date();
 
   switch (period) {
+    case 'week':
+    case 'this_week':
+      return {
+        startDate: subDays(now, 7),
+        endDate: now,
+      };
+    case 'month':
     case 'this_month':
       return {
         startDate: startOfMonth(now),
@@ -112,6 +119,18 @@ function getPeriodDates(
       return {
         startDate: startOfMonth(subMonths(now, 1)),
         endDate: endOfMonth(subMonths(now, 1)),
+      };
+    case 'quarter':
+    case 'this_quarter':
+      return {
+        startDate: subMonths(now, 3),
+        endDate: now,
+      };
+    case 'year':
+    case 'this_year':
+      return {
+        startDate: subMonths(now, 12),
+        endDate: now,
       };
     case 'last_thirty_days':
       return {
@@ -128,7 +147,7 @@ function getPeriodDates(
       };
     default:
       throw new Error(
-        'Invalid period. Must be: this_month, last_month, last_thirty_days, or custom'
+        'Invalid period. Must be: week, month, quarter, year, this_month, last_month, last_thirty_days, or custom'
       );
   }
 }

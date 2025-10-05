@@ -23,6 +23,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 npm run dev              # Start development server with hot reload (nodemon + ts-node)
 npm start                # Start production server (requires build first)
 npm run build            # Compile TypeScript to dist/
+npm run cli              # Interactive CLI to explore and test the API
 ```
 
 ### Database Operations
@@ -147,21 +148,28 @@ npm test -- --testNamePattern="GET /accounts"   # Specific test case
 
 ## Critical Implementation Notes
 
-### Current Implementation Status (~98% complete - Phase 1 Complete ✅)
+### Current Implementation Status (100% Database Implementation Complete ✅)
 
 **Test Status**: 202/202 tests passing (100%) ✅
 
+**Database Implementation**: All 11 service modules now use Prisma ORM with PostgreSQL - no mock data files. Recent migration (Oct 2024) completed transition from mock JSON files to full database persistence for Budget and Notification services.
+
 **Fully Implemented**:
-- ✅ Budgets CRUD (100%) - src/controllers/budgetsController.ts
+- ✅ Budgets CRUD (100%) - src/controllers/budgetsController.ts + src/services/budgetService.ts
+  - Full Prisma database implementation with transaction aggregation
+  - Budget spent calculation based on real transaction data
+  - Budget state calculation (under/risk/over)
 - ✅ Accounts CRUD with POST (100%) - src/controllers/accountsController.ts
 - ✅ Transactions CRUD with POST (100%) - src/controllers/transactionsController.ts
 - ✅ Cashflow Module (100%) - src/controllers/cashflowController.ts
   - Bills, Incomes, Events CRUD
   - 15 endpoints with recurrence logic
-- ✅ Alerts & Notifications (100%) - src/controllers/alertsController.ts
+- ✅ Alerts & Notifications (100%) - src/controllers/alertsController.ts + src/services/notificationService.ts
+  - Full Prisma database implementation with soft deletes
   - 6 alert types (account_threshold, goal, merchant_name, spending_target, transaction_limit, upcoming_bill)
   - 20+ endpoints with flexible JSON conditions
   - Alert evaluation logic and multi-channel delivery design
+  - Notification tracking (read/unread, email/SMS delivery status)
 - ✅ JWT authentication (dual format)
 - ✅ Database schema (Prisma) - comprehensive models
 - ✅ Partner management
@@ -250,12 +258,67 @@ Required environment variables (see `.env.example`):
 
 ## Migration and Seeding
 
-**Seeding**: `npm run seed` populates database with test data using Faker.js
-- Generators in `tools/seed/generators/`
-- Creates partners, users, accounts, transactions, budgets, etc.
-- Configurable via `tools/seed/index.ts`
+### Database Seeding
 
-**Database Migrations**: Use Prisma migrations
+The project includes a comprehensive seeding system to generate realistic test data using Faker.js.
+
+**Basic Seeding** (clears existing data and generates defaults):
+```bash
+npm run seed -- generate --clear
+```
+
+**Seeding Options**:
+```bash
+# View all options
+npm run seed -- generate --help
+
+# Custom data amounts
+npm run seed -- generate --clear --users 20 --accounts 5 --transactions 200
+
+# Predefined scenarios
+npm run seed -- generate --clear --scenario basic      # Default: 10 users, 3 accounts, 100 transactions
+npm run seed -- generate --clear --scenario realistic  # More realistic data volumes
+npm run seed -- generate --clear --scenario stress     # Large data set for testing
+
+# Multiple partners
+npm run seed -- generate --clear --partners 3 --users 5
+```
+
+**Available Options**:
+- `-s, --scenario <name>` - Predefined scenario (basic, realistic, stress)
+- `-p, --partners <count>` - Number of partners to generate (default: 1)
+- `-u, --users <count>` - Number of users per partner (default: 10)
+- `-a, --accounts <count>` - Number of accounts per user (default: 3)
+- `-t, --transactions <count>` - Number of transactions per account (default: 100)
+- `--clear` - Clear existing data before generating
+
+**Generated Data**:
+- Partners with OAuth clients and feature flags
+- Users with bcrypt-hashed passwords (Password123!)
+- Accounts (checking, savings, credit cards, etc.)
+- Transactions with realistic merchants and categories
+- Budgets with spending calculations
+- Goals (payoff and savings)
+- Alerts and notifications
+- Cashflow items (bills, incomes)
+
+**Test User Credentials**:
+All generated users have the password: `Password123!`
+
+User emails are randomly generated. To see actual emails, either:
+- Check the CLI tool which lists available test users
+- Run: `npm run seed -- generate --clear` and check the output
+- Query the database directly with Prisma Studio: `npm run prisma:studio`
+
+**Seeding Implementation**:
+- Generators located in `tools/seed/generators/`
+- Main entry point: `tools/seed/index.ts`
+- Uses Commander.js for CLI interface
+- Generates realistic data with @faker-js/faker
+
+### Database Migrations
+
+Use Prisma migrations for schema changes:
 ```bash
 npx prisma migrate dev --name description_of_change
 ```
@@ -265,10 +328,37 @@ npx prisma migrate dev --name description_of_change
 1. **Background Jobs Not Implemented**: Alert evaluation, cashflow projections run on-demand only (see docs/ALERT_NOTIFICATION_ARCHITECTURE.md for implementation plan)
 2. **Email/SMS Integration Pending**: Notification delivery channels not yet connected to external providers
 3. **Account Aggregation Missing**: No integration with Plaid/Finicity/MX for automatic transaction sync
-4. **Expenses/Networth Stubs**: Calculation endpoints return placeholder data
+4. **Networth Stubs**: Networth calculation endpoints return placeholder data (Expenses module fully implemented)
 5. **Limited Test Coverage**: Integration tests exist for budgets, cashflow, alerts; expand to all modules
 6. **No Rate Limiting**: API has no request rate limits or throttling
 7. **Single Database Instance**: No read replicas or sharding for horizontal scaling
+
+## Interactive CLI Tool
+
+**Learning the API**: The project includes an interactive CLI (`npm run cli`) to help you explore and learn the API:
+
+**Features**:
+- Interactive menu-driven interface
+- Shows actual HTTP requests/responses for learning
+- Test all major features (accounts, budgets, transactions, etc.)
+- Pre-configured test users for quick authentication
+- Educational mode with request logging
+
+**Quick Start**:
+```bash
+npm run dev      # Start server in one terminal
+npm run seed     # Seed test data (if not done)
+npm run cli      # Start interactive CLI in another terminal
+```
+
+**Benefits**:
+- Learn API endpoints hands-on
+- See HTTP request/response details
+- Test workflows without writing code
+- Understand authentication and data flow
+- Great for onboarding or exploring features
+
+See `tools/cli/README.md` for detailed usage guide.
 
 ## Development Workflow
 

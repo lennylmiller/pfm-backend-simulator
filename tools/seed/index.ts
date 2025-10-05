@@ -99,6 +99,19 @@ program
       }
       console.log(`✓ Generated ${alertCount} alerts\n`);
 
+      // Generate cashflow data
+      console.log('Generating cashflow data (bills, incomes, events)...');
+      let billsCount = 0;
+      let incomesCount = 0;
+      let eventsCount = 0;
+      for (const user of users) {
+        const cashflowData = await generators.generateCashflow(user.id, 5, 2);
+        billsCount += cashflowData.bills.length;
+        incomesCount += cashflowData.incomes.length;
+        eventsCount += cashflowData.events.length;
+      }
+      console.log(`✓ Generated ${billsCount} bills, ${incomesCount} incomes, ${eventsCount} events\n`);
+
       console.log('Test data generation completed successfully!');
       console.log('\nSummary:');
       console.log(`  Partners: ${partners.length}`);
@@ -108,6 +121,9 @@ program
       console.log(`  Budgets: ${budgetCount}`);
       console.log(`  Goals: ${goalCount}`);
       console.log(`  Alerts: ${alertCount}`);
+      console.log(`  Bills: ${billsCount}`);
+      console.log(`  Incomes: ${incomesCount}`);
+      console.log(`  Events: ${eventsCount}`);
     } catch (error) {
       console.error('Data generation failed:', error);
       process.exit(1);
@@ -120,6 +136,9 @@ program.parse();
 
 async function clearDatabase() {
   // Order matters due to foreign keys
+  await prisma.cashflowEvent.deleteMany();
+  await prisma.cashflowBill.deleteMany();
+  await prisma.cashflowIncome.deleteMany();
   await prisma.notification.deleteMany();
   await prisma.alert.deleteMany();
   await prisma.goal.deleteMany();

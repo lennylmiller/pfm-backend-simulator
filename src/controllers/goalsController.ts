@@ -8,6 +8,12 @@ import * as goalService from '../services/goalService';
 import { validatePayoffGoal, validateSavingsGoal } from '../validators/goalSchemas';
 import { serializeGoal } from '../utils/serializers';
 import { logger } from '../config/logger';
+import { AuthContext } from '../types/auth';
+
+interface AuthenticatedRequest extends Request {
+  context?: AuthContext;
+}
+
 
 // Static goal image data
 const PAYOFF_GOAL_IMAGES = [
@@ -81,10 +87,11 @@ export async function listPayoffGoals(
   next: NextFunction
 ): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const userId = BigInt(req.params.userId);
     const includeArchived = req.query.include_archived === 'true';
 
-    if (req.params.userId !== req.context?.userId) {
+    if (req.params.userId !== authReq.context?.userId) {
       res.status(403).json({ error: 'Forbidden' });
       return;
     }
@@ -107,10 +114,11 @@ export async function getPayoffGoal(
   next: NextFunction
 ): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const userId = BigInt(req.params.userId);
     const goalId = BigInt(req.params.id);
 
-    if (req.params.userId !== req.context?.userId) {
+    if (req.params.userId !== authReq.context?.userId) {
       res.status(403).json({ error: 'Forbidden' });
       return;
     }
@@ -141,10 +149,11 @@ export async function createPayoffGoal(
   next: NextFunction
 ): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const userId = BigInt(req.params.userId);
     const goalData = req.body.payoff_goal;
 
-    if (req.params.userId !== req.context?.userId) {
+    if (req.params.userId !== authReq.context?.userId) {
       res.status(403).json({ error: 'Forbidden' });
       return;
     }
@@ -187,11 +196,12 @@ export async function updatePayoffGoal(
   next: NextFunction
 ): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const userId = BigInt(req.params.userId);
     const goalId = BigInt(req.params.id);
     const updates = req.body.payoff_goal;
 
-    if (req.params.userId !== req.context?.userId) {
+    if (req.params.userId !== authReq.context?.userId) {
       res.status(403).json({ error: 'Forbidden' });
       return;
     }
@@ -239,10 +249,11 @@ export async function deletePayoffGoal(
   next: NextFunction
 ): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const userId = BigInt(req.params.userId);
     const goalId = BigInt(req.params.id);
 
-    if (req.params.userId !== req.context?.userId) {
+    if (req.params.userId !== authReq.context?.userId) {
       res.status(403).json({ error: 'Forbidden' });
       return;
     }
@@ -267,10 +278,11 @@ export async function archivePayoffGoal(
   next: NextFunction
 ): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const userId = BigInt(req.params.userId);
     const goalId = BigInt(req.params.id);
 
-    if (req.params.userId !== req.context?.userId) {
+    if (req.params.userId !== authReq.context?.userId) {
       res.status(403).json({ error: 'Forbidden' });
       return;
     }
@@ -299,10 +311,11 @@ export async function listSavingsGoals(
   next: NextFunction
 ): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const userId = BigInt(req.params.userId);
     const includeArchived = req.query.include_archived === 'true';
 
-    if (req.params.userId !== req.context?.userId) {
+    if (req.params.userId !== authReq.context?.userId) {
       res.status(403).json({ error: 'Forbidden' });
       return;
     }
@@ -319,16 +332,56 @@ export async function listSavingsGoals(
   }
 }
 
+/**
+ * GET /users/:userId/goals
+ * List all goals (both payoff and savings combined)
+ */
+export async function listAllGoals(req: Request, res: Response) {
+  try {
+    const authReq = req as AuthenticatedRequest;
+    const { userId } = req.params;
+
+    if (userId !== authReq.context?.userId) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    const userIdBigInt = BigInt(authReq.context!.userId);
+
+    // Fetch both types of goals in parallel
+    const [payoffGoals, savingsGoals] = await Promise.all([
+      goalService.getPayoffGoals(userIdBigInt),
+      goalService.getSavingsGoals(userIdBigInt),
+    ]);
+
+    // Serialize and combine
+    const serializedPayoff = payoffGoals.map((goal) =>
+      serializeGoal(goal, 'payoff', goalService.calculateProgress, goalService.calculateStatus)
+    );
+    const serializedSavings = savingsGoals.map((goal) =>
+      serializeGoal(goal, 'savings', goalService.calculateProgress, goalService.calculateStatus)
+    );
+
+    return res.json({
+      payoff_goals: serializedPayoff,
+      savings_goals: serializedSavings,
+    });
+  } catch (error) {
+    logger.error({ error }, 'Failed to list all goals');
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
 export async function getSavingsGoal(
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const userId = BigInt(req.params.userId);
     const goalId = BigInt(req.params.id);
 
-    if (req.params.userId !== req.context?.userId) {
+    if (req.params.userId !== authReq.context?.userId) {
       res.status(403).json({ error: 'Forbidden' });
       return;
     }
@@ -359,10 +412,11 @@ export async function createSavingsGoal(
   next: NextFunction
 ): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const userId = BigInt(req.params.userId);
     const goalData = req.body.savings_goal;
 
-    if (req.params.userId !== req.context?.userId) {
+    if (req.params.userId !== authReq.context?.userId) {
       res.status(403).json({ error: 'Forbidden' });
       return;
     }
@@ -406,11 +460,12 @@ export async function updateSavingsGoal(
   next: NextFunction
 ): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const userId = BigInt(req.params.userId);
     const goalId = BigInt(req.params.id);
     const updates = req.body.savings_goal;
 
-    if (req.params.userId !== req.context?.userId) {
+    if (req.params.userId !== authReq.context?.userId) {
       res.status(403).json({ error: 'Forbidden' });
       return;
     }
@@ -459,10 +514,11 @@ export async function deleteSavingsGoal(
   next: NextFunction
 ): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const userId = BigInt(req.params.userId);
     const goalId = BigInt(req.params.id);
 
-    if (req.params.userId !== req.context?.userId) {
+    if (req.params.userId !== authReq.context?.userId) {
       res.status(403).json({ error: 'Forbidden' });
       return;
     }
@@ -487,10 +543,11 @@ export async function archiveSavingsGoal(
   next: NextFunction
 ): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const userId = BigInt(req.params.userId);
     const goalId = BigInt(req.params.id);
 
-    if (req.params.userId !== req.context?.userId) {
+    if (req.params.userId !== authReq.context?.userId) {
       res.status(403).json({ error: 'Forbidden' });
       return;
     }

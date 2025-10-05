@@ -3,10 +3,13 @@ import * as accountsController from '../controllers/accountsController';
 
 const router = Router({ mergeParams: true });
 
+// GET /users/:userId/accounts (list all accounts - primary endpoint)
+router.get('/', accountsController.getAllAccounts);
+
 // POST /users/:userId/accounts
 router.post('/', accountsController.createAccount);
 
-// GET /users/:userId/accounts/all
+// GET /users/:userId/accounts/all (alias for compatibility)
 router.get('/all', accountsController.getAllAccounts);
 
 // GET /users/:userId/accounts/potential_cashflow (must be before /:id to avoid conflict)

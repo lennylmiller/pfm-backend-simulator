@@ -20,6 +20,12 @@ import {
   serializeCashflowSummary,
 } from '../utils/serializers';
 import { Decimal } from '@prisma/client/runtime/library';
+import { AuthContext } from '../types/auth';
+
+interface AuthenticatedRequest extends Request {
+  context?: AuthContext;
+}
+
 
 // =============================================================================
 // CASHFLOW SUMMARY
@@ -31,7 +37,8 @@ import { Decimal } from '@prisma/client/runtime/library';
  */
 export async function getCashflowSummary(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     const summary = await cashflowService.getCashflowSummary(userId);
     res.json({ cashflow: serializeCashflowSummary(summary) });
   } catch (error: any) {
@@ -45,7 +52,8 @@ export async function getCashflowSummary(req: Request, res: Response): Promise<v
  */
 export async function updateCashflowSettings(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     validateCashflowSettings(req.body); // Validate but don't need the result
     // Settings are currently static in serializer
     // Future: persist settings in user preferences
@@ -70,7 +78,8 @@ export async function updateCashflowSettings(req: Request, res: Response): Promi
  */
 export async function listBills(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     const bills = await cashflowService.getAllBills(userId);
     res.json({ bills: bills.map(serializeBill) });
   } catch (error: any) {
@@ -84,7 +93,8 @@ export async function listBills(req: Request, res: Response): Promise<void> {
  */
 export async function createBill(req: Request, res: Response): Promise<void> {
   try {
-    const userId = BigInt(req.context!.userId);
+    const authReq = req as AuthenticatedRequest;
+    const userId = BigInt(authReq.context!.userId);
     const validated = validateBillCreate(req.body);
     const bill = await cashflowService.createBill(userId, {
       name: validated.name,
@@ -110,10 +120,11 @@ export async function createBill(req: Request, res: Response): Promise<void> {
  */
 export async function updateBill(req: Request, res: Response): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const billId = BigInt(req.params.id);
     const validated = validateBillUpdate(req.body);
 
-    const bill = await cashflowService.updateBill(BigInt(req.context!.userId), billId, {
+    const bill = await cashflowService.updateBill(BigInt(authReq.context!.userId), billId, {
       name: validated.name,
       amount: validated.amount,
       dueDate: validated.due_date,
@@ -143,8 +154,9 @@ export async function updateBill(req: Request, res: Response): Promise<void> {
  */
 export async function deleteBill(req: Request, res: Response): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const billId = BigInt(req.params.id);
-    const deleted = await cashflowService.deleteBill(BigInt(req.context!.userId), billId);
+    const deleted = await cashflowService.deleteBill(BigInt(authReq.context!.userId), billId);
 
     if (!deleted) {
       res.status(404).json({ error: 'Bill not found' });
@@ -163,8 +175,9 @@ export async function deleteBill(req: Request, res: Response): Promise<void> {
  */
 export async function stopBill(req: Request, res: Response): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const billId = BigInt(req.params.id);
-    const bill = await cashflowService.stopBill(BigInt(req.context!.userId), billId);
+    const bill = await cashflowService.stopBill(BigInt(authReq.context!.userId), billId);
 
     if (!bill) {
       res.status(404).json({ error: 'Bill not found' });
@@ -187,7 +200,8 @@ export async function stopBill(req: Request, res: Response): Promise<void> {
  */
 export async function listIncomes(req: Request, res: Response): Promise<void> {
   try {
-    const incomes = await cashflowService.getAllIncomes(BigInt(req.context!.userId));
+    const authReq = req as AuthenticatedRequest;
+    const incomes = await cashflowService.getAllIncomes(BigInt(authReq.context!.userId));
     res.json({ incomes: incomes.map(serializeIncome) });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
@@ -200,8 +214,9 @@ export async function listIncomes(req: Request, res: Response): Promise<void> {
  */
 export async function createIncome(req: Request, res: Response): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const validated = validateIncomeCreate(req.body);
-    const income = await cashflowService.createIncome(BigInt(req.context!.userId), {
+    const income = await cashflowService.createIncome(BigInt(authReq.context!.userId), {
       name: validated.name,
       amount: validated.amount,
       receiveDate: validated.receive_date,
@@ -225,10 +240,11 @@ export async function createIncome(req: Request, res: Response): Promise<void> {
  */
 export async function updateIncome(req: Request, res: Response): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const incomeId = BigInt(req.params.id);
     const validated = validateIncomeUpdate(req.body);
 
-    const income = await cashflowService.updateIncome(BigInt(req.context!.userId), incomeId, {
+    const income = await cashflowService.updateIncome(BigInt(authReq.context!.userId), incomeId, {
       name: validated.name,
       amount: validated.amount,
       receiveDate: validated.receive_date,
@@ -258,8 +274,9 @@ export async function updateIncome(req: Request, res: Response): Promise<void> {
  */
 export async function deleteIncome(req: Request, res: Response): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const incomeId = BigInt(req.params.id);
-    const deleted = await cashflowService.deleteIncome(BigInt(req.context!.userId), incomeId);
+    const deleted = await cashflowService.deleteIncome(BigInt(authReq.context!.userId), incomeId);
 
     if (!deleted) {
       res.status(404).json({ error: 'Income not found' });
@@ -278,8 +295,9 @@ export async function deleteIncome(req: Request, res: Response): Promise<void> {
  */
 export async function stopIncome(req: Request, res: Response): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const incomeId = BigInt(req.params.id);
-    const income = await cashflowService.stopIncome(BigInt(req.context!.userId), incomeId);
+    const income = await cashflowService.stopIncome(BigInt(authReq.context!.userId), incomeId);
 
     if (!income) {
       res.status(404).json({ error: 'Income not found' });
@@ -302,7 +320,8 @@ export async function stopIncome(req: Request, res: Response): Promise<void> {
  */
 export async function listEvents(req: Request, res: Response): Promise<void> {
   try {
-    const events = await cashflowService.getCashflowEvents(BigInt(req.context!.userId), false);
+    const authReq = req as AuthenticatedRequest;
+    const events = await cashflowService.getCashflowEvents(BigInt(authReq.context!.userId), false);
     res.json({ events: events.map(serializeEvent) });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
@@ -315,10 +334,11 @@ export async function listEvents(req: Request, res: Response): Promise<void> {
  */
 export async function updateEvent(req: Request, res: Response): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const eventId = BigInt(req.params.id);
     const validated = validateEventUpdate(req.body);
 
-    const event = await cashflowService.updateCashflowEvent(BigInt(req.context!.userId), eventId, {
+    const event = await cashflowService.updateCashflowEvent(BigInt(authReq.context!.userId), eventId, {
       name: validated.name,
       amount: validated.amount ? new Decimal(validated.amount) : undefined,
       eventDate: validated.event_date ? new Date(validated.event_date) : undefined,
@@ -349,8 +369,9 @@ export async function updateEvent(req: Request, res: Response): Promise<void> {
  */
 export async function deleteEvent(req: Request, res: Response): Promise<void> {
   try {
+    const authReq = req as AuthenticatedRequest;
     const eventId = BigInt(req.params.id);
-    const deleted = await cashflowService.deleteCashflowEvent(BigInt(req.context!.userId), eventId);
+    const deleted = await cashflowService.deleteCashflowEvent(BigInt(authReq.context!.userId), eventId);
 
     if (!deleted) {
       res.status(404).json({ error: 'Event not found' });

@@ -10,6 +10,13 @@ import * as goalsController from '../controllers/goalsController';
 const router = Router({ mergeParams: true });
 
 // =============================================================================
+// ALL GOALS (COMBINED)
+// =============================================================================
+
+// GET /users/:userId/goals (combined payoff + savings)
+router.get('/goals', authenticateJWT, goalsController.listAllGoals);
+
+// =============================================================================
 // PAYOFF GOALS
 // =============================================================================
 

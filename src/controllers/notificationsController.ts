@@ -1,17 +1,24 @@
 import { Request, Response } from 'express';
-import { notificationService } from '../services/notificationService';
+import * as notificationService from '../services/notificationService';
 import { logger } from '../config/logger';
 import { serialize } from '../utils/serializers';
+import { AuthContext } from '../types/auth';
+
+interface AuthenticatedRequest extends Request {
+  context?: AuthContext;
+}
+
 
 export const getNotifications = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId } = req.params;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const notifications = await notificationService.getNotifications(userId);
+    const notifications = await notificationService.getNotifications(BigInt(userId));
 
     return res.json(serialize({ notifications }));
   } catch (error) {
@@ -22,13 +29,14 @@ export const getNotifications = async (req: Request, res: Response) => {
 
 export const deleteNotification = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId, id } = req.params;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    await notificationService.deleteNotification(userId, id);
+    await notificationService.deleteNotification(BigInt(userId), BigInt(id));
 
     return res.status(204).send();
   } catch (error) {

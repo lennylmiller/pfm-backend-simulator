@@ -2,10 +2,17 @@ import { Request, Response } from 'express';
 import { prisma } from '../config/database';
 import { logger } from '../config/logger';
 import { serialize, wrapInArray } from '../utils/serializers';
+import { AuthContext } from '../types/auth';
+
+interface AuthenticatedRequest extends Request {
+  context?: AuthContext;
+}
+
 
 export const getCurrentPartner = async (req: Request, res: Response) => {
   try {
-    const { partnerId } = req.context!;
+    const authReq = req as AuthenticatedRequest;
+    const { partnerId } = authReq.context!;
 
     const partner = await prisma.partner.findUnique({
       where: {

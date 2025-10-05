@@ -4,18 +4,24 @@ import * as transactionService from '../services/transactionService';
 import { logger } from '../config/logger';
 import { serialize, wrapInArray } from '../utils/serializers';
 import { validateAccountCreate } from '../validators/accountSchemas';
+import { AuthContext } from '../types/auth';
+
+interface AuthenticatedRequest extends Request {
+  context?: AuthContext;
+}
 
 export const getAllAccounts = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId } = req.params;
 
     // Verify user context matches
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const userIdBigInt = BigInt(req.context!.userId);
-    const partnerIdBigInt = BigInt(req.context!.partnerId);
+    const userIdBigInt = BigInt(authReq.context!.userId);
+    const partnerIdBigInt = BigInt(authReq.context!.partnerId);
 
     const accounts = await accountService.getAllAccounts(userIdBigInt, partnerIdBigInt);
 
@@ -28,13 +34,14 @@ export const getAllAccounts = async (req: Request, res: Response) => {
 
 export const getAccount = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId, id } = req.params;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const userIdBigInt = BigInt(req.context!.userId);
+    const userIdBigInt = BigInt(authReq.context!.userId);
     const accountIdBigInt = BigInt(id);
 
     const account = await accountService.getAccountById(userIdBigInt, accountIdBigInt);
@@ -53,14 +60,15 @@ export const getAccount = async (req: Request, res: Response) => {
 
 export const updateAccount = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId, id } = req.params;
     const { account } = req.body;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const userIdBigInt = BigInt(req.context!.userId);
+    const userIdBigInt = BigInt(authReq.context!.userId);
     const accountIdBigInt = BigInt(id);
 
     // Map snake_case fields to camelCase for service
@@ -87,13 +95,14 @@ export const updateAccount = async (req: Request, res: Response) => {
 
 export const archiveAccount = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId, id } = req.params;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const userIdBigInt = BigInt(req.context!.userId);
+    const userIdBigInt = BigInt(authReq.context!.userId);
     const accountIdBigInt = BigInt(id);
 
     const account = await accountService.archiveAccount(userIdBigInt, accountIdBigInt);
@@ -107,13 +116,14 @@ export const archiveAccount = async (req: Request, res: Response) => {
 
 export const deleteAccount = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId, id } = req.params;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const userIdBigInt = BigInt(req.context!.userId);
+    const userIdBigInt = BigInt(authReq.context!.userId);
     const accountIdBigInt = BigInt(id);
 
     await accountService.deleteAccount(userIdBigInt, accountIdBigInt);
@@ -127,13 +137,14 @@ export const deleteAccount = async (req: Request, res: Response) => {
 
 export const getAccountInvestments = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId, id } = req.params;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const userIdBigInt = BigInt(req.context!.userId);
+    const userIdBigInt = BigInt(authReq.context!.userId);
     const accountIdBigInt = BigInt(id);
 
     const investments = await accountService.getAccountInvestments(userIdBigInt, accountIdBigInt);
@@ -146,14 +157,15 @@ export const getAccountInvestments = async (req: Request, res: Response) => {
 
 export const getAccountTransactions = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId, id } = req.params;
     const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const userIdBigInt = BigInt(req.context!.userId);
+    const userIdBigInt = BigInt(authReq.context!.userId);
     const accountIdBigInt = BigInt(id);
 
     const result = await transactionService.getAccountTransactions(
@@ -170,14 +182,15 @@ export const getAccountTransactions = async (req: Request, res: Response) => {
 
 export const getPotentialCashflowAccounts = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId } = req.params;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const userIdBigInt = BigInt(req.context!.userId);
-    const partnerIdBigInt = BigInt(req.context!.partnerId);
+    const userIdBigInt = BigInt(authReq.context!.userId);
+    const partnerIdBigInt = BigInt(authReq.context!.partnerId);
 
     const accounts = await accountService.getPotentialCashflowAccounts(
       userIdBigInt,
@@ -192,15 +205,16 @@ export const getPotentialCashflowAccounts = async (req: Request, res: Response) 
 
 export const createAccount = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId } = req.params;
     const { account } = req.body;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const userIdBigInt = BigInt(req.context!.userId);
-    const partnerIdBigInt = BigInt(req.context!.partnerId);
+    const userIdBigInt = BigInt(authReq.context!.userId);
+    const partnerIdBigInt = BigInt(authReq.context!.partnerId);
 
     // Validate request body
     const validated = validateAccountCreate(account);

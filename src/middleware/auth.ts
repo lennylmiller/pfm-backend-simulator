@@ -2,9 +2,16 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { authConfig } from '../config/auth';
 import { logger } from '../config/logger';
+import { AuthContext } from '../types/auth';
+
+// Extend Request with context for TypeScript
+interface AuthenticatedRequest extends Request {
+  context?: AuthContext;
+}
 
 export const authenticateJWT = (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers.authorization;
+  const authReq = req as AuthenticatedRequest;
+  const authHeader = authReq.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Missing or invalid authorization header' });
@@ -27,7 +34,7 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
     }
 
     // Attach to request context
-    req.context = {
+    authReq.context = {
       userId: userId,
       partnerId: partnerId,
     };
@@ -41,7 +48,8 @@ export const authenticateJWT = (req: Request, res: Response, next: NextFunction)
 };
 
 export const optionalAuth = (req: Request, res: Response, next: NextFunction) => {
-  const authHeader = req.headers.authorization;
+  const authReq = req as AuthenticatedRequest;
+  const authHeader = authReq.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return next();
@@ -57,7 +65,7 @@ export const optionalAuth = (req: Request, res: Response, next: NextFunction) =>
     const partnerId = payload.partnerId || payload.iss;
 
     if (userId && partnerId) {
-      req.context = {
+      authReq.context = {
         userId: userId,
         partnerId: partnerId,
       };

@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import authRoutes from './auth';
 import usersRoutes from './users';
 import partnersRoutes from './partners';
 import goalImagesRoutes from './goalImages';
@@ -8,6 +9,9 @@ import stubRoutes from './stubs';
 import * as tagsController from '../controllers/tagsController';
 
 const router = Router();
+
+// Mount authentication routes (no /api/v2 prefix, just /auth)
+router.use('/auth', authRoutes);
 
 // Mount routes
 router.use('/users', usersRoutes);

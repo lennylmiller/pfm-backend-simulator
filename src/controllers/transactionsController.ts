@@ -3,17 +3,24 @@ import * as transactionService from '../services/transactionService';
 import { logger } from '../config/logger';
 import { serialize, wrapInArray } from '../utils/serializers';
 import { validateTransactionCreate } from '../validators/transactionSchemas';
+import { AuthContext } from '../types/auth';
+
+interface AuthenticatedRequest extends Request {
+  context?: AuthContext;
+}
+
 
 export const searchTransactions = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId } = req.params;
     const { q, untagged, tags, begin_on, end_on } = req.query;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const userIdBigInt = BigInt(req.context!.userId);
+    const userIdBigInt = BigInt(authReq.context!.userId);
 
     const result = await transactionService.searchTransactions(userIdBigInt, {
       query: q as string,
@@ -30,16 +37,41 @@ export const searchTransactions = async (req: Request, res: Response) => {
   }
 };
 
-export const updateTransaction = async (req: Request, res: Response) => {
+/**
+ * GET /users/:userId/transactions
+ * List all transactions (same as search with no filters)
+ */
+export const listTransactions = async (req: Request, res: Response) => {
   try {
-    const { userId, id } = req.params;
-    const { transaction } = req.body;
+    const authReq = req as AuthenticatedRequest;
+    const { userId } = req.params;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const userIdBigInt = BigInt(req.context!.userId);
+    const userIdBigInt = BigInt(authReq.context!.userId);
+
+    const result = await transactionService.searchTransactions(userIdBigInt, {});
+
+    return res.json(serialize({ transactions: result }));
+  } catch (error) {
+    logger.error({ error }, 'Failed to list transactions');
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+export const updateTransaction = async (req: Request, res: Response) => {
+  try {
+    const authReq = req as AuthenticatedRequest;
+    const { userId, id } = req.params;
+    const { transaction } = req.body;
+
+    if (userId !== authReq.context?.userId) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+
+    const userIdBigInt = BigInt(authReq.context!.userId);
     const transactionIdBigInt = BigInt(id);
 
     const updated = await transactionService.updateTransaction(
@@ -62,13 +94,14 @@ export const updateTransaction = async (req: Request, res: Response) => {
 
 export const deleteTransaction = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId, id } = req.params;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const userIdBigInt = BigInt(req.context!.userId);
+    const userIdBigInt = BigInt(authReq.context!.userId);
     const transactionIdBigInt = BigInt(id);
 
     const deleted = await transactionService.deleteTransaction(userIdBigInt, transactionIdBigInt);
@@ -86,14 +119,15 @@ export const deleteTransaction = async (req: Request, res: Response) => {
 
 export const createTransaction = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId } = req.params;
     const { transaction } = req.body;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const userIdBigInt = BigInt(req.context!.userId);
+    const userIdBigInt = BigInt(authReq.context!.userId);
 
     // Validate request body
     const validated = validateTransactionCreate(transaction);

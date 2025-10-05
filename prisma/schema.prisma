@@ -256,6 +256,10 @@ model Budget {
   userId            BigInt    @map("user_id")
   name              String
   budgetAmount      Decimal   @map("budget_amount") @db.Decimal(12, 2)
+  month             Int?      // 1-12
+  year              Int?      // e.g., 2025
+  spent             Decimal   @default(0.00) @db.Decimal(12, 2)
+  state             String    @default("under") // under|risk|over
   tagNames          String[]  @default([]) @map("tag_names")
   accountList       BigInt[]  @default([]) @map("account_list")
   showOnDashboard   Boolean   @default(true) @map("show_on_dashboard")

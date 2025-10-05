@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { authenticateJWT } from '../middleware/auth';
+import { AuthContext } from '../types/auth';
 import accountsRoutes from './accounts';
 import budgetsRoutes from './budgets';
 import goalsRoutes from './goals';
@@ -12,12 +13,18 @@ import { serialize } from '../utils/serializers';
 import { logger } from '../config/logger';
 import * as networthController from '../controllers/networthController';
 
+// Extend Request type for routes that use authentication
+interface AuthenticatedRequest extends Request {
+  context?: AuthContext;
+}
+
 const router = Router();
 
 // Get current user information
 router.get('/current', authenticateJWT, async (req: Request, res: Response) => {
   try {
-    const userId = req.context?.userId;
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.context?.userId;
 
     if (!userId) {
       return res.status(401).json({ error: 'Unauthorized' });
@@ -85,7 +92,8 @@ router.get('/:userId/informational_messages', authenticateJWT, (req: Request, re
 // Track login activity
 router.post('/current/track_login', authenticateJWT, async (req: Request, res: Response) => {
   try {
-    const userId = req.context?.userId;
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.context?.userId;
 
     if (!userId) {
       return res.status(401).json({ error: 'Unauthorized' });
