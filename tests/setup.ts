@@ -19,13 +19,29 @@ afterAll(async () => {
  */
 async function cleanDatabase() {
   // Delete in order respecting foreign key constraints
+  // 1. Delete child tables that reference accounts/users
   await prisma.transaction.deleteMany({});
+  await prisma.cashflowEvent.deleteMany({});
+  await prisma.cashflowBill.deleteMany({});
+  await prisma.cashflowIncome.deleteMany({});
+
+  // 2. Delete accounts (references both user and partner)
   await prisma.account.deleteMany({});
+
+  // 3. Delete other tables that reference users
   await prisma.budget.deleteMany({});
   await prisma.goal.deleteMany({});
   await prisma.alert.deleteMany({});
   await prisma.notification.deleteMany({});
+  await prisma.accessToken.deleteMany({});
   await prisma.tag.deleteMany({});
+
+  // 4. Delete users (references partner)
   await prisma.user.deleteMany({});
+
+  // 5. Delete partner-level tables
+  await prisma.oAuthClient.deleteMany({});
+
+  // 6. Finally delete partners
   await prisma.partner.deleteMany({});
 }

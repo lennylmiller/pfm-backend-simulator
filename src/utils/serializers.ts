@@ -432,7 +432,7 @@ export function serializeExpensesSummary(summary: any): any {
     period: summary.period,
     period_start: summary.startDate,
     period_end: summary.endDate,
-    categories: summary.breakdown
+    categories: summary.breakdown ? serializeExpensesByCategory(summary.breakdown) : undefined
   };
 }
 

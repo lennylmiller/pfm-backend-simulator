@@ -63,7 +63,20 @@ export const updateAccount = async (req: Request, res: Response) => {
     const userIdBigInt = BigInt(req.context!.userId);
     const accountIdBigInt = BigInt(id);
 
-    const updated = await accountService.updateAccount(userIdBigInt, accountIdBigInt, account);
+    // Map snake_case fields to camelCase for service
+    const accountData = {
+      name: account.name,
+      displayName: account.display_name,
+      includeInNetworth: account.include_in_networth,
+      includeInCashflow: account.include_in_cashflow,
+      includeInExpenses: account.include_in_expenses,
+      includeInBudget: account.include_in_budget,
+      includeInGoals: account.include_in_goals,
+      includeInDashboard: account.include_in_dashboard,
+      ordering: account.ordering,
+    };
+
+    const updated = await accountService.updateAccount(userIdBigInt, accountIdBigInt, accountData);
 
     return res.json({ account: serialize(updated) });
   } catch (error) {
