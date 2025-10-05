@@ -45,7 +45,8 @@
       "Bash(for file in src/services/*.ts)",
       "Bash(do sed -i '' 's|../../../../banno/responsive-tiles|../../../../../banno/responsive-tiles|g' \"$file\")",
       "Bash(done)",
-      "Bash(do)"
+      "Bash(do)",
+      "Bash(tac:*)"
     ],
     "deny": [],
     "ask": []
