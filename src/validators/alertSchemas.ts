@@ -9,16 +9,16 @@ import { z } from 'zod';
 // ENUMS AND BASE TYPES
 // =============================================================================
 
-const alertTypeValues = [
+export const alertTypeValues = [
   'account_threshold',
   'goal',
   'merchant_name',
   'spending_target',
   'transaction_limit',
-  'upcoming_bill'
+  'upcoming_bill',
 ] as const;
 
-const comparisonOperators = ['less_than', 'greater_than', 'equal_to'] as const;
+export const comparisonOperators = ['less_than', 'greater_than', 'equal_to'] as const;
 
 // =============================================================================
 // BASE ALERT SCHEMAS
@@ -27,7 +27,7 @@ const comparisonOperators = ['less_than', 'greater_than', 'equal_to'] as const;
 export const AlertBaseSchema = z.object({
   name: z.string().min(1, 'Name is required').max(255, 'Name must be 255 characters or less'),
   email_delivery: z.boolean().default(true),
-  sms_delivery: z.boolean().default(false)
+  sms_delivery: z.boolean().default(false),
 });
 
 // =============================================================================
@@ -35,9 +35,9 @@ export const AlertBaseSchema = z.object({
 // =============================================================================
 
 export const AccountThresholdAlertSchema = AlertBaseSchema.extend({
-  account_id: z.union([z.string(), z.number()]).transform(val => BigInt(val)),
+  account_id: z.union([z.string(), z.number()]).transform((val) => BigInt(val)),
   threshold: z.string().regex(/^\d+(\.\d{2})?$/, 'Must be a decimal with 2 places'),
-  direction: z.enum(['below', 'above'])
+  direction: z.enum(['below', 'above']),
 });
 
 // =============================================================================
@@ -45,8 +45,8 @@ export const AccountThresholdAlertSchema = AlertBaseSchema.extend({
 // =============================================================================
 
 export const GoalAlertSchema = AlertBaseSchema.extend({
-  goal_id: z.union([z.string(), z.number()]).transform(val => BigInt(val)),
-  milestone_percentage: z.number().int().min(0).max(100)
+  goal_id: z.union([z.string(), z.number()]).transform((val) => BigInt(val)),
+  milestone_percentage: z.number().int().min(0).max(100),
 });
 
 // =============================================================================
@@ -55,7 +55,7 @@ export const GoalAlertSchema = AlertBaseSchema.extend({
 
 export const MerchantNameAlertSchema = AlertBaseSchema.extend({
   merchant_pattern: z.string().min(1, 'Merchant pattern is required'),
-  match_type: z.enum(['exact', 'contains']).default('contains')
+  match_type: z.enum(['exact', 'contains']).default('contains'),
 });
 
 // =============================================================================
@@ -63,8 +63,8 @@ export const MerchantNameAlertSchema = AlertBaseSchema.extend({
 // =============================================================================
 
 export const SpendingTargetAlertSchema = AlertBaseSchema.extend({
-  budget_id: z.union([z.string(), z.number()]).transform(val => BigInt(val)),
-  threshold_percentage: z.number().int().min(0).max(200)
+  budget_id: z.union([z.string(), z.number()]).transform((val) => BigInt(val)),
+  threshold_percentage: z.number().int().min(0).max(200),
 });
 
 // =============================================================================
@@ -72,8 +72,11 @@ export const SpendingTargetAlertSchema = AlertBaseSchema.extend({
 // =============================================================================
 
 export const TransactionLimitAlertSchema = AlertBaseSchema.extend({
-  account_id: z.union([z.string(), z.number()]).transform(val => BigInt(val)).optional(),
-  amount: z.string().regex(/^\d+(\.\d{2})?$/, 'Must be a decimal with 2 places')
+  account_id: z
+    .union([z.string(), z.number()])
+    .transform((val) => BigInt(val))
+    .optional(),
+  amount: z.string().regex(/^\d+(\.\d{2})?$/, 'Must be a decimal with 2 places'),
 });
 
 // =============================================================================
@@ -81,8 +84,8 @@ export const TransactionLimitAlertSchema = AlertBaseSchema.extend({
 // =============================================================================
 
 export const UpcomingBillAlertSchema = AlertBaseSchema.extend({
-  bill_id: z.union([z.string(), z.number()]).transform(val => BigInt(val)),
-  days_before: z.number().int().min(1).max(30)
+  bill_id: z.union([z.string(), z.number()]).transform((val) => BigInt(val)),
+  days_before: z.number().int().min(1).max(30),
 });
 
 // =============================================================================
@@ -94,7 +97,7 @@ export const AlertUpdateSchema = z.object({
   conditions: z.record(z.any()).optional(),
   email_delivery: z.boolean().optional(),
   sms_delivery: z.boolean().optional(),
-  active: z.boolean().optional()
+  active: z.boolean().optional(),
 });
 
 // =============================================================================
@@ -103,7 +106,10 @@ export const AlertUpdateSchema = z.object({
 
 export const AlertDestinationSchema = z.object({
   email: z.string().email('Must be a valid email').optional(),
-  sms: z.string().regex(/^\+?[1-9]\d{1,14}$/, 'Must be a valid phone number').optional()
+  sms: z
+    .string()
+    .regex(/^\+?[1-9]\d{1,14}$/, 'Must be a valid phone number')
+    .optional(),
 });
 
 // =============================================================================
@@ -113,14 +119,16 @@ export const AlertDestinationSchema = z.object({
 function createValidationError(zodError: z.ZodError): Error {
   const validationError: any = new Error('Validation failed');
   validationError.name = 'ValidationError';
-  validationError.errors = zodError.errors.map(err => ({
+  validationError.errors = zodError.errors.map((err) => ({
     field: err.path.join('.'),
-    message: err.message
+    message: err.message,
   }));
   return validationError;
 }
 
-export function validateAccountThresholdAlert(data: unknown): z.infer<typeof AccountThresholdAlertSchema> {
+export function validateAccountThresholdAlert(
+  data: unknown
+): z.infer<typeof AccountThresholdAlertSchema> {
   try {
     return AccountThresholdAlertSchema.parse(data);
   } catch (error) {
@@ -153,7 +161,9 @@ export function validateMerchantNameAlert(data: unknown): z.infer<typeof Merchan
   }
 }
 
-export function validateSpendingTargetAlert(data: unknown): z.infer<typeof SpendingTargetAlertSchema> {
+export function validateSpendingTargetAlert(
+  data: unknown
+): z.infer<typeof SpendingTargetAlertSchema> {
   try {
     return SpendingTargetAlertSchema.parse(data);
   } catch (error) {
@@ -164,7 +174,9 @@ export function validateSpendingTargetAlert(data: unknown): z.infer<typeof Spend
   }
 }
 
-export function validateTransactionLimitAlert(data: unknown): z.infer<typeof TransactionLimitAlertSchema> {
+export function validateTransactionLimitAlert(
+  data: unknown
+): z.infer<typeof TransactionLimitAlertSchema> {
   try {
     return TransactionLimitAlertSchema.parse(data);
   } catch (error) {

@@ -88,20 +88,14 @@ export async function getAllBills(userId: bigint): Promise<CashflowBill[]> {
       userId,
       deletedAt: null,
     },
-    orderBy: [
-      { active: 'desc' },
-      { dueDate: 'asc' },
-    ],
+    orderBy: [{ active: 'desc' }, { dueDate: 'asc' }],
   });
 }
 
 /**
  * Get a single bill by ID
  */
-export async function getBillById(
-  userId: bigint,
-  billId: bigint
-): Promise<CashflowBill | null> {
+export async function getBillById(userId: bigint, billId: bigint): Promise<CashflowBill | null> {
   return await prisma.cashflowBill.findFirst({
     where: {
       id: billId,
@@ -114,10 +108,7 @@ export async function getBillById(
 /**
  * Create a new bill
  */
-export async function createBill(
-  userId: bigint,
-  data: CreateBillData
-): Promise<CashflowBill> {
+export async function createBill(userId: bigint, data: CreateBillData): Promise<CashflowBill> {
   return await prisma.cashflowBill.create({
     data: {
       userId,
@@ -170,10 +161,7 @@ export async function updateBill(
 /**
  * Soft delete a bill
  */
-export async function deleteBill(
-  userId: bigint,
-  billId: bigint
-): Promise<boolean> {
+export async function deleteBill(userId: bigint, billId: bigint): Promise<boolean> {
   const existing = await prisma.cashflowBill.findFirst({
     where: {
       id: billId,
@@ -197,10 +185,7 @@ export async function deleteBill(
 /**
  * Stop a bill (deactivate)
  */
-export async function stopBill(
-  userId: bigint,
-  billId: bigint
-): Promise<CashflowBill | null> {
+export async function stopBill(userId: bigint, billId: bigint): Promise<CashflowBill | null> {
   const existing = await prisma.cashflowBill.findFirst({
     where: {
       id: billId,
@@ -236,10 +221,7 @@ export async function getAllIncomes(userId: bigint): Promise<CashflowIncome[]> {
       userId,
       deletedAt: null,
     },
-    orderBy: [
-      { active: 'desc' },
-      { receiveDate: 'asc' },
-    ],
+    orderBy: [{ active: 'desc' }, { receiveDate: 'asc' }],
   });
 }
 
@@ -318,10 +300,7 @@ export async function updateIncome(
 /**
  * Soft delete an income
  */
-export async function deleteIncome(
-  userId: bigint,
-  incomeId: bigint
-): Promise<boolean> {
+export async function deleteIncome(userId: bigint, incomeId: bigint): Promise<boolean> {
   const existing = await prisma.cashflowIncome.findFirst({
     where: {
       id: incomeId,
@@ -345,10 +324,7 @@ export async function deleteIncome(
 /**
  * Stop an income (deactivate)
  */
-export async function stopIncome(
-  userId: bigint,
-  incomeId: bigint
-): Promise<CashflowIncome | null> {
+export async function stopIncome(userId: bigint, incomeId: bigint): Promise<CashflowIncome | null> {
   const existing = await prisma.cashflowIncome.findFirst({
     where: {
       id: incomeId,
@@ -391,7 +367,7 @@ export function projectRecurringItem(
   const recurrence = item.recurrence;
 
   // Start from the beginning of the current month
-  let current = new Date(startDate);
+  const current = new Date(startDate);
   current.setDate(dueDate);
 
   // If the due date has already passed this month, start from next occurrence
@@ -466,25 +442,13 @@ export async function generateCashflowEvents(userId: bigint): Promise<CashflowEv
 
   // Project all bills
   for (const bill of bills) {
-    const billEvents = projectRecurringItem(
-      bill,
-      'bill',
-      'expense',
-      startDate,
-      endDate
-    );
+    const billEvents = projectRecurringItem(bill, 'bill', 'expense', startDate, endDate);
     events.push(...billEvents);
   }
 
   // Project all incomes
   for (const income of incomes) {
-    const incomeEvents = projectRecurringItem(
-      income,
-      'income',
-      'income',
-      startDate,
-      endDate
-    );
+    const incomeEvents = projectRecurringItem(income, 'income', 'income', startDate, endDate);
     events.push(...incomeEvents);
   }
 
@@ -517,17 +481,19 @@ export async function getCashflowEvents(
     });
 
     // Create new projections in batch
-    return await prisma.cashflowEvent.createMany({
-      data: projectedEvents,
-    }).then(() =>
-      prisma.cashflowEvent.findMany({
-        where: {
-          userId,
-          deletedAt: null,
-        },
-        orderBy: { eventDate: 'asc' },
+    return await prisma.cashflowEvent
+      .createMany({
+        data: projectedEvents,
       })
-    );
+      .then(() =>
+        prisma.cashflowEvent.findMany({
+          where: {
+            userId,
+            deletedAt: null,
+          },
+          orderBy: { eventDate: 'asc' },
+        })
+      );
   }
 
   // Return as non-persisted data (cast for type compatibility)
@@ -571,10 +537,7 @@ export async function updateCashflowEvent(
 /**
  * Delete a cashflow event
  */
-export async function deleteCashflowEvent(
-  userId: bigint,
-  eventId: bigint
-): Promise<boolean> {
+export async function deleteCashflowEvent(userId: bigint, eventId: bigint): Promise<boolean> {
   const existing = await prisma.cashflowEvent.findFirst({
     where: {
       id: eventId,
@@ -626,26 +589,16 @@ export async function getCashflowSummary(userId: bigint): Promise<CashflowSummar
   ]);
 
   // Calculate totals
-  const totalBills = bills.reduce(
-    (sum, bill) => sum.add(bill.amount),
-    new Decimal(0)
-  );
+  const totalBills = bills.reduce((sum, bill) => sum.add(bill.amount), new Decimal(0));
 
-  const totalIncome = incomes.reduce(
-    (sum, income) => sum.add(income.amount),
-    new Decimal(0)
-  );
+  const totalIncome = incomes.reduce((sum, income) => sum.add(income.amount), new Decimal(0));
 
   const netCashflow = totalIncome.minus(totalBills);
 
   // Calculate averages
-  const averageBills = billsCount > 0
-    ? totalBills.div(billsCount)
-    : new Decimal(0);
+  const averageBills = billsCount > 0 ? totalBills.div(billsCount) : new Decimal(0);
 
-  const averageIncome = incomesCount > 0
-    ? totalIncome.div(incomesCount)
-    : new Decimal(0);
+  const averageIncome = incomesCount > 0 ? totalIncome.div(incomesCount) : new Decimal(0);
 
   // Get projected events count efficiently
   const events = await generateCashflowEvents(userId);

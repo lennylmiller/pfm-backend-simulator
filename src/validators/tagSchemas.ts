@@ -10,8 +10,14 @@ import { z } from 'zod';
 // =============================================================================
 
 export const TagCreateSchema = z.object({
-  name: z.string().min(1, 'Tag name is required').max(255, 'Tag name must be 255 characters or less'),
-  parent_tag_id: z.union([z.string(), z.number()]).transform(val => BigInt(val)).optional()
+  name: z
+    .string()
+    .min(1, 'Tag name is required')
+    .max(255, 'Tag name must be 255 characters or less'),
+  parent_tag_id: z
+    .union([z.string(), z.number()])
+    .transform((val) => BigInt(val))
+    .optional(),
 });
 
 // =============================================================================
@@ -19,8 +25,11 @@ export const TagCreateSchema = z.object({
 // =============================================================================
 
 export const TagUpdateSchema = z.object({
-  id: z.union([z.string(), z.number()]).transform(val => BigInt(val)),
-  name: z.string().min(1, 'Tag name is required').max(255, 'Tag name must be 255 characters or less')
+  id: z.union([z.string(), z.number()]).transform((val) => BigInt(val)),
+  name: z
+    .string()
+    .min(1, 'Tag name is required')
+    .max(255, 'Tag name must be 255 characters or less'),
 });
 
 // =============================================================================
@@ -30,7 +39,7 @@ export const TagUpdateSchema = z.object({
 export const BulkTagOperationsSchema = z.object({
   create: z.array(TagCreateSchema).optional(),
   update: z.array(TagUpdateSchema).optional(),
-  delete: z.array(z.union([z.string(), z.number()]).transform(val => BigInt(val))).optional()
+  delete: z.array(z.union([z.string(), z.number()]).transform((val) => BigInt(val))).optional(),
 });
 
 // =============================================================================

@@ -6,7 +6,6 @@
 import { prisma } from '../config/database';
 import { Transaction, TransactionType } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
-import { updateAccountBalance } from './accountService';
 
 // =============================================================================
 // INTERFACES
@@ -151,10 +150,7 @@ export async function updateTransaction(
 /**
  * Soft delete a transaction and update account balance
  */
-export async function deleteTransaction(
-  userId: bigint,
-  transactionId: bigint
-): Promise<boolean> {
+export async function deleteTransaction(userId: bigint, transactionId: bigint): Promise<boolean> {
   // Verify ownership
   const existing = await prisma.transaction.findFirst({
     where: {

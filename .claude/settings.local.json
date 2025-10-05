@@ -62,7 +62,12 @@
       "Bash(timeout 30 npm test:*)",
       "Bash(for:*)",
       "mcp__context7__get-library-docs",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(awk:*)",
+      "Bash(npx eslint:*)",
+      "Read(///**)",
+      "Bash(tee:*)",
+      "Read(//private/tmp/**)"
     ],
     "deny": [],
     "ask": []

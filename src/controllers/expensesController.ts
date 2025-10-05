@@ -7,7 +7,7 @@ import {
   serializeExpensesByMerchant,
   serializeExpensesByTag,
   serializeExpensesTrends,
-  serializeExpensesComparison
+  serializeExpensesComparison,
 } from '../utils/serializers';
 
 /**
@@ -17,14 +17,7 @@ import {
 export const getExpensesSummary = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const {
-      period,
-      start_date,
-      end_date,
-      group_by,
-      include_tags,
-      exclude_tags
-    } = req.query;
+    const { period, start_date, end_date, group_by, include_tags, exclude_tags } = req.query;
 
     // Verify user authorization
     if (userId !== req.context?.userId) {
@@ -48,18 +41,15 @@ export const getExpensesSummary = async (req: Request, res: Response) => {
     const endDate = end_date ? new Date(end_date as string) : undefined;
 
     // Get expenses summary
-    const summary = await expenseService.getExpensesSummary(
-      userIdBigInt,
-      partnerIdBigInt,
-      {
-        period: (period as 'this_month' | 'last_month' | 'last_thirty_days' | 'custom') || 'this_month',
-        startDate,
-        endDate,
-        groupBy: group_by as 'category' | 'merchant' | 'tag' | undefined,
-        includeTagIds,
-        excludeTagIds
-      }
-    );
+    const summary = await expenseService.getExpensesSummary(userIdBigInt, partnerIdBigInt, {
+      period:
+        (period as 'this_month' | 'last_month' | 'last_thirty_days' | 'custom') || 'this_month',
+      startDate,
+      endDate,
+      groupBy: group_by as 'category' | 'merchant' | 'tag' | undefined,
+      includeTagIds,
+      excludeTagIds,
+    });
 
     return res.json({ expenses: serializeExpensesSummary(summary) });
   } catch (error) {
@@ -213,11 +203,7 @@ export const getExpensesTrends = async (req: Request, res: Response) => {
 
     const monthsNum = months ? parseInt(months as string) : 6;
 
-    const trends = await expenseService.getExpensesTrends(
-      userIdBigInt,
-      partnerIdBigInt,
-      monthsNum
-    );
+    const trends = await expenseService.getExpensesTrends(userIdBigInt, partnerIdBigInt, monthsNum);
 
     return res.json({ trends: serializeExpensesTrends(trends) });
   } catch (error) {
@@ -241,10 +227,7 @@ export const getExpensesComparison = async (req: Request, res: Response) => {
     const userIdBigInt = BigInt(req.context!.userId);
     const partnerIdBigInt = BigInt(req.context!.partnerId);
 
-    const comparison = await expenseService.getExpensesComparison(
-      userIdBigInt,
-      partnerIdBigInt
-    );
+    const comparison = await expenseService.getExpensesComparison(userIdBigInt, partnerIdBigInt);
 
     return res.json({ comparison: serializeExpensesComparison(comparison) });
   } catch (error) {

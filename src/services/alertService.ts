@@ -4,7 +4,6 @@
  */
 
 import { PrismaClient, Alert, Notification, AlertType } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime/library';
 
 const prisma = new PrismaClient();
 
@@ -50,7 +49,7 @@ export async function getAllAlerts(
 ): Promise<Alert[]> {
   const where: any = {
     userId,
-    deletedAt: null
+    deletedAt: null,
   };
 
   if (!options.includeInactive) {
@@ -59,36 +58,27 @@ export async function getAllAlerts(
 
   return await prisma.alert.findMany({
     where,
-    orderBy: [
-      { active: 'desc' },
-      { createdAt: 'desc' }
-    ]
+    orderBy: [{ active: 'desc' }, { createdAt: 'desc' }],
   });
 }
 
 /**
  * Get a specific alert by ID
  */
-export async function getAlertById(
-  userId: bigint,
-  alertId: bigint
-): Promise<Alert | null> {
+export async function getAlertById(userId: bigint, alertId: bigint): Promise<Alert | null> {
   return await prisma.alert.findFirst({
     where: {
       id: alertId,
       userId,
-      deletedAt: null
-    }
+      deletedAt: null,
+    },
   });
 }
 
 /**
  * Create a new alert
  */
-export async function createAlert(
-  userId: bigint,
-  data: CreateAlertData
-): Promise<Alert> {
+export async function createAlert(userId: bigint, data: CreateAlertData): Promise<Alert> {
   return await prisma.alert.create({
     data: {
       userId,
@@ -99,8 +89,8 @@ export async function createAlert(
       conditions: data.conditions,
       emailDelivery: data.emailDelivery,
       smsDelivery: data.smsDelivery,
-      active: true
-    }
+      active: true,
+    },
   });
 }
 
@@ -126,18 +116,15 @@ export async function updateAlert(
       ...(data.emailDelivery !== undefined && { emailDelivery: data.emailDelivery }),
       ...(data.smsDelivery !== undefined && { smsDelivery: data.smsDelivery }),
       ...(data.active !== undefined && { active: data.active }),
-      updatedAt: new Date()
-    }
+      updatedAt: new Date(),
+    },
   });
 }
 
 /**
  * Delete an alert (soft delete)
  */
-export async function deleteAlert(
-  userId: bigint,
-  alertId: bigint
-): Promise<boolean> {
+export async function deleteAlert(userId: bigint, alertId: bigint): Promise<boolean> {
   const existing = await getAlertById(userId, alertId);
   if (!existing) {
     return false;
@@ -145,7 +132,7 @@ export async function deleteAlert(
 
   await prisma.alert.update({
     where: { id: alertId },
-    data: { deletedAt: new Date() }
+    data: { deletedAt: new Date() },
   });
 
   return true;
@@ -154,20 +141,14 @@ export async function deleteAlert(
 /**
  * Enable an alert
  */
-export async function enableAlert(
-  userId: bigint,
-  alertId: bigint
-): Promise<Alert | null> {
+export async function enableAlert(userId: bigint, alertId: bigint): Promise<Alert | null> {
   return await updateAlert(userId, alertId, { active: true });
 }
 
 /**
  * Disable an alert
  */
-export async function disableAlert(
-  userId: bigint,
-  alertId: bigint
-): Promise<Alert | null> {
+export async function disableAlert(userId: bigint, alertId: bigint): Promise<Alert | null> {
   return await updateAlert(userId, alertId, { active: false });
 }
 
@@ -191,7 +172,7 @@ export async function createAccountThresholdAlert(
 ): Promise<Alert> {
   // Verify account ownership
   const account = await prisma.account.findFirst({
-    where: { id: data.accountId, userId, archivedAt: null }
+    where: { id: data.accountId, userId, archivedAt: null },
   });
 
   if (!account) {
@@ -206,10 +187,10 @@ export async function createAccountThresholdAlert(
     conditions: {
       account_id: data.accountId.toString(),
       threshold: data.threshold,
-      direction: data.direction
+      direction: data.direction,
     },
     emailDelivery: data.emailDelivery,
-    smsDelivery: data.smsDelivery
+    smsDelivery: data.smsDelivery,
   });
 }
 
@@ -228,7 +209,7 @@ export async function createGoalAlert(
 ): Promise<Alert> {
   // Verify goal ownership
   const goal = await prisma.goal.findFirst({
-    where: { id: data.goalId, userId, deletedAt: null }
+    where: { id: data.goalId, userId, deletedAt: null },
   });
 
   if (!goal) {
@@ -242,10 +223,10 @@ export async function createGoalAlert(
     sourceId: data.goalId,
     conditions: {
       goal_id: data.goalId.toString(),
-      milestone_percentage: data.milestonePercentage
+      milestone_percentage: data.milestonePercentage,
     },
     emailDelivery: data.emailDelivery,
-    smsDelivery: data.smsDelivery
+    smsDelivery: data.smsDelivery,
   });
 }
 
@@ -267,10 +248,10 @@ export async function createMerchantNameAlert(
     name: data.name,
     conditions: {
       merchant_pattern: data.merchantPattern,
-      match_type: data.matchType
+      match_type: data.matchType,
     },
     emailDelivery: data.emailDelivery,
-    smsDelivery: data.smsDelivery
+    smsDelivery: data.smsDelivery,
   });
 }
 
@@ -289,7 +270,7 @@ export async function createSpendingTargetAlert(
 ): Promise<Alert> {
   // Verify budget ownership
   const budget = await prisma.budget.findFirst({
-    where: { id: data.budgetId, userId, deletedAt: null }
+    where: { id: data.budgetId, userId, deletedAt: null },
   });
 
   if (!budget) {
@@ -303,10 +284,10 @@ export async function createSpendingTargetAlert(
     sourceId: data.budgetId,
     conditions: {
       budget_id: data.budgetId.toString(),
-      threshold_percentage: data.thresholdPercentage
+      threshold_percentage: data.thresholdPercentage,
     },
     emailDelivery: data.emailDelivery,
-    smsDelivery: data.smsDelivery
+    smsDelivery: data.smsDelivery,
   });
 }
 
@@ -326,7 +307,7 @@ export async function createTransactionLimitAlert(
   // Verify account ownership if provided
   if (data.accountId) {
     const account = await prisma.account.findFirst({
-      where: { id: data.accountId, userId, archivedAt: null }
+      where: { id: data.accountId, userId, archivedAt: null },
     });
 
     if (!account) {
@@ -341,10 +322,10 @@ export async function createTransactionLimitAlert(
     sourceId: data.accountId || undefined,
     conditions: {
       ...(data.accountId && { account_id: data.accountId.toString() }),
-      amount: data.amount
+      amount: data.amount,
     },
     emailDelivery: data.emailDelivery,
-    smsDelivery: data.smsDelivery
+    smsDelivery: data.smsDelivery,
   });
 }
 
@@ -363,7 +344,7 @@ export async function createUpcomingBillAlert(
 ): Promise<Alert> {
   // Verify bill ownership
   const bill = await prisma.cashflowBill.findFirst({
-    where: { id: data.billId, userId, deletedAt: null }
+    where: { id: data.billId, userId, deletedAt: null },
   });
 
   if (!bill) {
@@ -377,10 +358,10 @@ export async function createUpcomingBillAlert(
     sourceId: data.billId,
     conditions: {
       bill_id: data.billId.toString(),
-      days_before: data.daysBefore
+      days_before: data.daysBefore,
     },
     emailDelivery: data.emailDelivery,
-    smsDelivery: data.smsDelivery
+    smsDelivery: data.smsDelivery,
   });
 }
 
@@ -397,7 +378,7 @@ export async function getAllNotifications(
 ): Promise<Notification[]> {
   const where: any = {
     userId,
-    deletedAt: null
+    deletedAt: null,
   };
 
   if (options.read !== undefined) {
@@ -408,7 +389,7 @@ export async function getAllNotifications(
     where,
     orderBy: { createdAt: 'desc' },
     take: options.limit,
-    skip: options.offset
+    skip: options.offset,
   });
 }
 
@@ -423,8 +404,8 @@ export async function getNotificationById(
     where: {
       id: notificationId,
       userId,
-      deletedAt: null
-    }
+      deletedAt: null,
+    },
   });
 }
 
@@ -439,7 +420,7 @@ export async function createNotification(
   let alertType = 'system';
   if (data.alertId) {
     const alert = await prisma.alert.findUnique({
-      where: { id: data.alertId }
+      where: { id: data.alertId },
     });
     if (alert) {
       alertType = alert.alertType;
@@ -454,10 +435,10 @@ export async function createNotification(
       message: data.message,
       metadata: {
         ...(data.metadata || {}),
-        alert_type: alertType
+        alert_type: alertType,
       },
-      read: false
-    }
+      read: false,
+    },
   });
 }
 
@@ -477,18 +458,15 @@ export async function markNotificationAsRead(
     where: { id: notificationId },
     data: {
       read: true,
-      readAt: new Date()
-    }
+      readAt: new Date(),
+    },
   });
 }
 
 /**
  * Delete a notification (soft delete)
  */
-export async function deleteNotification(
-  userId: bigint,
-  notificationId: bigint
-): Promise<boolean> {
+export async function deleteNotification(userId: bigint, notificationId: bigint): Promise<boolean> {
   const existing = await getNotificationById(userId, notificationId);
   if (!existing) {
     return false;
@@ -496,7 +474,7 @@ export async function deleteNotification(
 
   await prisma.notification.update({
     where: { id: notificationId },
-    data: { deletedAt: new Date() }
+    data: { deletedAt: new Date() },
   });
 
   return true;
@@ -510,8 +488,8 @@ export async function getUnreadNotificationCount(userId: bigint): Promise<number
     where: {
       userId,
       read: false,
-      deletedAt: null
-    }
+      deletedAt: null,
+    },
   });
 }
 
@@ -525,7 +503,7 @@ export async function getUnreadNotificationCount(userId: bigint): Promise<number
 export async function getAlertDestinations(userId: bigint): Promise<any> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { email: true, preferences: true }
+    select: { email: true, preferences: true },
   });
 
   if (!user) {
@@ -538,7 +516,7 @@ export async function getAlertDestinations(userId: bigint): Promise<any> {
     email: user.email || null,
     sms: prefs.alertSmsNumber || null,
     email_verified: prefs.emailVerified || false,
-    sms_verified: prefs.smsVerified || false
+    sms_verified: prefs.smsVerified || false,
   };
 }
 
@@ -551,7 +529,7 @@ export async function updateAlertDestinations(
 ): Promise<any> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { preferences: true }
+    select: { preferences: true },
   });
 
   if (!user) {
@@ -568,9 +546,9 @@ export async function updateAlertDestinations(
         ...prefs,
         ...(data.sms && { alertSmsNumber: data.sms }),
         ...(data.email && { emailVerified: false }), // Reset verification
-        ...(data.sms && { smsVerified: false })
-      }
-    }
+        ...(data.sms && { smsVerified: false }),
+      },
+    },
   });
 
   return await getAlertDestinations(userId);

@@ -13,7 +13,7 @@ import {
   validateTransactionLimitAlert,
   validateUpcomingBillAlert,
   validateAlertUpdate,
-  validateAlertDestination
+  validateAlertDestination,
 } from '../validators/alertSchemas';
 import { serializeAlert, serializeNotification } from '../utils/serializers';
 
@@ -171,7 +171,7 @@ export async function createAccountThresholdAlert(req: Request, res: Response): 
       threshold: validated.threshold,
       direction: validated.direction,
       emailDelivery: validated.email_delivery,
-      smsDelivery: validated.sms_delivery
+      smsDelivery: validated.sms_delivery,
     });
 
     res.status(201).json({ alert: serializeAlert(alert) });
@@ -199,10 +199,10 @@ export async function updateAccountThresholdAlert(req: Request, res: Response): 
       conditions: {
         account_id: validated.account_id.toString(),
         threshold: validated.threshold,
-        direction: validated.direction
+        direction: validated.direction,
       },
       emailDelivery: validated.email_delivery,
-      smsDelivery: validated.sms_delivery
+      smsDelivery: validated.sms_delivery,
     });
 
     if (!alert) {
@@ -238,7 +238,7 @@ export async function createGoalAlert(req: Request, res: Response): Promise<void
       goalId: validated.goal_id,
       milestonePercentage: validated.milestone_percentage,
       emailDelivery: validated.email_delivery,
-      smsDelivery: validated.sms_delivery
+      smsDelivery: validated.sms_delivery,
     });
 
     res.status(201).json({ alert: serializeAlert(alert) });
@@ -269,7 +269,7 @@ export async function createMerchantNameAlert(req: Request, res: Response): Prom
       merchantPattern: validated.merchant_pattern,
       matchType: validated.match_type,
       emailDelivery: validated.email_delivery,
-      smsDelivery: validated.sms_delivery
+      smsDelivery: validated.sms_delivery,
     });
 
     res.status(201).json({ alert: serializeAlert(alert) });
@@ -300,7 +300,7 @@ export async function createSpendingTargetAlert(req: Request, res: Response): Pr
       budgetId: validated.budget_id,
       thresholdPercentage: validated.threshold_percentage,
       emailDelivery: validated.email_delivery,
-      smsDelivery: validated.sms_delivery
+      smsDelivery: validated.sms_delivery,
     });
 
     res.status(201).json({ alert: serializeAlert(alert) });
@@ -331,7 +331,7 @@ export async function createTransactionLimitAlert(req: Request, res: Response): 
       accountId: validated.account_id,
       amount: validated.amount,
       emailDelivery: validated.email_delivery,
-      smsDelivery: validated.sms_delivery
+      smsDelivery: validated.sms_delivery,
     });
 
     res.status(201).json({ alert: serializeAlert(alert) });
@@ -362,7 +362,7 @@ export async function createUpcomingBillAlert(req: Request, res: Response): Prom
       billId: validated.bill_id,
       daysBefore: validated.days_before,
       emailDelivery: validated.email_delivery,
-      smsDelivery: validated.sms_delivery
+      smsDelivery: validated.sms_delivery,
     });
 
     res.status(201).json({ alert: serializeAlert(alert) });
@@ -393,7 +393,7 @@ export async function listNotifications(req: Request, res: Response): Promise<vo
     const notifications = await alertService.getAllNotifications(userId, {
       read,
       limit: perPage,
-      offset: (page - 1) * perPage
+      offset: (page - 1) * perPage,
     });
 
     const unreadCount = await alertService.getUnreadNotificationCount(userId);
@@ -403,8 +403,8 @@ export async function listNotifications(req: Request, res: Response): Promise<vo
       meta: {
         current_page: page,
         per_page: perPage,
-        unread_count: unreadCount
-      }
+        unread_count: unreadCount,
+      },
     });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
@@ -506,7 +506,7 @@ export async function updateAlertDestinations(req: Request, res: Response): Prom
 
     const destinations = await alertService.updateAlertDestinations(userId, {
       email: validated.email,
-      sms: validated.sms
+      sms: validated.sms,
     });
 
     res.json({ destinations });

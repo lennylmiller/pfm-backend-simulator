@@ -24,7 +24,7 @@ export async function listSystemTags(
 ): Promise<void> {
   try {
     const tags = await tagService.getSystemTags();
-    const serialized = tags.map(tag => serializeTag(tag));
+    const serialized = tags.map((tag) => serializeTag(tag));
 
     res.status(200).json({ tags: serialized });
   } catch (error) {
@@ -42,11 +42,7 @@ export async function listSystemTags(
  * Get all tags accessible to user (system + partner + user's own)
  * with transaction counts
  */
-export async function listUserTags(
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> {
+export async function listUserTags(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const userId = BigInt(req.params.userId);
 
@@ -56,9 +52,7 @@ export async function listUserTags(
     }
 
     const tagsWithCounts = await tagService.getUserTagsWithCounts(userId);
-    const serialized = tagsWithCounts.map(tag =>
-      serializeTag(tag, tag.transactionCount)
-    );
+    const serialized = tagsWithCounts.map((tag) => serializeTag(tag, tag.transactionCount));
 
     res.status(200).json({ tags: serialized });
   } catch (error) {
@@ -96,7 +90,7 @@ export async function bulkUpdateTags(
     const serviceOps = {
       create: validatedOps.create,
       update: validatedOps.update,
-      delete: validatedOps.delete
+      delete: validatedOps.delete,
     };
 
     // Execute operations
@@ -104,9 +98,9 @@ export async function bulkUpdateTags(
 
     // Serialize results
     const response = {
-      created: results.created.map(tag => serializeTag(tag)),
-      updated: results.updated.map(tag => serializeTag(tag)),
-      deleted: results.deleted.map(id => Number(id))
+      created: results.created.map((tag) => serializeTag(tag)),
+      updated: results.updated.map((tag) => serializeTag(tag)),
+      deleted: results.deleted.map((id) => Number(id)),
     };
 
     res.status(200).json(response);
@@ -114,7 +108,7 @@ export async function bulkUpdateTags(
     if (error.name === 'ValidationError') {
       res.status(400).json({
         error: 'Validation failed',
-        details: error.errors
+        details: error.errors,
       });
       return;
     }

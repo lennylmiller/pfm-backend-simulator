@@ -11,13 +11,13 @@ import {
   validateIncomeCreate,
   validateIncomeUpdate,
   validateEventUpdate,
-  validateCashflowSettings
+  validateCashflowSettings,
 } from '../validators/cashflowSchemas';
 import {
   serializeBill,
   serializeIncome,
   serializeEvent,
-  serializeCashflowSummary
+  serializeCashflowSummary,
 } from '../utils/serializers';
 import { Decimal } from '@prisma/client/runtime/library';
 
@@ -46,7 +46,7 @@ export async function getCashflowSummary(req: Request, res: Response): Promise<v
 export async function updateCashflowSettings(req: Request, res: Response): Promise<void> {
   try {
     const userId = BigInt(req.context!.userId);
-    const validated = validateCashflowSettings(req.body);
+    validateCashflowSettings(req.body); // Validate but don't need the result
     // Settings are currently static in serializer
     // Future: persist settings in user preferences
     const summary = await cashflowService.getCashflowSummary(userId);
@@ -92,7 +92,7 @@ export async function createBill(req: Request, res: Response): Promise<void> {
       dueDate: validated.due_date,
       recurrence: validated.recurrence,
       categoryId: validated.category_id,
-      accountId: validated.account_id
+      accountId: validated.account_id,
     });
     res.status(201).json({ bill: serializeBill(bill) });
   } catch (error: any) {
@@ -119,7 +119,7 @@ export async function updateBill(req: Request, res: Response): Promise<void> {
       dueDate: validated.due_date,
       recurrence: validated.recurrence,
       categoryId: validated.category_id,
-      accountId: validated.account_id
+      accountId: validated.account_id,
     });
 
     if (!bill) {
@@ -207,7 +207,7 @@ export async function createIncome(req: Request, res: Response): Promise<void> {
       receiveDate: validated.receive_date,
       recurrence: validated.recurrence,
       categoryId: validated.category_id,
-      accountId: validated.account_id
+      accountId: validated.account_id,
     });
     res.status(201).json({ income: serializeIncome(income) });
   } catch (error: any) {
@@ -234,7 +234,7 @@ export async function updateIncome(req: Request, res: Response): Promise<void> {
       receiveDate: validated.receive_date,
       recurrence: validated.recurrence,
       categoryId: validated.category_id,
-      accountId: validated.account_id
+      accountId: validated.account_id,
     });
 
     if (!income) {
@@ -325,7 +325,7 @@ export async function updateEvent(req: Request, res: Response): Promise<void> {
       eventType: validated.event_type,
       accountId: validated.account_id,
       processed: validated.processed,
-      metadata: validated.metadata
+      metadata: validated.metadata,
     });
 
     if (!event) {

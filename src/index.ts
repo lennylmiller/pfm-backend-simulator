@@ -38,7 +38,7 @@ app.use((req, res, next) => {
 
   // Override res.send to remove ETag header
   const originalSend = res.send;
-  res.send = function(data) {
+  res.send = function (data) {
     res.removeHeader('ETag');
     res.removeHeader('etag');
     return originalSend.call(this, data);

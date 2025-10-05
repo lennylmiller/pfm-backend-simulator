@@ -101,7 +101,7 @@ function categorizeAccount(account: {
  */
 function calculateAssets(accounts: Array<{ accountType: AccountType; balance: Decimal }>): Decimal {
   return accounts
-    .filter(a => categorizeAccount(a) === 'asset')
+    .filter((a) => categorizeAccount(a) === 'asset')
     .reduce((sum, account) => {
       return sum.add(account.balance);
     }, new Decimal(0));
@@ -111,9 +111,11 @@ function calculateAssets(accounts: Array<{ accountType: AccountType; balance: De
  * Calculate total liabilities from accounts
  * CRITICAL: Uses Decimal arithmetic, takes absolute value of balances
  */
-function calculateLiabilities(accounts: Array<{ accountType: AccountType; balance: Decimal }>): Decimal {
+function calculateLiabilities(
+  accounts: Array<{ accountType: AccountType; balance: Decimal }>
+): Decimal {
   return accounts
-    .filter(a => categorizeAccount(a) === 'liability')
+    .filter((a) => categorizeAccount(a) === 'liability')
     .reduce((sum, account) => {
       // Liabilities stored as negative, take absolute value
       return sum.add(account.balance.abs());
@@ -145,15 +147,18 @@ interface AccountForBreakdown {
  * Shows each account's contribution to total networth
  */
 function createAccountBreakdown(accounts: AccountForBreakdown[]): AccountBreakdown[] {
-  return accounts.map(account => {
+  return accounts.map((account) => {
     const category = categorizeAccount(account);
 
     // For assets: contribution is positive balance
     // For liabilities: contribution is the balance (which should already be negative)
     // If liability balance is stored as positive, make it negative
-    const contribution = category === 'asset'
-      ? account.balance
-      : account.balance.isPositive() ? account.balance.neg() : account.balance;
+    const contribution =
+      category === 'asset'
+        ? account.balance
+        : account.balance.isPositive()
+          ? account.balance.neg()
+          : account.balance;
 
     return {
       accountId: Number(account.id),
@@ -161,7 +166,7 @@ function createAccountBreakdown(accounts: AccountForBreakdown[]): AccountBreakdo
       accountType: account.accountType,
       category,
       balance: account.balance.toFixed(2),
-      contribution: contribution.toFixed(2)
+      contribution: contribution.toFixed(2),
     };
   });
 }
@@ -188,15 +193,15 @@ export async function calculateNetworth(
     where: {
       userId,
       partnerId,
-      includeInNetworth: true,  // CRITICAL: respect user preference
-      archivedAt: null,         // Exclude archived accounts
-      state: AccountState.active // Only active accounts
+      includeInNetworth: true, // CRITICAL: respect user preference
+      archivedAt: null, // Exclude archived accounts
+      state: AccountState.active, // Only active accounts
     },
     select: {
       id: true,
       accountType: true,
-      balance: true
-    }
+      balance: true,
+    },
   });
 
   // Calculate assets and liabilities with Decimal precision
@@ -208,7 +213,7 @@ export async function calculateNetworth(
     assets: assets.toFixed(2),
     liabilities: liabilities.toFixed(2),
     networth: networth.toFixed(2),
-    asOfDate: (asOfDate || new Date()).toISOString()
+    asOfDate: (asOfDate || new Date()).toISOString(),
   };
 }
 
@@ -230,17 +235,17 @@ export async function calculateNetworthWithBreakdown(
     where: {
       userId,
       partnerId,
-      includeInNetworth: true,  // CRITICAL: respect user preference
-      archivedAt: null,         // Exclude archived accounts
-      state: AccountState.active // Only active accounts
+      includeInNetworth: true, // CRITICAL: respect user preference
+      archivedAt: null, // Exclude archived accounts
+      state: AccountState.active, // Only active accounts
     },
     select: {
       id: true,
       name: true,
       displayName: true,
       accountType: true,
-      balance: true
-    }
+      balance: true,
+    },
   });
 
   // Calculate totals
@@ -252,8 +257,8 @@ export async function calculateNetworthWithBreakdown(
   const breakdown = createAccountBreakdown(accounts);
 
   // Separate assets and liabilities
-  const assetAccounts = breakdown.filter(a => a.category === 'asset');
-  const liabilityAccounts = breakdown.filter(a => a.category === 'liability');
+  const assetAccounts = breakdown.filter((a) => a.category === 'asset');
+  const liabilityAccounts = breakdown.filter((a) => a.category === 'liability');
 
   return {
     assets: assets.toFixed(2),
@@ -262,8 +267,8 @@ export async function calculateNetworthWithBreakdown(
     asOfDate: (asOfDate || new Date()).toISOString(),
     breakdown: {
       assets: assetAccounts,
-      liabilities: liabilityAccounts
-    }
+      liabilities: liabilityAccounts,
+    },
   };
 }
 
@@ -281,18 +286,20 @@ export async function calculateNetworthWithBreakdown(
 export async function calculateHistoricalNetworth(
   userId: bigint,
   partnerId: bigint,
-  months: number
+  _months: number
 ): Promise<NetworthHistory[]> {
   // TODO: Implement once balance history tracking is added
   // For now, return current networth only
   const current = await calculateNetworth(userId, partnerId);
   const now = new Date();
 
-  return [{
-    month: now.toISOString().substring(0, 7), // YYYY-MM format
-    year: now.getFullYear(),
-    assets: current.assets,
-    liabilities: current.liabilities,
-    networth: current.networth
-  }];
+  return [
+    {
+      month: now.toISOString().substring(0, 7), // YYYY-MM format
+      year: now.getFullYear(),
+      assets: current.assets,
+      liabilities: current.liabilities,
+      networth: current.networth,
+    },
+  ];
 }

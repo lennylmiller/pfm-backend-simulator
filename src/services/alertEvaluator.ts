@@ -4,7 +4,15 @@
  * Designed to be called by background jobs or real-time triggers
  */
 
-import { PrismaClient, Alert, Account, Goal, Budget, CashflowBill, Transaction } from '@prisma/client';
+import {
+  PrismaClient,
+  Alert,
+  Account,
+  Goal,
+  Budget,
+  CashflowBill,
+  Transaction,
+} from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
 import { createNotification } from './alertService';
 
@@ -62,8 +70,8 @@ export class AccountThresholdEvaluator implements AlertEvaluator {
         account_id: data.account.id.toString(),
         current_balance: data.account.balance.toFixed(2),
         threshold: conditions.threshold,
-        direction
-      }
+        direction,
+      },
     });
   }
 }
@@ -112,8 +120,8 @@ export class GoalEvaluator implements AlertEvaluator {
         goal_id: data.goal.id.toString(),
         goal_type: data.goal.goalType,
         progress: data.progress,
-        milestone: conditions.milestone_percentage
-      }
+        milestone: conditions.milestone_percentage,
+      },
     });
   }
 }
@@ -152,8 +160,8 @@ export class MerchantNameEvaluator implements AlertEvaluator {
         transaction_id: data.transaction.id.toString(),
         merchant_name: data.transaction.merchantName,
         amount: data.transaction.amount.abs().toFixed(2),
-        pattern: conditions.merchant_pattern
-      }
+        pattern: conditions.merchant_pattern,
+      },
     });
   }
 }
@@ -172,7 +180,10 @@ export class SpendingTargetEvaluator implements AlertEvaluator {
     return percentUsed >= thresholdPercentage;
   }
 
-  async createNotification(alert: Alert, data: { budget: Budget; spent: Decimal; percentUsed: number }): Promise<void> {
+  async createNotification(
+    alert: Alert,
+    data: { budget: Budget; spent: Decimal; percentUsed: number }
+  ): Promise<void> {
     const conditions = alert.conditions as any;
 
     await createNotification(alert.userId, {
@@ -184,8 +195,8 @@ export class SpendingTargetEvaluator implements AlertEvaluator {
         spent: data.spent.toFixed(2),
         budget_amount: data.budget.budgetAmount.toFixed(2),
         percent_used: data.percentUsed,
-        threshold: conditions.threshold_percentage
-      }
+        threshold: conditions.threshold_percentage,
+      },
     });
   }
 }
@@ -214,8 +225,8 @@ export class TransactionLimitEvaluator implements AlertEvaluator {
         transaction_id: data.transaction.id.toString(),
         amount: data.transaction.amount.abs().toFixed(2),
         limit: conditions.amount,
-        description: data.transaction.description
-      }
+        description: data.transaction.description,
+      },
     });
   }
 }
@@ -225,7 +236,10 @@ export class TransactionLimitEvaluator implements AlertEvaluator {
 // =============================================================================
 
 export class UpcomingBillEvaluator implements AlertEvaluator {
-  async evaluateAlert(alert: Alert, data: { bill: CashflowBill; daysUntilDue: number }): Promise<boolean> {
+  async evaluateAlert(
+    alert: Alert,
+    data: { bill: CashflowBill; daysUntilDue: number }
+  ): Promise<boolean> {
     const conditions = alert.conditions as any;
     const daysBefore = conditions.days_before;
 
@@ -233,12 +247,18 @@ export class UpcomingBillEvaluator implements AlertEvaluator {
     return data.daysUntilDue <= daysBefore && data.daysUntilDue >= 0;
   }
 
-  async createNotification(alert: Alert, data: { bill: CashflowBill; daysUntilDue: number; dueDate: Date }): Promise<void> {
+  async createNotification(
+    alert: Alert,
+    data: { bill: CashflowBill; daysUntilDue: number; dueDate: Date }
+  ): Promise<void> {
     const conditions = alert.conditions as any;
 
-    const daysText = data.daysUntilDue === 0 ? 'today' :
-                     data.daysUntilDue === 1 ? 'tomorrow' :
-                     `in ${data.daysUntilDue} days`;
+    const daysText =
+      data.daysUntilDue === 0
+        ? 'today'
+        : data.daysUntilDue === 1
+          ? 'tomorrow'
+          : `in ${data.daysUntilDue} days`;
 
     await createNotification(alert.userId, {
       alertId: alert.id,
@@ -249,8 +269,8 @@ export class UpcomingBillEvaluator implements AlertEvaluator {
         amount: data.bill.amount.toFixed(2),
         due_date: data.dueDate.toISOString().split('T')[0],
         days_until_due: data.daysUntilDue,
-        days_before_alert: conditions.days_before
-      }
+        days_before_alert: conditions.days_before,
+      },
     });
   }
 }
@@ -291,8 +311,8 @@ export async function evaluateAllUserAlerts(userId: bigint): Promise<void> {
     where: {
       userId,
       active: true,
-      deletedAt: null
-    }
+      deletedAt: null,
+    },
   });
 
   for (const alert of alerts) {
@@ -312,10 +332,10 @@ export async function evaluateAlert(alert: Alert): Promise<void> {
       case 'account_threshold': {
         const accountId = BigInt(conditions.account_id);
         const account = await prisma.account.findUnique({
-          where: { id: accountId }
+          where: { id: accountId },
         });
 
-        if (account && await evaluator.evaluateAlert(alert, account)) {
+        if (account && (await evaluator.evaluateAlert(alert, account))) {
           await evaluator.createNotification(alert, { account });
           await updateAlertLastTriggered(alert.id);
         }
@@ -325,10 +345,10 @@ export async function evaluateAlert(alert: Alert): Promise<void> {
       case 'goal': {
         const goalId = BigInt(conditions.goal_id);
         const goal = await prisma.goal.findUnique({
-          where: { id: goalId }
+          where: { id: goalId },
         });
 
-        if (goal && await evaluator.evaluateAlert(alert, goal)) {
+        if (goal && (await evaluator.evaluateAlert(alert, goal))) {
           // Calculate progress for notification
           let progress = 0;
           const metadata = goal.metadata as any;
@@ -357,7 +377,7 @@ export async function evaluateAlert(alert: Alert): Promise<void> {
       case 'spending_target': {
         const budgetId = BigInt(conditions.budget_id);
         const budget = await prisma.budget.findUnique({
-          where: { id: budgetId }
+          where: { id: budgetId },
         });
 
         if (budget) {
@@ -387,7 +407,7 @@ export async function evaluateAlert(alert: Alert): Promise<void> {
 async function updateAlertLastTriggered(alertId: bigint): Promise<void> {
   await prisma.alert.update({
     where: { id: alertId },
-    data: { lastTriggeredAt: new Date() }
+    data: { lastTriggeredAt: new Date() },
   });
 }
 
@@ -405,12 +425,12 @@ async function calculateBudgetSpent(budget: Budget): Promise<Decimal> {
       accountId: budget.accountList.length > 0 ? { in: budget.accountList } : undefined,
       postedAt: { gte: firstDay, lte: lastDay },
       deletedAt: null,
-      amount: { lt: 0 }
-    }
+      amount: { lt: 0 },
+    },
   });
 
   // Filter by tag names if budget has tags
-  let matchingTxs = transactions;
+  const matchingTxs = transactions;
   if (budget.tagNames.length > 0) {
     // This would require joining with tags table
     // For now, just sum all transactions

@@ -50,7 +50,10 @@ export async function generateAccounts(userId: bigint, partnerId: bigint, count:
         userId,
         partnerId,
         name: accountName,
-        displayName: faker.helpers.maybe(() => `${accountName} (${faker.finance.accountNumber(4)})`, { probability: 0.5 }),
+        displayName: faker.helpers.maybe(
+          () => `${accountName} (${faker.finance.accountNumber(4)})`,
+          { probability: 0.5 }
+        ),
         number: faker.finance.accountNumber(),
         referenceId: faker.string.uuid(),
         accountType,

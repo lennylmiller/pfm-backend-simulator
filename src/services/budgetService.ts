@@ -37,7 +37,7 @@ export const budgetService = {
 
     return {
       budgets,
-      meta: mockData.meta
+      meta: mockData.meta,
     };
   },
 
@@ -57,8 +57,8 @@ export const budgetService = {
       budget_amount: data.budget_amount,
       tag_names: data.tag_names || [],
       links: {
-        accounts: data.accounts || []
-      }
+        accounts: data.accounts || [],
+      },
     };
 
     budgetStore.set(newBudget.id.toString(), newBudget);
@@ -81,7 +81,7 @@ export const budgetService = {
     Object.assign(budget, {
       name: data.name !== undefined ? data.name : budget.name,
       budget_amount: data.budget_amount !== undefined ? data.budget_amount : budget.budget_amount,
-      tag_names: data.tag_names !== undefined ? data.tag_names : budget.tag_names
+      tag_names: data.tag_names !== undefined ? data.tag_names : budget.tag_names,
     });
 
     return budget;
@@ -90,5 +90,5 @@ export const budgetService = {
   async deleteBudget(userId: string, budgetId: string) {
     budgetStore.delete(budgetId);
     return;
-  }
+  },
 };

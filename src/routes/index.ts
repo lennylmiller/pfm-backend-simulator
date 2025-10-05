@@ -1,9 +1,6 @@
 import { Router } from 'express';
-import accountsRoutes from './accounts';
 import usersRoutes from './users';
 import partnersRoutes from './partners';
-import budgetsRoutes from './budgets';
-import tagsRoutes from './tags';
 import goalImagesRoutes from './goalImages';
 import cashflowRoutes from './cashflow';
 import alertsRoutes from './alerts';

@@ -18,19 +18,40 @@ const eventTypeValues = ['income', 'expense'] as const;
 export const BillCreateSchema = z.object({
   name: z.string().min(1, 'Name is required').max(255, 'Name must be 255 characters or less'),
   amount: z.string().regex(/^\d+(\.\d{2})?$/, 'Must be a decimal with 2 places'),
-  due_date: z.number().int().min(1, 'Due date must be between 1-31').max(31, 'Due date must be between 1-31'),
+  due_date: z
+    .number()
+    .int()
+    .min(1, 'Due date must be between 1-31')
+    .max(31, 'Due date must be between 1-31'),
   recurrence: z.enum(recurrenceValues).default('monthly'),
-  category_id: z.union([z.string(), z.number()]).transform(val => BigInt(val)).optional(),
-  account_id: z.union([z.string(), z.number()]).transform(val => BigInt(val)).optional()
+  category_id: z
+    .union([z.string(), z.number()])
+    .transform((val) => BigInt(val))
+    .optional(),
+  account_id: z
+    .union([z.string(), z.number()])
+    .transform((val) => BigInt(val))
+    .optional(),
 });
 
 export const BillUpdateSchema = z.object({
   name: z.string().min(1).max(255).optional(),
-  amount: z.string().regex(/^\d+(\.\d{2})?$/).optional(),
+  amount: z
+    .string()
+    .regex(/^\d+(\.\d{2})?$/)
+    .optional(),
   due_date: z.number().int().min(1).max(31).optional(),
   recurrence: z.enum(recurrenceValues).optional(),
-  category_id: z.union([z.string(), z.number()]).transform(val => BigInt(val)).optional().nullable(),
-  account_id: z.union([z.string(), z.number()]).transform(val => BigInt(val)).optional().nullable()
+  category_id: z
+    .union([z.string(), z.number()])
+    .transform((val) => BigInt(val))
+    .optional()
+    .nullable(),
+  account_id: z
+    .union([z.string(), z.number()])
+    .transform((val) => BigInt(val))
+    .optional()
+    .nullable(),
 });
 
 // =============================================================================
@@ -40,19 +61,40 @@ export const BillUpdateSchema = z.object({
 export const IncomeCreateSchema = z.object({
   name: z.string().min(1, 'Name is required').max(255, 'Name must be 255 characters or less'),
   amount: z.string().regex(/^\d+(\.\d{2})?$/, 'Must be a decimal with 2 places'),
-  receive_date: z.number().int().min(1, 'Receive date must be between 1-31').max(31, 'Receive date must be between 1-31'),
+  receive_date: z
+    .number()
+    .int()
+    .min(1, 'Receive date must be between 1-31')
+    .max(31, 'Receive date must be between 1-31'),
   recurrence: z.enum(recurrenceValues).default('monthly'),
-  category_id: z.union([z.string(), z.number()]).transform(val => BigInt(val)).optional(),
-  account_id: z.union([z.string(), z.number()]).transform(val => BigInt(val)).optional()
+  category_id: z
+    .union([z.string(), z.number()])
+    .transform((val) => BigInt(val))
+    .optional(),
+  account_id: z
+    .union([z.string(), z.number()])
+    .transform((val) => BigInt(val))
+    .optional(),
 });
 
 export const IncomeUpdateSchema = z.object({
   name: z.string().min(1).max(255).optional(),
-  amount: z.string().regex(/^\d+(\.\d{2})?$/).optional(),
+  amount: z
+    .string()
+    .regex(/^\d+(\.\d{2})?$/)
+    .optional(),
   receive_date: z.number().int().min(1).max(31).optional(),
   recurrence: z.enum(recurrenceValues).optional(),
-  category_id: z.union([z.string(), z.number()]).transform(val => BigInt(val)).optional().nullable(),
-  account_id: z.union([z.string(), z.number()]).transform(val => BigInt(val)).optional().nullable()
+  category_id: z
+    .union([z.string(), z.number()])
+    .transform((val) => BigInt(val))
+    .optional()
+    .nullable(),
+  account_id: z
+    .union([z.string(), z.number()])
+    .transform((val) => BigInt(val))
+    .optional()
+    .nullable(),
 });
 
 // =============================================================================
@@ -61,12 +103,19 @@ export const IncomeUpdateSchema = z.object({
 
 export const EventUpdateSchema = z.object({
   name: z.string().min(1).max(255).optional(),
-  amount: z.string().regex(/^-?\d+(\.\d{2})?$/).optional(),
+  amount: z
+    .string()
+    .regex(/^-?\d+(\.\d{2})?$/)
+    .optional(),
   event_date: z.string().datetime('Must be a valid ISO 8601 datetime').optional(),
   event_type: z.enum(eventTypeValues).optional(),
-  account_id: z.union([z.string(), z.number()]).transform(val => BigInt(val)).optional().nullable(),
+  account_id: z
+    .union([z.string(), z.number()])
+    .transform((val) => BigInt(val))
+    .optional()
+    .nullable(),
   processed: z.boolean().optional(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.any()).optional(),
 });
 
 // =============================================================================
@@ -76,7 +125,7 @@ export const EventUpdateSchema = z.object({
 export const CashflowSettingsSchema = z.object({
   auto_categorize: z.boolean().optional(),
   show_projections: z.boolean().optional(),
-  projection_days: z.number().int().min(30).max(365).optional()
+  projection_days: z.number().int().min(30).max(365).optional(),
 });
 
 // =============================================================================
@@ -90,9 +139,9 @@ export function validateBillCreate(data: unknown): any {
     if (error instanceof z.ZodError) {
       const validationError: any = new Error('Validation failed');
       validationError.name = 'ValidationError';
-      validationError.errors = error.errors.map(err => ({
+      validationError.errors = error.errors.map((err) => ({
         field: err.path.join('.'),
-        message: err.message
+        message: err.message,
       }));
       throw validationError;
     }
@@ -107,9 +156,9 @@ export function validateBillUpdate(data: unknown): any {
     if (error instanceof z.ZodError) {
       const validationError: any = new Error('Validation failed');
       validationError.name = 'ValidationError';
-      validationError.errors = error.errors.map(err => ({
+      validationError.errors = error.errors.map((err) => ({
         field: err.path.join('.'),
-        message: err.message
+        message: err.message,
       }));
       throw validationError;
     }
@@ -124,9 +173,9 @@ export function validateIncomeCreate(data: unknown): any {
     if (error instanceof z.ZodError) {
       const validationError: any = new Error('Validation failed');
       validationError.name = 'ValidationError';
-      validationError.errors = error.errors.map(err => ({
+      validationError.errors = error.errors.map((err) => ({
         field: err.path.join('.'),
-        message: err.message
+        message: err.message,
       }));
       throw validationError;
     }
@@ -141,9 +190,9 @@ export function validateIncomeUpdate(data: unknown): any {
     if (error instanceof z.ZodError) {
       const validationError: any = new Error('Validation failed');
       validationError.name = 'ValidationError';
-      validationError.errors = error.errors.map(err => ({
+      validationError.errors = error.errors.map((err) => ({
         field: err.path.join('.'),
-        message: err.message
+        message: err.message,
       }));
       throw validationError;
     }
@@ -158,9 +207,9 @@ export function validateEventUpdate(data: unknown): any {
     if (error instanceof z.ZodError) {
       const validationError: any = new Error('Validation failed');
       validationError.name = 'ValidationError';
-      validationError.errors = error.errors.map(err => ({
+      validationError.errors = error.errors.map((err) => ({
         field: err.path.join('.'),
-        message: err.message
+        message: err.message,
       }));
       throw validationError;
     }
@@ -175,9 +224,9 @@ export function validateCashflowSettings(data: unknown): any {
     if (error instanceof z.ZodError) {
       const validationError: any = new Error('Validation failed');
       validationError.name = 'ValidationError';
-      validationError.errors = error.errors.map(err => ({
+      validationError.errors = error.errors.map((err) => ({
         field: err.path.join('.'),
-        message: err.message
+        message: err.message,
       }));
       throw validationError;
     }

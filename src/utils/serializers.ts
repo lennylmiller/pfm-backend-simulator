@@ -7,7 +7,7 @@
  * Convert camelCase keys to snake_case recursively
  */
 function toSnakeCase(str: string): string {
-  return str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+  return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
 }
 
 /**
@@ -19,7 +19,7 @@ export function snakeCaseKeys(obj: any): any {
   }
 
   if (Array.isArray(obj)) {
-    return obj.map(item => snakeCaseKeys(item));
+    return obj.map((item) => snakeCaseKeys(item));
   }
 
   if (typeof obj === 'object' && obj.constructor === Object) {
@@ -43,7 +43,7 @@ export function serializeSpecialTypes(obj: any): any {
   }
 
   if (Array.isArray(obj)) {
-    return obj.map(item => serializeSpecialTypes(item));
+    return obj.map((item) => serializeSpecialTypes(item));
   }
 
   if (typeof obj === 'bigint') {
@@ -130,7 +130,12 @@ export function extractImageName(url: string | null | undefined): string | null 
 /**
  * Serialize Goal to Payoff or Savings format
  */
-export function serializeGoal(goal: any, type: 'payoff' | 'savings', calculateProgress: (goal: any) => number, calculateStatus: (goal: any) => string): any {
+export function serializeGoal(
+  goal: any,
+  type: 'payoff' | 'savings',
+  calculateProgress: (goal: any) => number,
+  calculateStatus: (goal: any) => string
+): any {
   const progress = calculateProgress(goal);
   const status = calculateStatus(goal);
   const metadata = goal.metadata as any;
@@ -154,8 +159,8 @@ export function serializeGoal(goal: any, type: 'payoff' | 'savings', calculatePr
       created_at: serializeDate(goal.createdAt),
       updated_at: serializeDate(goal.updatedAt),
       links: {
-        accounts: goal.accountId ? [serializeBigInt(goal.accountId)] : []
-      }
+        accounts: goal.accountId ? [serializeBigInt(goal.accountId)] : [],
+      },
     };
   } else {
     // Savings goal
@@ -173,12 +178,14 @@ export function serializeGoal(goal: any, type: 'payoff' | 'savings', calculatePr
       target_completion_on: goal.targetDate ? serializeDateOnly(goal.targetDate) : null,
       image_name: extractImageName(goal.imageUrl),
       image_url: goal.imageUrl,
-      complete: parseFloat(serializeDecimal(goal.currentAmount)) >= parseFloat(serializeDecimal(goal.targetAmount)),
+      complete:
+        parseFloat(serializeDecimal(goal.currentAmount)) >=
+        parseFloat(serializeDecimal(goal.targetAmount)),
       created_at: serializeDate(goal.createdAt),
       updated_at: serializeDate(goal.updatedAt),
       links: {
-        accounts: goal.accountId ? [serializeBigInt(goal.accountId)] : []
-      }
+        accounts: goal.accountId ? [serializeBigInt(goal.accountId)] : [],
+      },
     };
   }
 }
@@ -192,7 +199,7 @@ export function serializeTag(tag: any, transactionCount?: number): any {
     id: serializeBigInt(tag.id),
     name: tag.name,
     parent_tag_id: tag.parentTagId ? serializeBigInt(tag.parentTagId) : null,
-    tag_type: tag.tagType
+    tag_type: tag.tagType,
   };
 
   // Only include transaction_count if provided
@@ -225,8 +232,8 @@ export function serializeBill(bill: any): any {
     updated_at: bill.updatedAt.toISOString(),
     links: {
       category: bill.categoryId ? serializeBigInt(bill.categoryId) : null,
-      account: bill.accountId ? serializeBigInt(bill.accountId) : null
-    }
+      account: bill.accountId ? serializeBigInt(bill.accountId) : null,
+    },
   };
 }
 
@@ -248,8 +255,8 @@ export function serializeIncome(income: any): any {
     updated_at: income.updatedAt.toISOString(),
     links: {
       category: income.categoryId ? serializeBigInt(income.categoryId) : null,
-      account: income.accountId ? serializeBigInt(income.accountId) : null
-    }
+      account: income.accountId ? serializeBigInt(income.accountId) : null,
+    },
   };
 }
 
@@ -263,13 +270,14 @@ export function serializeEvent(event: any): any {
     source_id: event.sourceId ? serializeBigInt(event.sourceId) : null,
     name: event.name,
     amount: event.amount.toFixed(2),
-    event_date: event.eventDate instanceof Date
-      ? event.eventDate.toISOString().split('T')[0]
-      : event.eventDate,
+    event_date:
+      event.eventDate instanceof Date
+        ? event.eventDate.toISOString().split('T')[0]
+        : event.eventDate,
     event_type: event.eventType,
     account_id: event.accountId ? serializeBigInt(event.accountId) : null,
     processed: event.processed,
-    metadata: event.metadata || {}
+    metadata: event.metadata || {},
   };
 }
 
@@ -291,8 +299,8 @@ export function serializeCashflowSummary(summary: any): any {
     settings: {
       auto_categorize: true,
       show_projections: true,
-      projection_days: 90
-    }
+      projection_days: 90,
+    },
   };
 }
 
@@ -317,7 +325,7 @@ export function serializeAlert(alert: any): any {
     last_triggered_at: alert.lastTriggeredAt ? serializeDate(alert.lastTriggeredAt) : null,
     created_at: serializeDate(alert.createdAt),
     updated_at: serializeDate(alert.updatedAt),
-    links: {}
+    links: {},
   };
 
   // Add type-specific fields
@@ -329,8 +337,8 @@ export function serializeAlert(alert: any): any {
         threshold: conditions.threshold,
         direction: conditions.direction,
         links: {
-          account: alert.sourceId ? serializeBigInt(alert.sourceId) : null
-        }
+          account: alert.sourceId ? serializeBigInt(alert.sourceId) : null,
+        },
       };
 
     case 'goal':
@@ -339,8 +347,8 @@ export function serializeAlert(alert: any): any {
         goal_id: alert.sourceId ? serializeBigInt(alert.sourceId) : null,
         milestone_percentage: conditions.milestone_percentage,
         links: {
-          goal: alert.sourceId ? serializeBigInt(alert.sourceId) : null
-        }
+          goal: alert.sourceId ? serializeBigInt(alert.sourceId) : null,
+        },
       };
 
     case 'merchant_name':
@@ -348,7 +356,7 @@ export function serializeAlert(alert: any): any {
         ...base,
         merchant_pattern: conditions.merchant_pattern,
         match_type: conditions.match_type,
-        links: {}
+        links: {},
       };
 
     case 'spending_target':
@@ -357,8 +365,8 @@ export function serializeAlert(alert: any): any {
         budget_id: alert.sourceId ? serializeBigInt(alert.sourceId) : null,
         threshold_percentage: conditions.threshold_percentage,
         links: {
-          budget: alert.sourceId ? serializeBigInt(alert.sourceId) : null
-        }
+          budget: alert.sourceId ? serializeBigInt(alert.sourceId) : null,
+        },
       };
 
     case 'transaction_limit':
@@ -367,8 +375,8 @@ export function serializeAlert(alert: any): any {
         account_id: alert.sourceId ? serializeBigInt(alert.sourceId) : null,
         amount: conditions.amount,
         links: {
-          ...(alert.sourceId && { account: serializeBigInt(alert.sourceId) })
-        }
+          ...(alert.sourceId && { account: serializeBigInt(alert.sourceId) }),
+        },
       };
 
     case 'upcoming_bill':
@@ -377,8 +385,8 @@ export function serializeAlert(alert: any): any {
         bill_id: alert.sourceId ? serializeBigInt(alert.sourceId) : null,
         days_before: conditions.days_before,
         links: {
-          bill: alert.sourceId ? serializeBigInt(alert.sourceId) : null
-        }
+          bill: alert.sourceId ? serializeBigInt(alert.sourceId) : null,
+        },
       };
 
     default:
@@ -411,9 +419,11 @@ export function serializeNotification(notification: any): any {
       ...(metadata.account_id && { account: serializeBigInt(BigInt(metadata.account_id)) }),
       ...(metadata.goal_id && { goal: serializeBigInt(BigInt(metadata.goal_id)) }),
       ...(metadata.budget_id && { budget: serializeBigInt(BigInt(metadata.budget_id)) }),
-      ...(metadata.transaction_id && { transaction: serializeBigInt(BigInt(metadata.transaction_id)) }),
-      ...(metadata.bill_id && { bill: serializeBigInt(BigInt(metadata.bill_id)) })
-    }
+      ...(metadata.transaction_id && {
+        transaction: serializeBigInt(BigInt(metadata.transaction_id)),
+      }),
+      ...(metadata.bill_id && { bill: serializeBigInt(BigInt(metadata.bill_id)) }),
+    },
   };
 }
 
@@ -432,7 +442,7 @@ export function serializeExpensesSummary(summary: any): any {
     period: summary.period,
     period_start: summary.startDate,
     period_end: summary.endDate,
-    categories: summary.breakdown ? serializeExpensesByCategory(summary.breakdown) : undefined
+    categories: summary.breakdown ? serializeExpensesByCategory(summary.breakdown) : undefined,
   };
 }
 
@@ -440,13 +450,13 @@ export function serializeExpensesSummary(summary: any): any {
  * Serialize category expenses array
  */
 export function serializeExpensesByCategory(categories: any[]): any[] {
-  return categories.map(cat => ({
+  return categories.map((cat) => ({
     tag_id: cat.tagId,
     tag_name: cat.tagName || cat.category,
     amount: cat.total,
     transaction_count: cat.count,
     average_amount: cat.average,
-    percent_of_total: cat.percentage
+    percent_of_total: cat.percentage,
   }));
 }
 
@@ -454,13 +464,13 @@ export function serializeExpensesByCategory(categories: any[]): any[] {
  * Serialize merchant expenses array
  */
 export function serializeExpensesByMerchant(merchants: any[]): any[] {
-  return merchants.map(m => ({
+  return merchants.map((m) => ({
     merchant: m.merchant,
     amount: m.total,
     transaction_count: m.count,
     average_amount: m.average,
     percent_of_total: m.percentage,
-    last_transaction_date: m.lastDate
+    last_transaction_date: m.lastDate,
   }));
 }
 
@@ -481,8 +491,8 @@ export function serializeExpensesByTag(expenses: any): any {
       merchant_name: t.merchantName,
       amount: serializeDecimal(t.amount),
       posted_at: serializeDate(t.postedAt),
-      primary_tag_id: t.primaryTagId ? serializeBigInt(t.primaryTagId) : null
-    }))
+      primary_tag_id: t.primaryTagId ? serializeBigInt(t.primaryTagId) : null,
+    })),
   };
 }
 
@@ -490,12 +500,12 @@ export function serializeExpensesByTag(expenses: any): any {
  * Serialize monthly trends array
  */
 export function serializeExpensesTrends(trends: any[]): any[] {
-  return trends.map(t => ({
+  return trends.map((t) => ({
     month: t.month,
     year: t.year,
     total: t.total,
     count: t.count,
-    average: t.average
+    average: t.average,
   }));
 }
 
@@ -507,15 +517,15 @@ export function serializeExpensesComparison(comparison: any): any {
     this_month: {
       total: comparison.thisMonth.total,
       count: comparison.thisMonth.count,
-      average: comparison.thisMonth.average
+      average: comparison.thisMonth.average,
     },
     last_month: {
       total: comparison.lastMonth.total,
       count: comparison.lastMonth.count,
-      average: comparison.lastMonth.average
+      average: comparison.lastMonth.average,
     },
     difference: comparison.difference,
-    percentage_change: comparison.percentageChange
+    percentage_change: comparison.percentageChange,
   };
 }
 
@@ -531,7 +541,7 @@ export function serializeNetworth(networth: any): any {
     assets: networth.assets,
     liabilities: networth.liabilities,
     networth: networth.networth,
-    as_of_date: networth.asOfDate
+    as_of_date: networth.asOfDate,
   };
 }
 
@@ -544,7 +554,7 @@ function serializeAccountBreakdown(account: any): any {
     account_name: account.accountName,
     account_type: account.accountType,
     balance: account.balance,
-    contribution: account.contribution
+    contribution: account.contribution,
   };
 }
 
@@ -558,6 +568,6 @@ export function serializeNetworthDetailed(detailed: any): any {
     networth: detailed.networth,
     as_of_date: detailed.asOfDate,
     asset_accounts: detailed.breakdown.assets.map(serializeAccountBreakdown),
-    liability_accounts: detailed.breakdown.liabilities.map(serializeAccountBreakdown)
+    liability_accounts: detailed.breakdown.liabilities.map(serializeAccountBreakdown),
   };
 }

@@ -12,7 +12,7 @@ import {
   subDays,
   format,
   startOfDay,
-  endOfDay
+  endOfDay,
 } from 'date-fns';
 
 // =============================================================================
@@ -95,24 +95,28 @@ export interface PeriodSummary {
 /**
  * Get date range for predefined periods
  */
-function getPeriodDates(period: string, startDate?: Date, endDate?: Date): { startDate: Date; endDate: Date } {
+function getPeriodDates(
+  period: string,
+  startDate?: Date,
+  endDate?: Date
+): { startDate: Date; endDate: Date } {
   const now = new Date();
 
   switch (period) {
     case 'this_month':
       return {
         startDate: startOfMonth(now),
-        endDate: endOfMonth(now)
+        endDate: endOfMonth(now),
       };
     case 'last_month':
       return {
         startDate: startOfMonth(subMonths(now, 1)),
-        endDate: endOfMonth(subMonths(now, 1))
+        endDate: endOfMonth(subMonths(now, 1)),
       };
     case 'last_thirty_days':
       return {
         startDate: subDays(now, 30),
-        endDate: now
+        endDate: now,
       };
     case 'custom':
       if (!startDate || !endDate) {
@@ -120,10 +124,12 @@ function getPeriodDates(period: string, startDate?: Date, endDate?: Date): { sta
       }
       return {
         startDate: startOfDay(startDate),
-        endDate: endOfDay(endDate)
+        endDate: endOfDay(endDate),
       };
     default:
-      throw new Error('Invalid period. Must be: this_month, last_month, last_thirty_days, or custom');
+      throw new Error(
+        'Invalid period. Must be: this_month, last_month, last_thirty_days, or custom'
+      );
   }
 }
 
@@ -187,11 +193,7 @@ export async function getExpensesSummary(
     excludeTagIds?: bigint[];
   }
 ): Promise<ExpensesSummary> {
-  const { startDate, endDate } = getPeriodDates(
-    options.period,
-    options.startDate,
-    options.endDate
-  );
+  const { startDate, endDate } = getPeriodDates(options.period, options.startDate, options.endDate);
 
   // Build transaction filter
   const where: any = {
@@ -199,9 +201,9 @@ export async function getExpensesSummary(
     transactionType: 'debit',
     postedAt: {
       gte: startDate,
-      lte: endDate
+      lte: endDate,
     },
-    deletedAt: null
+    deletedAt: null,
   };
 
   // Apply tag filtering
@@ -222,9 +224,9 @@ export async function getExpensesSummary(
       merchantName: true,
       primaryTagId: true,
       postedAt: true,
-      description: true
+      description: true,
     },
-    orderBy: { postedAt: 'desc' }
+    orderBy: { postedAt: 'desc' },
   });
 
   // Calculate total and count
@@ -254,7 +256,7 @@ export async function getExpensesSummary(
     period: options.period,
     startDate: format(startDate, 'yyyy-MM-dd'),
     endDate: format(endDate, 'yyyy-MM-dd'),
-    breakdown
+    breakdown,
   };
 }
 
@@ -274,14 +276,14 @@ export async function getExpensesByCategory(
       transactionType: 'debit',
       postedAt: {
         gte: startDate,
-        lte: endDate
+        lte: endDate,
       },
-      deletedAt: null
+      deletedAt: null,
     },
     select: {
       amount: true,
-      primaryTagId: true
-    }
+      primaryTagId: true,
+    },
   });
 
   // Calculate total for percentage calculations
@@ -298,7 +300,7 @@ export async function getExpensesByCategory(
     if (!grouped.has(key)) {
       grouped.set(key, {
         tagId: transaction.primaryTagId,
-        transactions: []
+        transactions: [],
       });
     }
     grouped.get(key)!.transactions.push(transaction);
@@ -306,22 +308,23 @@ export async function getExpensesByCategory(
 
   // Fetch tag names for all unique tag IDs
   const tagIds = Array.from(grouped.values())
-    .map(g => g.tagId)
+    .map((g) => g.tagId)
     .filter((id): id is bigint => id !== null);
 
-  const tags = tagIds.length > 0
-    ? await prisma.tag.findMany({
-        where: { id: { in: tagIds } },
-        select: { id: true, name: true }
-      })
-    : [];
+  const tags =
+    tagIds.length > 0
+      ? await prisma.tag.findMany({
+          where: { id: { in: tagIds } },
+          select: { id: true, name: true },
+        })
+      : [];
 
-  const tagMap = new Map(tags.map(t => [t.id.toString(), t.name]));
+  const tagMap = new Map(tags.map((t) => [t.id.toString(), t.name]));
 
   // Build category expense array
   const categories: CategoryExpense[] = [];
 
-  for (const [key, group] of grouped.entries()) {
+  for (const [, group] of grouped.entries()) {
     const tagTotal = group.transactions.reduce(
       (sum, t) => sum.add(absDecimal(new Decimal(t.amount.toString()))),
       new Decimal(0)
@@ -335,7 +338,7 @@ export async function getExpensesByCategory(
       count: group.transactions.length,
       average: calculateAverage(tagTotal, group.transactions.length),
       percentage: calculatePercentage(tagTotal, grandTotal),
-      transactions: group.transactions.length
+      transactions: group.transactions.length,
     });
   }
 
@@ -362,16 +365,16 @@ export async function getExpensesByMerchant(
       transactionType: 'debit',
       postedAt: {
         gte: startDate,
-        lte: endDate
+        lte: endDate,
       },
       deletedAt: null,
-      merchantName: { not: null }
+      merchantName: { not: null },
     },
     select: {
       amount: true,
       merchantName: true,
-      postedAt: true
-    }
+      postedAt: true,
+    },
   });
 
   // Calculate total for percentages
@@ -401,8 +404,8 @@ export async function getExpensesByMerchant(
     );
 
     // Find most recent transaction date
-    const latestDate = txns.reduce((latest, t) =>
-      t.postedAt > latest ? t.postedAt : latest,
+    const latestDate = txns.reduce(
+      (latest, t) => (t.postedAt > latest ? t.postedAt : latest),
       txns[0].postedAt
     );
 
@@ -412,7 +415,7 @@ export async function getExpensesByMerchant(
       count: txns.length,
       average: calculateAverage(merchantTotal, txns.length),
       percentage: calculatePercentage(merchantTotal, grandTotal),
-      lastDate: format(latestDate, 'yyyy-MM-dd')
+      lastDate: format(latestDate, 'yyyy-MM-dd'),
     });
   }
 
@@ -436,7 +439,7 @@ export async function getExpensesByTag(
   // Fetch tag information
   const tag = await prisma.tag.findUnique({
     where: { id: tagId },
-    select: { id: true, name: true }
+    select: { id: true, name: true },
   });
 
   if (!tag) {
@@ -451,9 +454,9 @@ export async function getExpensesByTag(
       transactionType: 'debit',
       postedAt: {
         gte: startDate,
-        lte: endDate
+        lte: endDate,
       },
-      deletedAt: null
+      deletedAt: null,
     },
     select: {
       id: true,
@@ -462,9 +465,9 @@ export async function getExpensesByTag(
       merchantName: true,
       amount: true,
       postedAt: true,
-      primaryTagId: true
+      primaryTagId: true,
     },
-    orderBy: { postedAt: 'desc' }
+    orderBy: { postedAt: 'desc' },
   });
 
   // Calculate totals
@@ -479,7 +482,7 @@ export async function getExpensesByTag(
     total: formatAmount(total),
     count: transactions.length,
     average: calculateAverage(total, transactions.length),
-    transactions
+    transactions,
   };
 }
 
@@ -507,13 +510,13 @@ export async function getExpensesTrends(
         transactionType: 'debit',
         postedAt: {
           gte: startDate,
-          lte: endDate
+          lte: endDate,
         },
-        deletedAt: null
+        deletedAt: null,
       },
       select: {
-        amount: true
-      }
+        amount: true,
+      },
     });
 
     // Calculate totals
@@ -527,7 +530,7 @@ export async function getExpensesTrends(
       year: monthDate.getFullYear(),
       total: formatAmount(total),
       count: transactions.length,
-      average: calculateAverage(total, transactions.length)
+      average: calculateAverage(total, transactions.length),
     });
   }
 
@@ -540,7 +543,7 @@ export async function getExpensesTrends(
  */
 export async function getExpensesComparison(
   userId: bigint,
-  partnerId: bigint
+  _partnerId: bigint
 ): Promise<ExpensesComparison> {
   const now = new Date();
 
@@ -559,11 +562,11 @@ export async function getExpensesComparison(
       transactionType: 'debit',
       postedAt: {
         gte: thisMonthStart,
-        lte: thisMonthEnd
+        lte: thisMonthEnd,
       },
-      deletedAt: null
+      deletedAt: null,
     },
-    select: { amount: true }
+    select: { amount: true },
   });
 
   // Fetch last month's transactions
@@ -573,11 +576,11 @@ export async function getExpensesComparison(
       transactionType: 'debit',
       postedAt: {
         gte: lastMonthStart,
-        lte: lastMonthEnd
+        lte: lastMonthEnd,
       },
-      deletedAt: null
+      deletedAt: null,
     },
-    select: { amount: true }
+    select: { amount: true },
   });
 
   // Calculate totals
@@ -599,14 +602,14 @@ export async function getExpensesComparison(
     thisMonth: {
       total: formatAmount(thisMonthTotal),
       count: thisMonthTxns.length,
-      average: calculateAverage(thisMonthTotal, thisMonthTxns.length)
+      average: calculateAverage(thisMonthTotal, thisMonthTxns.length),
     },
     lastMonth: {
       total: formatAmount(lastMonthTotal),
       count: lastMonthTxns.length,
-      average: calculateAverage(lastMonthTotal, lastMonthTxns.length)
+      average: calculateAverage(lastMonthTotal, lastMonthTxns.length),
     },
     difference: formatAmount(difference),
-    percentageChange
+    percentageChange,
   };
 }

@@ -67,11 +67,7 @@ program
       console.log(`Generating ${transactionCount} transactions per account...`);
       let totalTransactions = 0;
       for (const account of accounts) {
-        await generators.generateTransactions(
-          account.userId,
-          account.id,
-          transactionCount
-        );
+        await generators.generateTransactions(account.userId, account.id, transactionCount);
         totalTransactions += transactionCount;
       }
       console.log(`✓ Generated ${totalTransactions} transactions\n`);

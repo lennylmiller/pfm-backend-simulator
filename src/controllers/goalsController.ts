@@ -11,20 +11,64 @@ import { logger } from '../config/logger';
 
 // Static goal image data
 const PAYOFF_GOAL_IMAGES = [
-  { id: 'credit_card', name: 'Credit Card', image_url: 'https://content.geezeo.com/images/payoff_goal_images/credit_card.jpg' },
-  { id: 'student_loan', name: 'Student Loan', image_url: 'https://content.geezeo.com/images/payoff_goal_images/student_loan.jpg' },
-  { id: 'car_loan', name: 'Car Loan', image_url: 'https://content.geezeo.com/images/payoff_goal_images/car_loan.jpg' },
-  { id: 'mortgage', name: 'Mortgage', image_url: 'https://content.geezeo.com/images/payoff_goal_images/mortgage.jpg' },
-  { id: 'personal_loan', name: 'Personal Loan', image_url: 'https://content.geezeo.com/images/payoff_goal_images/personal_loan.jpg' }
+  {
+    id: 'credit_card',
+    name: 'Credit Card',
+    image_url: 'https://content.geezeo.com/images/payoff_goal_images/credit_card.jpg',
+  },
+  {
+    id: 'student_loan',
+    name: 'Student Loan',
+    image_url: 'https://content.geezeo.com/images/payoff_goal_images/student_loan.jpg',
+  },
+  {
+    id: 'car_loan',
+    name: 'Car Loan',
+    image_url: 'https://content.geezeo.com/images/payoff_goal_images/car_loan.jpg',
+  },
+  {
+    id: 'mortgage',
+    name: 'Mortgage',
+    image_url: 'https://content.geezeo.com/images/payoff_goal_images/mortgage.jpg',
+  },
+  {
+    id: 'personal_loan',
+    name: 'Personal Loan',
+    image_url: 'https://content.geezeo.com/images/payoff_goal_images/personal_loan.jpg',
+  },
 ];
 
 const SAVINGS_GOAL_IMAGES = [
-  { id: 'vacation', name: 'Vacation', image_url: 'https://content.geezeo.com/images/savings_goal_images/vacation.jpg' },
-  { id: 'emergency_fund', name: 'Emergency Fund', image_url: 'https://content.geezeo.com/images/savings_goal_images/emergency_fund.jpg' },
-  { id: 'down_payment', name: 'Down Payment', image_url: 'https://content.geezeo.com/images/savings_goal_images/down_payment.jpg' },
-  { id: 'retirement', name: 'Retirement', image_url: 'https://content.geezeo.com/images/savings_goal_images/retirement.jpg' },
-  { id: 'car', name: 'Car', image_url: 'https://content.geezeo.com/images/savings_goal_images/car.jpg' },
-  { id: 'wedding', name: 'Wedding', image_url: 'https://content.geezeo.com/images/savings_goal_images/wedding.jpg' }
+  {
+    id: 'vacation',
+    name: 'Vacation',
+    image_url: 'https://content.geezeo.com/images/savings_goal_images/vacation.jpg',
+  },
+  {
+    id: 'emergency_fund',
+    name: 'Emergency Fund',
+    image_url: 'https://content.geezeo.com/images/savings_goal_images/emergency_fund.jpg',
+  },
+  {
+    id: 'down_payment',
+    name: 'Down Payment',
+    image_url: 'https://content.geezeo.com/images/savings_goal_images/down_payment.jpg',
+  },
+  {
+    id: 'retirement',
+    name: 'Retirement',
+    image_url: 'https://content.geezeo.com/images/savings_goal_images/retirement.jpg',
+  },
+  {
+    id: 'car',
+    name: 'Car',
+    image_url: 'https://content.geezeo.com/images/savings_goal_images/car.jpg',
+  },
+  {
+    id: 'wedding',
+    name: 'Wedding',
+    image_url: 'https://content.geezeo.com/images/savings_goal_images/wedding.jpg',
+  },
 ];
 
 // =============================================================================
@@ -46,7 +90,7 @@ export async function listPayoffGoals(
     }
 
     const goals = await goalService.getPayoffGoals(userId, { includeArchived });
-    const serialized = goals.map(goal =>
+    const serialized = goals.map((goal) =>
       serializeGoal(goal, 'payoff', goalService.calculateProgress, goalService.calculateStatus)
     );
 
@@ -78,7 +122,12 @@ export async function getPayoffGoal(
       return;
     }
 
-    const serialized = serializeGoal(goal, 'payoff', goalService.calculateProgress, goalService.calculateStatus);
+    const serialized = serializeGoal(
+      goal,
+      'payoff',
+      goalService.calculateProgress,
+      goalService.calculateStatus
+    );
     res.status(200).json({ payoff_goal: serialized });
   } catch (error) {
     logger.error({ error, goalId: req.params.id }, 'Failed to get payoff goal');
@@ -108,16 +157,21 @@ export async function createPayoffGoal(
       accountId: validatedData.account_id,
       targetCompletionOn: validatedData.target_completion_on,
       monthlyContribution: validatedData.monthly_contribution,
-      imageUrl: validatedData.image_url
+      imageUrl: validatedData.image_url,
     });
 
-    const serialized = serializeGoal(goal, 'payoff', goalService.calculateProgress, goalService.calculateStatus);
+    const serialized = serializeGoal(
+      goal,
+      'payoff',
+      goalService.calculateProgress,
+      goalService.calculateStatus
+    );
     res.status(201).json({ payoff_goal: serialized });
   } catch (error: any) {
     if (error.name === 'ValidationError') {
       res.status(400).json({
         error: 'Validation failed',
-        details: error.errors
+        details: error.errors,
       });
       return;
     }
@@ -150,7 +204,7 @@ export async function updatePayoffGoal(
       accountId: validatedData.account_id,
       targetCompletionOn: validatedData.target_completion_on,
       monthlyContribution: validatedData.monthly_contribution,
-      imageUrl: validatedData.image_url
+      imageUrl: validatedData.image_url,
     });
 
     if (!goal) {
@@ -158,13 +212,18 @@ export async function updatePayoffGoal(
       return;
     }
 
-    const serialized = serializeGoal(goal, 'payoff', goalService.calculateProgress, goalService.calculateStatus);
+    const serialized = serializeGoal(
+      goal,
+      'payoff',
+      goalService.calculateProgress,
+      goalService.calculateStatus
+    );
     res.status(200).json({ payoff_goal: serialized });
   } catch (error: any) {
     if (error.name === 'ValidationError') {
       res.status(400).json({
         error: 'Validation failed',
-        details: error.errors
+        details: error.errors,
       });
       return;
     }
@@ -249,7 +308,7 @@ export async function listSavingsGoals(
     }
 
     const goals = await goalService.getSavingsGoals(userId, { includeArchived });
-    const serialized = goals.map(goal =>
+    const serialized = goals.map((goal) =>
       serializeGoal(goal, 'savings', goalService.calculateProgress, goalService.calculateStatus)
     );
 
@@ -281,7 +340,12 @@ export async function getSavingsGoal(
       return;
     }
 
-    const serialized = serializeGoal(goal, 'savings', goalService.calculateProgress, goalService.calculateStatus);
+    const serialized = serializeGoal(
+      goal,
+      'savings',
+      goalService.calculateProgress,
+      goalService.calculateStatus
+    );
     res.status(200).json({ savings_goal: serialized });
   } catch (error) {
     logger.error({ error, goalId: req.params.id }, 'Failed to get savings goal');
@@ -312,16 +376,21 @@ export async function createSavingsGoal(
       accountId: validatedData.account_id,
       targetCompletionOn: validatedData.target_completion_on,
       monthlyContribution: validatedData.monthly_contribution,
-      imageUrl: validatedData.image_url
+      imageUrl: validatedData.image_url,
     });
 
-    const serialized = serializeGoal(goal, 'savings', goalService.calculateProgress, goalService.calculateStatus);
+    const serialized = serializeGoal(
+      goal,
+      'savings',
+      goalService.calculateProgress,
+      goalService.calculateStatus
+    );
     res.status(201).json({ savings_goal: serialized });
   } catch (error: any) {
     if (error.name === 'ValidationError') {
       res.status(400).json({
         error: 'Validation failed',
-        details: error.errors
+        details: error.errors,
       });
       return;
     }
@@ -355,7 +424,7 @@ export async function updateSavingsGoal(
       accountId: validatedData.account_id,
       targetCompletionOn: validatedData.target_completion_on,
       monthlyContribution: validatedData.monthly_contribution,
-      imageUrl: validatedData.image_url
+      imageUrl: validatedData.image_url,
     });
 
     if (!goal) {
@@ -363,13 +432,18 @@ export async function updateSavingsGoal(
       return;
     }
 
-    const serialized = serializeGoal(goal, 'savings', goalService.calculateProgress, goalService.calculateStatus);
+    const serialized = serializeGoal(
+      goal,
+      'savings',
+      goalService.calculateProgress,
+      goalService.calculateStatus
+    );
     res.status(200).json({ savings_goal: serialized });
   } catch (error: any) {
     if (error.name === 'ValidationError') {
       res.status(400).json({
         error: 'Validation failed',
-        details: error.errors
+        details: error.errors,
       });
       return;
     }

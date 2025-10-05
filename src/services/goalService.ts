@@ -66,7 +66,7 @@ export async function getPayoffGoals(
   const where: any = {
     userId,
     goalType: 'payoff' as GoalType,
-    deletedAt: null
+    deletedAt: null,
   };
 
   if (!includeArchived) {
@@ -75,38 +75,29 @@ export async function getPayoffGoals(
 
   return await prisma.goal.findMany({
     where,
-    orderBy: [
-      { archivedAt: 'asc' },
-      { createdAt: 'desc' }
-    ]
+    orderBy: [{ archivedAt: 'asc' }, { createdAt: 'desc' }],
   });
 }
 
-export async function getPayoffGoalById(
-  userId: bigint,
-  goalId: bigint
-): Promise<Goal | null> {
+export async function getPayoffGoalById(userId: bigint, goalId: bigint): Promise<Goal | null> {
   return await prisma.goal.findFirst({
     where: {
       id: goalId,
       userId,
       goalType: 'payoff' as GoalType,
-      deletedAt: null
-    }
+      deletedAt: null,
+    },
   });
 }
 
-export async function createPayoffGoal(
-  userId: bigint,
-  data: CreatePayoffGoalData
-): Promise<Goal> {
+export async function createPayoffGoal(userId: bigint, data: CreatePayoffGoalData): Promise<Goal> {
   // Validate account ownership
   const account = await prisma.account.findFirst({
     where: {
       id: data.accountId,
       userId,
-      archivedAt: null
-    }
+      archivedAt: null,
+    },
   });
 
   if (!account) {
@@ -127,9 +118,9 @@ export async function createPayoffGoal(
       imageUrl: data.imageUrl || null,
       metadata: {
         initialValue: data.currentValue,
-        monthlyContribution: data.monthlyContribution || '0.00'
-      }
-    }
+        monthlyContribution: data.monthlyContribution || '0.00',
+      },
+    },
   });
 }
 
@@ -144,8 +135,8 @@ export async function updatePayoffGoal(
       id: goalId,
       userId,
       goalType: 'payoff' as GoalType,
-      deletedAt: null
-    }
+      deletedAt: null,
+    },
   });
 
   if (!existing) {
@@ -158,8 +149,8 @@ export async function updatePayoffGoal(
       where: {
         id: data.accountId,
         userId,
-        archivedAt: null
-      }
+        archivedAt: null,
+      },
     });
 
     if (!account) {
@@ -182,49 +173,43 @@ export async function updatePayoffGoal(
   if (data.monthlyContribution !== undefined) {
     updateData.metadata = {
       ...metadata,
-      monthlyContribution: data.monthlyContribution
+      monthlyContribution: data.monthlyContribution,
     };
   }
 
   return await prisma.goal.update({
     where: { id: goalId },
-    data: updateData
+    data: updateData,
   });
 }
 
-export async function deletePayoffGoal(
-  userId: bigint,
-  goalId: bigint
-): Promise<boolean> {
+export async function deletePayoffGoal(userId: bigint, goalId: bigint): Promise<boolean> {
   const result = await prisma.goal.updateMany({
     where: {
       id: goalId,
       userId,
       goalType: 'payoff' as GoalType,
-      deletedAt: null
+      deletedAt: null,
     },
     data: {
-      deletedAt: new Date()
-    }
+      deletedAt: new Date(),
+    },
   });
 
   return result.count > 0;
 }
 
-export async function archivePayoffGoal(
-  userId: bigint,
-  goalId: bigint
-): Promise<boolean> {
+export async function archivePayoffGoal(userId: bigint, goalId: bigint): Promise<boolean> {
   const result = await prisma.goal.updateMany({
     where: {
       id: goalId,
       userId,
       goalType: 'payoff' as GoalType,
-      deletedAt: null
+      deletedAt: null,
     },
     data: {
-      archivedAt: new Date()
-    }
+      archivedAt: new Date(),
+    },
   });
 
   return result.count > 0;
@@ -243,7 +228,7 @@ export async function getSavingsGoals(
   const where: any = {
     userId,
     goalType: 'savings' as GoalType,
-    deletedAt: null
+    deletedAt: null,
   };
 
   if (!includeArchived) {
@@ -252,24 +237,18 @@ export async function getSavingsGoals(
 
   return await prisma.goal.findMany({
     where,
-    orderBy: [
-      { archivedAt: 'asc' },
-      { createdAt: 'desc' }
-    ]
+    orderBy: [{ archivedAt: 'asc' }, { createdAt: 'desc' }],
   });
 }
 
-export async function getSavingsGoalById(
-  userId: bigint,
-  goalId: bigint
-): Promise<Goal | null> {
+export async function getSavingsGoalById(userId: bigint, goalId: bigint): Promise<Goal | null> {
   return await prisma.goal.findFirst({
     where: {
       id: goalId,
       userId,
       goalType: 'savings' as GoalType,
-      deletedAt: null
-    }
+      deletedAt: null,
+    },
   });
 }
 
@@ -283,8 +262,8 @@ export async function createSavingsGoal(
       where: {
         id: data.accountId,
         userId,
-        archivedAt: null
-      }
+        archivedAt: null,
+      },
     });
 
     if (!account) {
@@ -307,9 +286,9 @@ export async function createSavingsGoal(
       imageUrl: data.imageUrl || null,
       metadata: {
         initialValue: data.currentValue || '0.00',
-        monthlyContribution: data.monthlyContribution || '0.00'
-      }
-    }
+        monthlyContribution: data.monthlyContribution || '0.00',
+      },
+    },
   });
 }
 
@@ -324,8 +303,8 @@ export async function updateSavingsGoal(
       id: goalId,
       userId,
       goalType: 'savings' as GoalType,
-      deletedAt: null
-    }
+      deletedAt: null,
+    },
   });
 
   if (!existing) {
@@ -338,8 +317,8 @@ export async function updateSavingsGoal(
       where: {
         id: data.accountId,
         userId,
-        archivedAt: null
-      }
+        archivedAt: null,
+      },
     });
 
     if (!account) {
@@ -363,49 +342,43 @@ export async function updateSavingsGoal(
   if (data.monthlyContribution !== undefined) {
     updateData.metadata = {
       ...metadata,
-      monthlyContribution: data.monthlyContribution
+      monthlyContribution: data.monthlyContribution,
     };
   }
 
   return await prisma.goal.update({
     where: { id: goalId },
-    data: updateData
+    data: updateData,
   });
 }
 
-export async function deleteSavingsGoal(
-  userId: bigint,
-  goalId: bigint
-): Promise<boolean> {
+export async function deleteSavingsGoal(userId: bigint, goalId: bigint): Promise<boolean> {
   const result = await prisma.goal.updateMany({
     where: {
       id: goalId,
       userId,
       goalType: 'savings' as GoalType,
-      deletedAt: null
+      deletedAt: null,
     },
     data: {
-      deletedAt: new Date()
-    }
+      deletedAt: new Date(),
+    },
   });
 
   return result.count > 0;
 }
 
-export async function archiveSavingsGoal(
-  userId: bigint,
-  goalId: bigint
-): Promise<boolean> {
+export async function archiveSavingsGoal(userId: bigint, goalId: bigint): Promise<boolean> {
   const result = await prisma.goal.updateMany({
     where: {
       id: goalId,
       userId,
       goalType: 'savings' as GoalType,
-      deletedAt: null
+      deletedAt: null,
     },
     data: {
-      archivedAt: new Date()
-    }
+      archivedAt: new Date(),
+    },
   });
 
   return result.count > 0;
@@ -431,7 +404,10 @@ export function calculateProgress(goal: Goal): number {
   } else {
     // For savings: progress = current / target * 100
     if (goal.targetAmount.lte(0)) return 0;
-    return Math.min(100, Math.max(0, goal.currentAmount.div(goal.targetAmount).mul(100).toNumber()));
+    return Math.min(
+      100,
+      Math.max(0, goal.currentAmount.div(goal.targetAmount).mul(100).toNumber())
+    );
   }
 }
 

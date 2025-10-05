@@ -24,7 +24,7 @@ router.get('/current', authenticateJWT, async (req: Request, res: Response) => {
     }
 
     const user = await prisma.user.findUnique({
-      where: { id: BigInt(userId) }
+      where: { id: BigInt(userId) },
     });
 
     if (!user) {
@@ -32,15 +32,17 @@ router.get('/current', authenticateJWT, async (req: Request, res: Response) => {
     }
 
     // Serialize with BigInt handling and snake_case conversion
-    res.json(serialize({
-      id: user.id,
-      partnerId: user.partnerId,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt
-    }));
+    res.json(
+      serialize({
+        id: user.id,
+        partnerId: user.partnerId,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      })
+    );
   } catch (error) {
     console.error('Error fetching current user:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -92,7 +94,7 @@ router.post('/current/track_login', authenticateJWT, async (req: Request, res: R
     // Update last login timestamp
     await prisma.user.update({
       where: { id: BigInt(userId) },
-      data: { updatedAt: new Date() }
+      data: { updatedAt: new Date() },
     });
 
     logger.info({ userId }, 'User login tracked');

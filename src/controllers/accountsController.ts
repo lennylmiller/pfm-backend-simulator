@@ -156,7 +156,11 @@ export const getAccountTransactions = async (req: Request, res: Response) => {
     const userIdBigInt = BigInt(req.context!.userId);
     const accountIdBigInt = BigInt(id);
 
-    const result = await transactionService.getAccountTransactions(userIdBigInt, accountIdBigInt, page);
+    const result = await transactionService.getAccountTransactions(
+      userIdBigInt,
+      accountIdBigInt,
+      page
+    );
     return res.json(serialize(result));
   } catch (error) {
     logger.error({ error }, 'Failed to get account transactions');
@@ -175,7 +179,10 @@ export const getPotentialCashflowAccounts = async (req: Request, res: Response) 
     const userIdBigInt = BigInt(req.context!.userId);
     const partnerIdBigInt = BigInt(req.context!.partnerId);
 
-    const accounts = await accountService.getPotentialCashflowAccounts(userIdBigInt, partnerIdBigInt);
+    const accounts = await accountService.getPotentialCashflowAccounts(
+      userIdBigInt,
+      partnerIdBigInt
+    );
     return res.json(serialize({ accounts }));
   } catch (error) {
     logger.error({ error }, 'Failed to get potential cashflow accounts');

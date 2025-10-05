@@ -14,46 +14,22 @@ const router = Router();
 // =============================================================================
 
 // List all alerts
-router.get(
-  '/users/:userId/alerts',
-  authenticateJWT,
-  alertsController.listAlerts
-);
+router.get('/users/:userId/alerts', authenticateJWT, alertsController.listAlerts);
 
 // Get specific alert
-router.get(
-  '/users/:userId/alerts/:id',
-  authenticateJWT,
-  alertsController.getAlert
-);
+router.get('/users/:userId/alerts/:id', authenticateJWT, alertsController.getAlert);
 
 // Update alert
-router.put(
-  '/users/:userId/alerts/:id',
-  authenticateJWT,
-  alertsController.updateAlert
-);
+router.put('/users/:userId/alerts/:id', authenticateJWT, alertsController.updateAlert);
 
 // Delete alert
-router.delete(
-  '/users/:userId/alerts/:id',
-  authenticateJWT,
-  alertsController.deleteAlert
-);
+router.delete('/users/:userId/alerts/:id', authenticateJWT, alertsController.deleteAlert);
 
 // Enable alert
-router.put(
-  '/users/:userId/alerts/:id/enable',
-  authenticateJWT,
-  alertsController.enableAlert
-);
+router.put('/users/:userId/alerts/:id/enable', authenticateJWT, alertsController.enableAlert);
 
 // Disable alert
-router.put(
-  '/users/:userId/alerts/:id/disable',
-  authenticateJWT,
-  alertsController.disableAlert
-);
+router.put('/users/:userId/alerts/:id/disable', authenticateJWT, alertsController.disableAlert);
 
 // =============================================================================
 // TYPE-SPECIFIC ALERT CREATION ENDPOINTS
@@ -73,11 +49,7 @@ router.put(
 );
 
 // Goal alerts
-router.post(
-  '/users/:userId/alerts/goals',
-  authenticateJWT,
-  alertsController.createGoalAlert
-);
+router.post('/users/:userId/alerts/goals', authenticateJWT, alertsController.createGoalAlert);
 
 // Merchant name alerts
 router.post(
@@ -112,18 +84,10 @@ router.post(
 // =============================================================================
 
 // List notifications
-router.get(
-  '/users/:userId/notifications',
-  authenticateJWT,
-  alertsController.listNotifications
-);
+router.get('/users/:userId/notifications', authenticateJWT, alertsController.listNotifications);
 
 // Get specific notification
-router.get(
-  '/users/:userId/notifications/:id',
-  authenticateJWT,
-  alertsController.getNotification
-);
+router.get('/users/:userId/notifications/:id', authenticateJWT, alertsController.getNotification);
 
 // Mark notification as read
 router.put(

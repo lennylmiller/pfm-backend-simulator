@@ -11,7 +11,7 @@ function loadMockData(filename: string) {
 const deletedNotifications: Set<string> = new Set();
 
 export const notificationService = {
-  async getNotifications(userId: string) {
+  async getNotifications(_userId: string) {
     const mockData = loadMockData('notifications.json');
 
     return mockData.notifications.filter((n: any) => !deletedNotifications.has(n.id.toString()));
@@ -20,5 +20,5 @@ export const notificationService = {
   async deleteNotification(userId: string, notificationId: string) {
     deletedNotifications.add(notificationId);
     return;
-  }
+  },
 };

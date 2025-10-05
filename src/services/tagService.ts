@@ -40,7 +40,7 @@ export interface TagWithCount extends Tag {
 export async function getSystemTags(): Promise<Tag[]> {
   return await prisma.tag.findMany({
     where: { tagType: 'system' },
-    orderBy: { name: 'asc' }
+    orderBy: { name: 'asc' },
   });
 }
 
@@ -52,13 +52,11 @@ export async function getSystemTags(): Promise<Tag[]> {
  * Get all tags accessible to a user (system + partner + user's own)
  * with transaction counts
  */
-export async function getUserTagsWithCounts(
-  userId: bigint
-): Promise<TagWithCount[]> {
+export async function getUserTagsWithCounts(userId: bigint): Promise<TagWithCount[]> {
   // Get user to access partnerId
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { partnerId: true }
+    select: { partnerId: true },
   });
 
   if (!user) {
@@ -71,13 +69,13 @@ export async function getUserTagsWithCounts(
       OR: [
         { tagType: 'system' },
         { tagType: 'partner', partnerId: user.partnerId },
-        { tagType: 'user', userId }
-      ]
+        { tagType: 'user', userId },
+      ],
     },
     orderBy: [
-      { tagType: 'asc' },  // system first, then partner, then user
-      { name: 'asc' }
-    ]
+      { tagType: 'asc' }, // system first, then partner, then user
+      { name: 'asc' },
+    ],
   });
 
   // Calculate transaction counts for each tag
@@ -87,13 +85,13 @@ export async function getUserTagsWithCounts(
         where: {
           userId,
           primaryTagId: tag.id,
-          deletedAt: null
-        }
+          deletedAt: null,
+        },
       });
 
       return {
         ...tag,
-        transactionCount: count
+        transactionCount: count,
       };
     })
   );
@@ -120,7 +118,7 @@ export async function executeBulkTagOperations(
   const results = {
     created: [] as Tag[],
     updated: [] as Tag[],
-    deleted: [] as bigint[]
+    deleted: [] as bigint[],
   };
 
   // Create new tags
@@ -131,8 +129,8 @@ export async function executeBulkTagOperations(
           userId,
           name: tagData.name,
           parentTagId: tagData.parentTagId || null,
-          tagType: 'user'
-        }
+          tagType: 'user',
+        },
       });
       results.created.push(tag);
     }
@@ -146,17 +144,17 @@ export async function executeBulkTagOperations(
         where: {
           id: tagData.id,
           userId,
-          tagType: 'user'
-        }
+          tagType: 'user',
+        },
       });
 
       if (!existing) {
-        continue;  // Skip if not owned by user
+        continue; // Skip if not owned by user
       }
 
       const tag = await prisma.tag.update({
         where: { id: tagData.id },
-        data: { name: tagData.name }
+        data: { name: tagData.name },
       });
       results.updated.push(tag);
     }
@@ -170,16 +168,16 @@ export async function executeBulkTagOperations(
         where: {
           id: tagId,
           userId,
-          tagType: 'user'
-        }
+          tagType: 'user',
+        },
       });
 
       if (!existing) {
-        continue;  // Skip if not owned by user
+        continue; // Skip if not owned by user
       }
 
       await prisma.tag.delete({
-        where: { id: tagId }
+        where: { id: tagId },
       });
       results.deleted.push(tagId);
     }
@@ -195,17 +193,14 @@ export async function executeBulkTagOperations(
 /**
  * Create a single user tag
  */
-export async function createUserTag(
-  userId: bigint,
-  data: CreateTagData
-): Promise<Tag> {
+export async function createUserTag(userId: bigint, data: CreateTagData): Promise<Tag> {
   return await prisma.tag.create({
     data: {
       userId,
       name: data.name,
       parentTagId: data.parentTagId || null,
-      tagType: 'user'
-    }
+      tagType: 'user',
+    },
   });
 }
 
@@ -222,8 +217,8 @@ export async function updateUserTag(
     where: {
       id: tagId,
       userId,
-      tagType: 'user'
-    }
+      tagType: 'user',
+    },
   });
 
   if (!existing) {
@@ -232,24 +227,21 @@ export async function updateUserTag(
 
   return await prisma.tag.update({
     where: { id: tagId },
-    data: { name }
+    data: { name },
   });
 }
 
 /**
  * Delete a user tag (only if owned by user)
  */
-export async function deleteUserTag(
-  userId: bigint,
-  tagId: bigint
-): Promise<boolean> {
+export async function deleteUserTag(userId: bigint, tagId: bigint): Promise<boolean> {
   // Verify ownership
   const existing = await prisma.tag.findFirst({
     where: {
       id: tagId,
       userId,
-      tagType: 'user'
-    }
+      tagType: 'user',
+    },
   });
 
   if (!existing) {
@@ -257,7 +249,7 @@ export async function deleteUserTag(
   }
 
   await prisma.tag.delete({
-    where: { id: tagId }
+    where: { id: tagId },
   });
 
   return true;
@@ -266,13 +258,10 @@ export async function deleteUserTag(
 /**
  * Get a single tag by ID (accessible to user)
  */
-export async function getTagById(
-  userId: bigint,
-  tagId: bigint
-): Promise<Tag | null> {
+export async function getTagById(userId: bigint, tagId: bigint): Promise<Tag | null> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { partnerId: true }
+    select: { partnerId: true },
   });
 
   if (!user) {
@@ -285,8 +274,8 @@ export async function getTagById(
       OR: [
         { tagType: 'system' },
         { tagType: 'partner', partnerId: user.partnerId },
-        { tagType: 'user', userId }
-      ]
-    }
+        { tagType: 'user', userId },
+      ],
+    },
   });
 }

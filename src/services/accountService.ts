@@ -47,10 +47,7 @@ export interface UpdateAccountData {
 /**
  * Get all active accounts for a user
  */
-export async function getAllAccounts(
-  userId: bigint,
-  partnerId: bigint
-): Promise<Account[]> {
+export async function getAllAccounts(userId: bigint, partnerId: bigint): Promise<Account[]> {
   return await prisma.account.findMany({
     where: {
       userId,
@@ -58,20 +55,14 @@ export async function getAllAccounts(
       archivedAt: null,
       state: AccountState.active,
     },
-    orderBy: [
-      { ordering: 'asc' },
-      { createdAt: 'desc' }
-    ],
+    orderBy: [{ ordering: 'asc' }, { createdAt: 'desc' }],
   });
 }
 
 /**
  * Get a single account by ID
  */
-export async function getAccountById(
-  userId: bigint,
-  accountId: bigint
-): Promise<Account | null> {
+export async function getAccountById(userId: bigint, accountId: bigint): Promise<Account | null> {
   return await prisma.account.findFirst({
     where: {
       id: accountId,
@@ -152,10 +143,7 @@ export async function updateAccount(
 /**
  * Archive an account
  */
-export async function archiveAccount(
-  userId: bigint,
-  accountId: bigint
-): Promise<Account | null> {
+export async function archiveAccount(userId: bigint, accountId: bigint): Promise<Account | null> {
   // Verify ownership
   const existing = await prisma.account.findFirst({
     where: {
@@ -180,10 +168,7 @@ export async function archiveAccount(
 /**
  * Delete an account (hard delete)
  */
-export async function deleteAccount(
-  userId: bigint,
-  accountId: bigint
-): Promise<boolean> {
+export async function deleteAccount(userId: bigint, accountId: bigint): Promise<boolean> {
   // Verify ownership
   const existing = await prisma.account.findFirst({
     where: {
@@ -233,10 +218,7 @@ export async function updateAccountBalance(
 /**
  * Get investment holdings for an account
  */
-export async function getAccountInvestments(
-  userId: bigint,
-  accountId: bigint
-): Promise<any> {
+export async function getAccountInvestments(userId: bigint, accountId: bigint): Promise<any> {
   // Verify ownership
   const account = await prisma.account.findFirst({
     where: { id: accountId, userId },

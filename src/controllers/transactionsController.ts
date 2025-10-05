@@ -18,9 +18,9 @@ export const searchTransactions = async (req: Request, res: Response) => {
     const result = await transactionService.searchTransactions(userIdBigInt, {
       query: q as string,
       untagged: untagged === '1' || untagged === 'true',
-      tags: Array.isArray(tags) ? tags as string[] : tags ? [tags as string] : undefined,
+      tags: Array.isArray(tags) ? (tags as string[]) : tags ? [tags as string] : undefined,
       beginOn: begin_on as string,
-      endOn: end_on as string
+      endOn: end_on as string,
     });
 
     return res.json(serialize({ transactions: result }));
