@@ -16,6 +16,8 @@ import { parseToken, displayUserContext, getTestUsers, UserContext } from './aut
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 import * as crypto from 'crypto';
+import { loadConfig } from './config/loader';
+import { executeQuickStart } from './workflows/quickStart';
 
 const api = new ApiClient();
 let userContext: UserContext | null = null;
@@ -438,7 +440,7 @@ async function settingsMenu() {
 
     // Generate the responsive-tiles start command (matching exact format from user's example)
     // API_KEY = JWT shared secret (symmetric key used to sign tokens in webpack, verify in backend)
-    const command = `API_KEY=${apiKey} PARTNER_DOMAIN='pfm.backend.simulator' PCID=${userContext.userId} ENV=development npm start`;
+    const command = `API_KEY=${apiKey} PARTNER_DOMAIN='pfm.backend.simulator.com' PCID=${userContext.userId} ENV=development npm start`;
 
     console.log(chalk.blue.bold('\n🎨 Responsive Tiles Start Command\n'));
     console.log(chalk.gray('Copy and run this command in the responsive-tiles directory:'));
@@ -448,19 +450,57 @@ async function settingsMenu() {
     console.log(chalk.gray('  • API_KEY = Newly generated JWT shared secret (128-char hex)'));
     console.log(chalk.gray('  • Frontend uses this secret to sign tokens in webpack'));
     console.log(chalk.gray('  • You must update backend JWT_SECRET to match this key'));
-    console.log(chalk.gray('  • PARTNER_DOMAIN = pfm.backend.simulator (JWT audience claim)'));
+    console.log(chalk.gray('  • PARTNER_DOMAIN = pfm.backend.simulator.com (JWT audience claim)'));
     console.log(chalk.gray(`  • PCID = ${userContext.userId} (JWT subject claim)`));
     console.log(chalk.gray('  • ENV = development\n'));
     console.log(chalk.yellow('⚠️  IMPORTANT: Update backend .env with:'));
     console.log(chalk.yellow(`JWT_SECRET=${apiKey}\n`));
     console.log(chalk.gray('💡 Note: Ensure /etc/hosts has this entry:'));
-    console.log(chalk.gray('127.0.0.1 pfm.backend.simulator\n'));
+    console.log(chalk.gray('127.0.0.1 pfm.backend.simulator.com\n'));
 
     await inquirer.prompt([{ type: 'input', name: 'continue', message: 'Press Enter to continue...' }]);
   } else if (action === 'logout') {
     api.clearToken();
     userContext = null;
     console.log(chalk.green('\n✅ Logged out'));
+    await inquirer.prompt([{ type: 'input', name: 'continue', message: 'Press Enter to continue...' }]);
+  }
+}
+
+// Workflow menu
+async function workflowMenu() {
+  const config = await loadConfig();
+
+  const { action } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'action',
+      message: 'Workflow Automation:',
+      choices: [
+        { name: '🚀 Quick Start (Automated)', value: 'quick' },
+        { name: '📋 Step-by-Step (Manual)', value: 'step' },
+        { name: '⬅️  Back to main menu', value: 'back' },
+      ],
+    },
+  ]);
+
+  if (action === 'back') return;
+
+  if (action === 'quick') {
+    const result = await executeQuickStart(config);
+
+    if (result.success && result.context.selectedUser) {
+      // Update user context from workflow result
+      userContext = {
+        userId: result.context.selectedUser.userId.toString(),
+        partnerId: result.context.selectedUser.partnerId.toString(),
+      };
+    }
+
+    await inquirer.prompt([{ type: 'input', name: 'continue', message: 'Press Enter to continue...' }]);
+  } else if (action === 'step') {
+    console.log(chalk.yellow('\n⚠️  Step-by-step workflow not implemented yet'));
+    console.log(chalk.gray('   Use Quick Start for now\n'));
     await inquirer.prompt([{ type: 'input', name: 'continue', message: 'Press Enter to continue...' }]);
   }
 }
@@ -482,18 +522,24 @@ async function mainMenu() {
         name: 'action',
         message: 'What would you like to do?',
         choices: [
+          { name: '🚀 Quick Start Workflow', value: 'workflow' },
+          new inquirer.Separator(),
           { name: '🔐 Authentication', value: 'auth' },
           { name: '💳 Accounts', value: 'accounts' },
           { name: '💰 Budgets', value: 'budgets' },
           { name: '📝 Transactions', value: 'transactions' },
           { name: '🌟 Other Features', value: 'other' },
           { name: '⚙️  Settings', value: 'settings' },
+          new inquirer.Separator(),
           { name: '❌ Exit', value: 'exit' },
         ],
       },
     ]);
 
     switch (action) {
+      case 'workflow':
+        await workflowMenu();
+        break;
       case 'auth':
         await authMenu();
         break;
