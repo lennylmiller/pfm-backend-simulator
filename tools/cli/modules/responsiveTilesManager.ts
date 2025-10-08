@@ -2,6 +2,8 @@ import { spawn, ChildProcess } from 'child_process';
 import chalk from 'chalk';
 import { ProcessInfo, UserPartnerSelection } from '../types/workflow';
 import * as crypto from 'crypto';
+import * as fs from 'fs';
+import * as path from 'path';
 
 /**
  * Responsive Tiles Manager Module
@@ -10,6 +12,44 @@ import * as crypto from 'crypto';
 
 // Global process reference
 let responsiveTilesProcess: ChildProcess | null = null;
+
+/**
+ * Check if responsive-tiles dependencies are installed
+ */
+export function checkDependenciesInstalled(responsiveTilesPath: string): boolean {
+  const nodeModulesPath = path.join(responsiveTilesPath, 'node_modules');
+  return fs.existsSync(nodeModulesPath);
+}
+
+/**
+ * Install responsive-tiles dependencies
+ */
+export async function installDependencies(responsiveTilesPath: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    console.log(chalk.blue('\n📦 Installing responsive-tiles dependencies...\n'));
+    console.log(chalk.gray('  This may take a few minutes...\n'));
+
+    const install = spawn('npm', ['install'], {
+      cwd: responsiveTilesPath,
+      stdio: 'inherit', // Show npm output directly
+    });
+
+    install.on('close', (code) => {
+      if (code === 0) {
+        console.log(chalk.green('\n✅ Dependencies installed successfully\n'));
+        resolve(true);
+      } else {
+        console.log(chalk.red(`\n❌ Failed to install dependencies (exit code ${code})\n`));
+        resolve(false);
+      }
+    });
+
+    install.on('error', (error) => {
+      console.log(chalk.red(`\n❌ Error installing dependencies: ${error.message}\n`));
+      resolve(false);
+    });
+  });
+}
 
 /**
  * Start responsive-tiles with generated startup command
@@ -42,6 +82,7 @@ export async function startResponsiveTiles(
       PCID: selection.userId.toString(),
       ENV: 'development',
       PORT: port.toString(),
+      DOMAIN: 'localhost',
     };
 
     // Start responsive-tiles with npm start
@@ -90,6 +131,12 @@ export async function startResponsiveTiles(
 
     // Wait for webpack to compile
     await new Promise(resolve => setTimeout(resolve, 5000));
+
+    // Check if process is still running after wait
+    if (!responsiveTilesProcess || responsiveTilesProcess.killed) {
+      console.log(chalk.red('\n❌ Responsive-tiles failed to start\n'));
+      return null;
+    }
 
     console.log(chalk.green(`\n✅ Responsive-tiles started on http://localhost:${port}\n`));
 

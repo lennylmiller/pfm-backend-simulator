@@ -6,6 +6,7 @@ import * as databaseManager from '../modules/databaseManager';
 import * as backendManager from '../modules/backendManager';
 import * as userSelector from '../modules/userSelector';
 import * as responsiveTilesManager from '../modules/responsiveTilesManager';
+import * as caddyManager from '../modules/caddyManager';
 
 /**
  * Quick Start Workflow
@@ -26,8 +27,23 @@ export async function executeQuickStart(config: CLIConfig): Promise<WorkflowExec
     console.log(chalk.gray('  2. Regenerate new seed data'));
     console.log(chalk.gray('  3. Select user and partner'));
     console.log(chalk.gray('  4. Generate JWT shared secret'));
-    console.log(chalk.gray('  5. Start backend server'));
-    console.log(chalk.gray('  6. Start responsive-tiles frontend\n'));
+    console.log(chalk.gray('  5. Update backend .env with JWT_SECRET'));
+    console.log(chalk.gray('  6. Verify sudo access (for port 443)'));
+    console.log(chalk.gray('  7. Start Caddy reverse proxy (HTTPS)'));
+    console.log(chalk.gray('  8. Start backend server'));
+    console.log(chalk.gray('  9. Check/install responsive-tiles dependencies'));
+    console.log(chalk.gray(' 10. Start responsive-tiles frontend\n'));
+
+    // Check Caddy installation
+    const caddyInstalled = await caddyManager.checkCaddyInstalled();
+    if (!caddyInstalled) {
+      caddyManager.displayCaddyInstallInstructions();
+      return {
+        success: false,
+        completedSteps,
+        context,
+      };
+    }
 
     // Confirmation
     if (config.workflow.confirmDestructiveActions) {
@@ -90,8 +106,25 @@ export async function executeQuickStart(config: CLIConfig): Promise<WorkflowExec
     }
     completedSteps.push('update_env');
 
-    // Step 6: Start backend server
-    console.log(chalk.blue('📋 Step 6: Starting backend server\n'));
+    // Step 6: Verify sudo access (pre-cache credentials)
+    console.log(chalk.blue('📋 Step 6: Verifying sudo access\n'));
+    const sudoVerified = await caddyManager.verifySudoAccess();
+    if (!sudoVerified) {
+      throw new Error('Sudo access required to start Caddy on port 443');
+    }
+    completedSteps.push('verify_sudo');
+
+    // Step 7: Start Caddy reverse proxy
+    console.log(chalk.blue('📋 Step 7: Starting Caddy reverse proxy\n'));
+    const caddyInfo = await caddyManager.startCaddy(config.paths.backend);
+    if (!caddyInfo) {
+      throw new Error('Failed to start Caddy reverse proxy');
+    }
+    context.caddyProcess = caddyInfo;
+    completedSteps.push('start_caddy');
+
+    // Step 8: Start backend server
+    console.log(chalk.blue('📋 Step 8: Starting backend server\n'));
     const backendInfo = await backendManager.startBackend({
       backendPath: config.paths.backend,
       port: config.server.backendPort,
@@ -102,8 +135,22 @@ export async function executeQuickStart(config: CLIConfig): Promise<WorkflowExec
     context.backendProcess = backendInfo;
     completedSteps.push('start_backend');
 
-    // Step 7: Start responsive-tiles
-    console.log(chalk.blue('📋 Step 7: Starting responsive-tiles\n'));
+    // Step 9: Check and install responsive-tiles dependencies
+    console.log(chalk.blue('📋 Step 9: Checking responsive-tiles dependencies\n'));
+    const depsInstalled = responsiveTilesManager.checkDependenciesInstalled(config.paths.responsiveTiles);
+    if (!depsInstalled) {
+      console.log(chalk.yellow('⚠️  Dependencies not found, installing...\n'));
+      const installSuccess = await responsiveTilesManager.installDependencies(config.paths.responsiveTiles);
+      if (!installSuccess) {
+        throw new Error('Failed to install responsive-tiles dependencies');
+      }
+    } else {
+      console.log(chalk.green('✅ Dependencies already installed\n'));
+    }
+    completedSteps.push('check_dependencies');
+
+    // Step 10: Start responsive-tiles
+    console.log(chalk.blue('📋 Step 10: Starting responsive-tiles\n'));
     const responsiveTilesInfo = await responsiveTilesManager.startResponsiveTiles(
       config.paths.responsiveTiles,
       config.server.responsiveTilesPort,
@@ -122,6 +169,7 @@ export async function executeQuickStart(config: CLIConfig): Promise<WorkflowExec
     console.log(chalk.blue('🎉 Your development environment is ready!\n'));
 
     console.log(chalk.gray('Services:'));
+    console.log(chalk.green(`  ✓ Reverse Proxy: https://${config.server.domain} (Caddy)`));
     console.log(chalk.green(`  ✓ Backend: http://${config.server.domain}:${config.server.backendPort}`));
     console.log(chalk.green(`  ✓ Frontend: http://localhost:${config.server.responsiveTilesPort}\n`));
 
@@ -132,6 +180,9 @@ export async function executeQuickStart(config: CLIConfig): Promise<WorkflowExec
     console.log(chalk.gray('JWT Configuration:'));
     console.log(chalk.gray(`  Shared Secret: ${jwtSecret.substring(0, 32)}...`));
     console.log(chalk.gray(`  Backend .env updated: ✓\n`));
+
+    console.log(chalk.yellow('💡 Frontend makes API calls to: https://pfm.backend.simulator.com'));
+    console.log(chalk.yellow('   (Caddy proxies this to http://localhost:3000)\n'));
 
     console.log(chalk.yellow('💡 To stop services, use Ctrl+C or run workflow again\n'));
 

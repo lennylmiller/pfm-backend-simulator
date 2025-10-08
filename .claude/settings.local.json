@@ -86,7 +86,14 @@
       "mcp__serena__insert_after_symbol",
       "Read(//dev/**)",
       "Bash(/dev/null)",
-      "Read(//private/etc/**)"
+      "Read(//private/etc/**)",
+      "Bash(timeout 30 npm run cli:*)",
+      "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiIxIiwiYXVkIjoicGZtLmJhY2tlbmQuc2ltdWxhdG9yLmNvbSIsInN1YiI6IjQ0MyIsImlhdCI6MTc1OTg4MzAzNCwiZXhwIjoxNzU5ODgzOTM0fQ.KXAZmxSpjzmEMrodN_E0lM19hYuKFpyVqb45eJkrn7A\" curl -s -H \"Authorization: Bearer $TOKEN\" http://pfm.backend.simulator.com:3000/api/v2/users/443/accounts/all)",
+      "Bash(brew install:*)",
+      "Bash(caddy validate:*)",
+      "Bash([ -f dist/index.js ])",
+      "Bash(sudo lsof:*)",
+      "Bash(sudo:*)"
     ],
     "deny": [],
     "ask": []

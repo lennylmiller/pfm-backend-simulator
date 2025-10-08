@@ -3,7 +3,7 @@ import { promisify } from 'util';
 import chalk from 'chalk';
 import { ServerHealth, ProcessInfo } from '../types/workflow';
 import * as path from 'path';
-import * as fetch from 'isomorphic-fetch';
+import fetch from 'isomorphic-fetch';
 
 const execAsync = promisify(exec);
 
@@ -76,8 +76,8 @@ export async function startBackend(config: { backendPath: string; port: number }
       backendProcess = null;
     });
 
-    // Wait a moment for server to start
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    // Wait for server to start (increased from 2s to 4s for better reliability)
+    await new Promise(resolve => setTimeout(resolve, 4000));
 
     // Verify server is healthy
     const health = await checkHealth(config.port);
@@ -162,7 +162,7 @@ export async function checkHealth(port: number, domain: string = 'localhost'): P
     const responseTime = Date.now() - startTime;
 
     if (response.ok) {
-      const data = await response.json();
+      const data: any = await response.json();
       return {
         healthy: data.status === 'ok',
         port,

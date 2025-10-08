@@ -1,0 +1,31 @@
+# Caddy reverse proxy configuration for pfm-backend-simulator
+# Maps HTTPS requests to local HTTP backend
+
+pfm.backend.simulator.com {
+	# Reverse proxy all requests to the backend
+	reverse_proxy localhost:3000
+
+	# Use Caddy's internal CA for self-signed certificates
+	# This creates a trusted cert for local development
+	tls internal
+
+	# Enable CORS headers for responsive-tiles frontend
+	header {
+		Access-Control-Allow-Origin "http://localhost:8080"
+		Access-Control-Allow-Methods "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+		Access-Control-Allow-Headers "X-Requested-With, Content-Type, Authorization"
+		Access-Control-Allow-Credentials "true"
+	}
+
+	# Handle preflight requests
+	@options {
+		method OPTIONS
+	}
+	respond @options 204
+
+	# Logging for debugging
+	log {
+		output file /Users/LenMiller/code/pfm-backend-simulator/logs/caddy.log
+		format json
+	}
+}

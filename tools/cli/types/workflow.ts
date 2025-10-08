@@ -56,6 +56,7 @@ export interface UserPartnerSelection {
 export interface WorkflowContext {
   config: any; // CLIConfig from config/defaults.ts
   selectedUser?: UserPartnerSelection;
+  caddyProcess?: ProcessInfo;
   backendProcess?: ProcessInfo;
   responsiveTilesProcess?: ProcessInfo;
   jwtSecret?: string;

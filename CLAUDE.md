@@ -47,6 +47,17 @@ npm run lint             # Run ESLint on src/
 npm run format           # Format code with Prettier
 ```
 
+### Caddy Reverse Proxy (HTTPS)
+```bash
+caddy run --config Caddyfile      # Start Caddy reverse proxy manually
+caddy validate --config Caddyfile # Validate Caddyfile configuration
+caddy stop                        # Stop Caddy
+```
+
+**Why Caddy?** Responsive-tiles expects HTTPS on port 443 (`https://pfm.backend.simulator.com`). Caddy provides automatic HTTPS with self-signed certificates, proxying to the HTTP backend on port 3000. This makes pfm-backend-simulator a true drop-in replacement for staging without modifying responsive-tiles.
+
+**CLI Integration**: The Quick Start workflow automatically manages Caddy. See `docs/CADDY_INTEGRATION.md` for details.
+
 ## Architecture Overview
 
 ### Core Design Pattern: MVC + Service Layer
