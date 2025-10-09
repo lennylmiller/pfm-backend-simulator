@@ -79,6 +79,7 @@ export async function startResponsiveTiles(
       ...process.env,
       API_KEY: apiKey,
       PARTNER_DOMAIN: domain,
+      PARTNER_ID: selection.partnerId.toString(),
       PCID: selection.userId.toString(),
       ENV: 'staging',
       PORT: port.toString(),
@@ -197,7 +198,7 @@ export function generateStartupCommand(
   apiKey: string,
   port: number = 8080
 ): string {
-  return `API_KEY=${apiKey} PARTNER_DOMAIN='${domain}' PCID=${selection.userId} ENV=staging PORT=${port} npm start`;
+  return `API_KEY=${apiKey} PARTNER_DOMAIN='${domain}' PARTNER_ID=${selection.partnerId} PCID=${selection.userId} ENV=staging PORT=${port} npm start`;
 }
 
 /**

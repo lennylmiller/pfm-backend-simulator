@@ -55,6 +55,33 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Partner config.json endpoint (public, no authentication)
+// Must be before /api/v2 routes since it's at root level
+app.get('/assets/config/:partnerId/config.json', (req, res) => {
+  const { partnerId } = req.params;
+
+  // Minimal config to allow frontend to load
+  const config = {
+    partner_id: partnerId,
+    features: {
+      accounts: true,
+      budgets: true,
+      cashflow: true,
+      transactions: true,
+      goals: true,
+      alerts: true,
+      networth: true,
+    },
+    branding: {
+      name: 'PFM Simulator',
+      logo_url: null,
+      primary_color: '#4e879f',
+    }
+  };
+
+  res.json(config);
+});
+
 // API routes
 app.use('/api/v2', routes);
 

@@ -94,7 +94,13 @@
       "Bash([ -f dist/index.js ])",
       "Bash(sudo lsof:*)",
       "Bash(sudo:*)",
-      "Bash(xargs:*)"
+      "Bash(xargs:*)",
+      "Bash(pgrep:*)",
+      "Bash(caddy stop:*)",
+      "Bash(open:*)",
+      "Bash(screencapture:*)",
+      "Read(//Users/LenMiller/Library/Application Support/Caddy/pki/authorities/local/**)",
+      "Bash(security find-certificate:*)"
     ],
     "deny": [],
     "ask": []
