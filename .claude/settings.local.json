@@ -93,7 +93,8 @@
       "Bash(caddy validate:*)",
       "Bash([ -f dist/index.js ])",
       "Bash(sudo lsof:*)",
-      "Bash(sudo:*)"
+      "Bash(sudo:*)",
+      "Bash(xargs:*)"
     ],
     "deny": [],
     "ask": []

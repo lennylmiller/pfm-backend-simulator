@@ -80,7 +80,7 @@ export async function startResponsiveTiles(
       API_KEY: apiKey,
       PARTNER_DOMAIN: domain,
       PCID: selection.userId.toString(),
-      ENV: 'development',
+      ENV: 'staging',
       PORT: port.toString(),
       DOMAIN: 'localhost',
     };
@@ -197,7 +197,7 @@ export function generateStartupCommand(
   apiKey: string,
   port: number = 8080
 ): string {
-  return `API_KEY=${apiKey} PARTNER_DOMAIN='${domain}' PCID=${selection.userId} ENV=development PORT=${port} npm start`;
+  return `API_KEY=${apiKey} PARTNER_DOMAIN='${domain}' PCID=${selection.userId} ENV=staging PORT=${port} npm start`;
 }
 
 /**
@@ -221,7 +221,7 @@ export function displayStartupCommand(
   console.log(chalk.gray('  • Backend JWT_SECRET must match this key'));
   console.log(chalk.gray(`  • PARTNER_DOMAIN = ${domain} (JWT audience claim)`));
   console.log(chalk.gray(`  • PCID = ${selection.userId} (JWT subject claim)`));
-  console.log(chalk.gray('  • ENV = development\n'));
+  console.log(chalk.gray('  • ENV = staging (drop-in replacement for staging environment)\n'));
 }
 
 /**

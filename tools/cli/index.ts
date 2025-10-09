@@ -18,9 +18,13 @@ import * as path from 'path';
 import * as crypto from 'crypto';
 import { loadConfig } from './config/loader';
 import { executeQuickStart } from './workflows/quickStart';
+import * as cleanup from './modules/cleanup';
 
 const api = new ApiClient();
 let userContext: UserContext | null = null;
+
+// Setup signal handlers for graceful shutdown
+cleanup.setupSignalHandlers();
 
 // Display banner
 function showBanner() {
@@ -516,6 +520,9 @@ async function mainMenu() {
       console.log(chalk.yellow('⚠️  Not logged in\n'));
     }
 
+    // Display services status
+    await cleanup.displayServicesStatus();
+
     const { action } = await inquirer.prompt([
       {
         type: 'list',
@@ -523,6 +530,7 @@ async function mainMenu() {
         message: 'What would you like to do?',
         choices: [
           { name: '🚀 Quick Start Workflow', value: 'workflow' },
+          { name: '🛑 Stop All Services', value: 'stop' },
           new inquirer.Separator(),
           { name: '🔐 Authentication', value: 'auth' },
           { name: '💳 Accounts', value: 'accounts' },
@@ -539,6 +547,10 @@ async function mainMenu() {
     switch (action) {
       case 'workflow':
         await workflowMenu();
+        break;
+      case 'stop':
+        await cleanup.stopAllServices();
+        await inquirer.prompt([{ type: 'input', name: 'continue', message: 'Press Enter to continue...' }]);
         break;
       case 'auth':
         await authMenu();
@@ -593,11 +605,5 @@ async function start() {
     throw error;
   }
 }
-
-// Handle process termination
-process.on('SIGINT', () => {
-  console.log(chalk.blue('\n\n👋 Goodbye!\n'));
-  process.exit(0);
-});
 
 start();
