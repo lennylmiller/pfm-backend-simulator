@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "sourceMap": true,
+    "inlineSourceMap": false,
+    "inlineSources": false,
+    "outDir": "./dist-debug",
+    "incremental": true,
+    "tsBuildInfoFile": "./dist-debug/.tsbuildinfo"
+  },
+  "ts-node": {
+    "transpileOnly": true,
+    "files": true,
+    "compilerOptions": {
+      "module": "commonjs",
+      "sourceMap": true,
+      "inlineSourceMap": false,
+      "inlineSources": false
+    }
+  }
+}
