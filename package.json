@@ -18,7 +18,8 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "lint": "eslint src/**/*.ts",
-    "format": "prettier --write \"src/**/*.ts\" \"tools/**/*.ts\""
+    "format": "prettier --write \"src/**/*.ts\" \"tools/**/*.ts\"",
+    "dev:debug": "nodemon --exec 'node --inspect -r ts-node/register src/index.ts'"
   },
   "keywords": [
     "pfm",

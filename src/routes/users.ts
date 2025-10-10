@@ -115,7 +115,7 @@ router.post('/current/track_login', authenticateJWT, async (req: Request, res: R
 
 // Harvest status (account aggregation from financial institutions)
 router.get('/:userId/harvest', authenticateJWT, (req: Request, res: Response) => {
-  res.json({ harvest: null });
+  res.json({ harvests: [{ status: 'complete' }] });
 });
 
 // Additional user endpoints will be added here
