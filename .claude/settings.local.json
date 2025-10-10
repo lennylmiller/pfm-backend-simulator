@@ -103,7 +103,9 @@
       "Bash(security find-certificate:*)",
       "SlashCommand(/sc:research \"VS Code debugging Node.js TypeScript with Caddy reverse proxy and nvm - best practices, configurations, workflows, and troubleshooting\" --depth exhaustive)",
       "mcp__tavily__tavily-search",
-      "Bash(git branch:*)"
+      "Bash(git branch:*)",
+      "Bash(mkdir:*)",
+      "Read(//Users/LenMiller/.claude/commands/**)"
     ],
     "deny": [],
     "ask": []

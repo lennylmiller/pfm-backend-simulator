@@ -111,7 +111,7 @@ tests/
 **Database Schema** (Prisma):
 - PostgreSQL with Prisma ORM
 - Schema: `prisma/schema.prisma`
-- Models: Partner, User, Account, Transaction, Budget, Goal, Alert, Notification, Tag
+- Models: Partner, User, Account, Transaction, Budget, Goal, Alert, Notification, Tag, CashflowBill, CashflowIncome, CashflowEvent (14 total models)
 - All timestamps: `createdAt`, `updatedAt`, soft deletes with `deletedAt`
 - See schema for full field definitions and relationships
 
@@ -193,8 +193,13 @@ npm test -- --testNamePattern="GET /accounts"   # Specific test case
   - Trends and comparison analytics
   - Performance optimized with database indexes
 
-**Partially Implemented**:
-- ⚠️ Networth calculations (stub only - needs 1-2 days implementation)
+- ✅ Networth Module (100%) - src/controllers/networthController.ts + src/services/networthService.ts
+  - Full Prisma database implementation with Decimal precision
+  - Asset/liability categorization by account type
+  - Summary endpoint (assets, liabilities, total networth)
+  - Detailed breakdown endpoint (per-account contribution)
+  - Historical networth calculation (current month only, ready for balance history feature)
+  - Respects includeInNetworth flags and account state
 
 **Not Implemented** (stubbed in `src/routes/stubs.ts`):
 - ❌ Account aggregation endpoints (Plaid/Finicity/MX integration)
@@ -336,10 +341,10 @@ npx prisma migrate dev --name description_of_change
 
 ## Known Issues and Limitations
 
-1. **Background Jobs Not Implemented**: Alert evaluation, cashflow projections run on-demand only (see docs/ALERT_NOTIFICATION_ARCHITECTURE.md for implementation plan)
+1. **Background Jobs Not Implemented**: Alert evaluation, cashflow projections run on-demand only (see specs/fodder/FUTURE_FEATURES.md for implementation plan)
 2. **Email/SMS Integration Pending**: Notification delivery channels not yet connected to external providers
 3. **Account Aggregation Missing**: No integration with Plaid/Finicity/MX for automatic transaction sync
-4. **Networth Stubs**: Networth calculation endpoints return placeholder data (Expenses module fully implemented)
+4. **Balance History Tracking**: Historical networth requires balance snapshots (see specs/fodder/FUTURE_FEATURES.md)
 5. **Limited Test Coverage**: Integration tests exist for budgets, cashflow, alerts; expand to all modules
 6. **No Rate Limiting**: API has no request rate limits or throttling
 7. **Single Database Instance**: No read replicas or sharding for horizontal scaling

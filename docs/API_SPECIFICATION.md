@@ -1,6 +1,8 @@
 # API v2 Specification
 **pfm-backend-simulator REST API Documentation**
 
+> **📋 Reference Documentation**: This document describes the complete Geezeo API v2 specification for responsive-tiles frontend compatibility. Not all features are fully implemented. See `CLAUDE.md` for actual implementation status.
+
 **Version**: 2.0.0
 **Base URL**: `https://api.example.com/api/v2`
 **Protocol**: HTTPS
