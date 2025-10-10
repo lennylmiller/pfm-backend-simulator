@@ -1,0 +1,4622 @@
+---
+openapi: 3.0.0
+info:
+  title: Team Attakula - PFM API Docs
+  version: 1.0.0
+externalDocs:
+  description: Previous Geezeo API Docs
+  url: https://developers.geezeo.com/
+servers:
+  - url: http://localhost:8080
+    description: Development
+  - url: https://sweet.itsgeez.us/
+    description: QA
+  - url: https://geez3o.geezeo.com/
+    description: Staging
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+tags:
+  - name: Goals
+  - name: Partners
+  - name: Ping
+  - name: Tags
+  - name: Uploads
+  - name: Users
+  - name: Users/Accounts
+  - name: Users/Activity
+  - name: Users/Ads
+  - name: Users/Alerts
+  - name: Users/Alerts > Account Thresholds
+  - name: Users/Alerts > Destinations
+  - name: Users/Alerts > Goals
+  - name: Users/Alerts > Merchant Names
+  - name: Users/Alerts > Notifications
+  - name: Users/Alerts > Spending Targets
+  - name: Users/Alerts > Transaction Limits
+  - name: Users/Alerts > Upcoming Bills
+  - name: Users/Budgets
+  - name: Users/Budgets > Transactions
+  - name: Users/Cashflow
+  - name: Users/Cashflow > Bills
+  - name: Users/Cashflow > Events
+  - name: Users/Cashflow > Incomes
+  - name: Users/CE_FIs
+  - name: Users/Current
+  - name: Users/Expenses
+  - name: Users/Harvest
+  - name: Users/Informational Messages
+  - name: Users/Logout
+  - name: Users/Networth
+  - name: Users/Networth > Accounts
+  - name: Users/Payoff Goals
+  - name: Users/Pending Accounts
+  - name: Users/Tags
+  - name: Users/Tickets
+  - name: Users/Transactions
+  - name: Users/Tile Tracker
+  - name: Users/Savings Goals
+paths:
+  /api/v2/payoff_goals:
+    get:
+      tags:
+        - Goals
+      summary: index payoff goals images
+      description: Listing of payoff goal images
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                payoff_goal_images:
+                  - id: credit_card.jpg
+                    name: Pay off a credit card
+                    url: https://sweet.itsgeez.us/assets/standard_goal_images/credit_card.jpg
+                  - id: loan.jpg
+                    name: Pay off loans
+                    url: https://sweet.itsgeez.us/assets/standard_goal_images/loan.jpg
+                  - id: payoff_goal.jpg
+                    name: Custom payoff goal
+                    url: https://sweet.itsgeez.us/assets/standard_goal_images/payoff_goal.jpg
+        "401":
+          description: Unauthorized. Returned when invalid credentials are provided
+          content:
+            application/json:
+              example:
+                error:
+                  - message: Unauthorized.
+                    data: {}
+  /api/v2/savings_goals:
+    get:
+      tags:
+        - Goals
+      summary: index savings goals images
+      description: Listing of payoff goal images
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                savings_goal_images:
+                  - id: baby.jpg
+                    name: Save for a baby
+                    url: https://sweet.itsgeez.us/assets/standard_goal_images/baby.jpg
+                  - id: car.jpg
+                    name: Save for a car
+                    url: https://sweet.itsgeez.us/assets/standard_goal_images/car.jpg
+                  - id: college.jpg
+                    name: Save for a college
+                    url: https://sweet.itsgeez.us/assets/standard_goal_images/college.jpg
+        "401":
+          description: Unauthorized. Returned when invalid credentials are provided
+          content:
+            application/json:
+              example:
+                error:
+                  - message: Unauthorized.
+                    data: {}
+  "/api/v2/partners/{partner_id}":
+    get:
+      tags:
+        - Partners
+      summary: show
+      description: List partner information
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: partner_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                partners:
+                  - id: 1
+                    demo: false
+                    domain: sweet.itsgeez.us
+                    product_name: Fleezeo INTERNAL
+                    browser_title: Fleezeo INTERNAL
+                    featured_searches:
+                      - id: 142
+                        ce_fis:
+                          - id: 8331
+                            fi_id: 40750
+                            name: 1st Capital Bank - Personal
+                            url: https://secure.fundsxpress.com/start/1CBMCA
+                            search_name: 1stcapitalbankpersonal
+                            enabled: true
+                            watchlist: false
+                        icon_url: https://geezeo-activestorage-qa.s3.amazonaws.com
+        "401":
+          description: Unauthorized. Returned when invalid credentials are provided
+          content:
+            application/json:
+              example:
+                error:
+                  - message: Unauthorized.
+                    data: {}
+        "404":
+          description: Returned when an invalid user is specified
+          content:
+            application/json:
+              example:
+                error:
+                  - message: Not found
+                    data: {}
+  /api/v2/partners/current:
+    get:
+      tags:
+        - Partners
+      summary: show current
+      description: 
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                partners:
+                  - id: 1
+                    demo: false
+                    domain: sweet.itsgeez.us
+                    product_name: Fleezeo INTERNAL
+                    browser_title: Fleezeo INTERNAL
+                    featured_searches:
+                      - id: 142
+                        ce_fis:
+                          - id: 8331
+                            fi_id: 40750
+                            name: 1st Capital Bank - Personal
+                            url: https://secure.fundsxpress.com/start/1CBMCA
+                            search_name: 1stcapitalbankpersonal
+                            enabled: true
+                            watchlist: false
+                        icon_url: https://geezeo-activestorage-qa.s3.amazonaws.com
+        "401":
+          description: Unauthorized. Returned when invalid credentials are provided
+          content:
+            application/json:
+              example:
+                error:
+                  - message: Unauthorized.
+                    data: {}
+        "404":
+          description: Returned when an invalid user is specified
+          content:
+            application/json:
+              example:
+                error:
+                  - message: Not found
+                    data: {}
+  /api/v2/partners/current/marketing_campaigns:
+    get:
+      tags:
+        - Partners
+      summary: index marketing campaigns
+      description: Listing of Marketing Campaigns
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                marketing_campaigns:
+                  - id: 123
+                    report_id: 456
+                    expires: 2019-12-25
+                    ad_target: http://www.yahoo.com
+                    ad_dimensions: 225_225
+                    title: Mobile Jan 8 test non mobile ad 1st
+                    campaign_location: null
+                    parent_id: null
+                    marketing_campaign_image_file_name: koalatea.png
+                  - id: 479
+                    report_id: 565
+                    expires: 2019-04-24
+                    ad_target: http://www.msn.com
+                    ad_dimensions: 225_225
+                    title: Mobile specific parameters ad
+                    campaign_location: SavingsGoal
+                    parent_id: null
+                    marketing_campaign_image_file_name: mobile-ad-1-1.jpg
+        "401":
+          description: Unauthorized. Returned when invalid credentials are provided
+          content:
+            application/json:
+              example:
+                error:
+                  - message: Unauthorized.
+                    data: {}
+  /api/v2/ping:
+    get:
+      tags:
+        - Ping
+      summary: ping
+      description: Get Ping. Verify connectivity to the API
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                response: PONG
+        "401":
+          description: Unauthorized. Returned when invalid credentials are provided
+          content:
+            application/json:
+              example:
+                error:
+                  - message: Unauthorized.
+                    data: {}
+  /api/v2/tags:
+    get:
+      tags:
+        - Tags
+      summary: index
+      description: List of default tags
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                "tags": ["Clothing","Education","Entertainment","Diningout","Groceries","Fees","Health","Home","Income","Personal","Payment","Savings","Transfer","Transportation","Travel", "Utilities"]
+        "401":
+          description: Unauthorized. Returned when invalid credentials are provided
+          content:
+            application/json:
+              example:
+                error:
+                  - message: Unauthorized.
+                    data: {}
+  /api/v2/uploads/received:
+    post:
+      tags:
+        - Uploads
+      summary: upload
+      description: >-
+        api_v2_uploads_received POST      
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v2/users:
+    post:
+      tags:
+        - Users
+      summary: create
+      description: |-
+        Create a new user. 
+
+        Parameter - Description
+        id - The user's partner customer id. Required
+        email - The user's email address. Required
+        first_name - The user's first name. Required
+        last_name - The user's last name. Required
+        login - The user's login for the PFM.
+        postal_code - The user's postal code.
+        birth_year - The year the user was born.
+        sex - The sex of the user. Either "Male" or "Female".
+        custom_tags - A list of tags the user has added.
+      requestBody:
+        content:
+          "*/*":
+            schema:
+              type: string
+              example:
+                user:
+                  - id: pmsample1
+                    login: login_test
+                    first_name: First
+                    last_name: Last
+                    email: email@example.com
+                    postal_code: 6252
+                    birth_year: 1980
+                    sex: Male
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - Users
+      summary: index
+      description: 
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                users:
+                  - id: 123456
+                    custom_tags: []
+                    login: 123456
+                    email: donotreply@geezeo.com
+                    login_count: 0
+                    last_login_at: null
+                    custom_settings: {}
+                    first_name: beta
+                    last_name: beta
+                    postal_code: 14209
+                    city: null,
+                    state: null,
+                    birth_year: 1995,
+                    sex: Male
+                  - id: 234567
+                    custom_tags: []
+                    login: 234567
+                    email: donotreply@geezeo.com
+                    login_count: 0
+                    last_login_at: null
+                    custom_settings: {}
+                    first_name: beta
+                    last_name: beta
+                    postal_code: 14209
+                    city: null,
+                    state: null,
+                    birth_year: null,
+                    sex: Female
+        "403":
+          description: Forbidden. Returned when invalid credentials are provided
+  "/api/v2/users/{user_id}":
+    get:
+      tags:
+        - Users
+      summary: show
+      description: Return information about a user.
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              example:
+                users:
+                  - id: pmsample1
+                    custom_tags:
+                      - Test1
+                      - Test2
+                    login: samplelogin
+                    email: user@example.com
+                    login_count: 0
+                    last_login_at: null
+                    custom_settings: {}
+                    first_name: beta
+                    last_name: beta
+                    postal_code: 14209
+                    city: null,
+                    state: null,
+                    birth_year: 1995,
+                    sex: Male
+        "401":
+          description: Unauthorized. Returned when invalid credentials are provided
+          content:
+            application/json:
+              example:
+                error:
+                  - message: Unauthorized.
+                    data: {}
+        "404":
+          description: Returned when an invalid user is specified
+          content:
+            application/json:
+              example:
+                error:
+                  - message: Not found
+                    data: {}
+    put:
+      tags:
+        - Users
+      summary: update
+      description: Update an existing user.
+      requestBody:
+        content:
+          "*/*":
+            schema:
+              type: string
+              example:
+                user:
+                  - id: pmsample1
+                    login: samplelogin
+                    first_name: FirstEdit
+                    last_name: LastEdit
+                    email: email@example.com
+                    postal_code: 6252
+                    birth_year: 1980
+                    sex: Male
+                    custom_tags:
+                      - Test1
+                      - Test2
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "204":
+          description: No Content. Successful response.
+          content:
+            application/json: {}
+        "403":
+          description: Forbidden. Returned when invalid authorization is provided
+          content:
+            application/json:
+              example:
+                error:
+                  - message: Unauthorized.
+                    data: {}
+        "404":
+          description: Returned when an invalid user is specified
+          content:
+            application/json:
+              example:
+                error:
+                  - message: Not found
+                    data: {}
+    delete:
+      tags:
+        - Users
+      summary: delete
+      description: |
+        Delete an existing user.
+
+        DELETE /api/v2/users/:user_id
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "204":
+          description: No Content. Successful response.
+          content:
+            application/json: {}
+        "403":
+          description: Forbidden. Returned when invalid authorization is provided
+          content:
+            application/json:
+              example:
+                error:
+                  - message: Unauthorized.
+                    data: {}
+        "404":
+          description: Returned when an invalid user is specified
+          content:
+            application/json:
+              example:
+                error:
+                  - message: Not found
+                    data: {}
+  "/api/v2/users/{user_id}/accounts/all":
+    get:
+      tags:
+        - Users/Accounts
+      summary: all
+      description: >-
+        all_api_v2_user_accounts GET
+
+        /api/v2/users/:user_id/accounts/all(.:format)                                           
+
+        api/v2/users/accounts#all {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/accounts/potential_cashflow":
+    get:
+      tags:
+        - Users/Accounts
+      summary: potential cashflow
+      description: >-
+        potential_cashflow_api_v2_user_accounts GET       
+
+        /api/v2/users/:user_id/accounts/potential_cashflow(.:format)                             
+
+        api/v2/users/accounts#potential_cashflow {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/accounts/classify":
+    patch:
+      tags:
+        - Users/Accounts
+      summary: classify
+      description: >-
+        classify_api_v2_user_accounts PATCH|PUT 
+
+        /api/v2/users/:user_id/accounts/classify(.:format)                                       
+
+        api/v2/users/accounts#classify {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content:
+          "*/*":
+            schema:
+              type: string
+              example: '"{\n  \"accounts\": {\n    \"id\": 37017880,\n    \"name\":
+                \"name\",\n    \"preferred_balance_type\":
+                \"current\",\n    \"display_account_type\":
+                \"checking\",\n    \"include_in_dashboard\":
+                true,\n    \"include_in_expenses\":
+                true,\n    \"include_in_budget\":
+                true,\n    \"include_in_cashflow\":
+                true,\n    \"include_in_goals\":
+                true,\n    \"include_in_networth\":
+                true,\n    \"locked_balance\": \"100.0\"\n  }\n}"'
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/accounts/{account_id}/update_credentials":
+    patch:
+      tags:
+        - Users/Accounts
+      summary: update credentials
+      description: >-
+        update_credentials_api_v2_user_account PATCH|PUT 
+
+        /api/v2/users/:user_id/accounts/:id/update_credentials(.:format)                         
+
+        api/v2/users/accounts#update_credentials {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content:
+          "*/*":
+            schema:
+              type: string
+              example: '"{\n  \"accounts\": {\n    \"id\": 37017880,\n    \"name\":
+                \"name\",\n    \"preferred_balance_type\":
+                \"current\",\n    \"display_account_type\":
+                \"checking\",\n    \"include_in_dashboard\":
+                true,\n    \"include_in_expenses\":
+                true,\n    \"include_in_budget\":
+                true,\n    \"include_in_cashflow\":
+                true,\n    \"include_in_goals\":
+                true,\n    \"include_in_networth\":
+                true,\n    \"locked_balance\": \"100.0\"\n  }\n}"'
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: account_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/accounts/{account_id}/archive":
+    patch:
+      tags:
+        - Users/Accounts
+      summary: archive
+      description: >-
+        archive_api_v2_user_account PATCH|PUT 
+
+        /api/v2/users/:user_id/accounts/:id/archive(.:format)                                    
+
+        api/v2/users/accounts#archive {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content:
+          "*/*":
+            schema:
+              type: string
+              example: '"{\n  \"accounts\": {\n    \"id\": 37017880,\n    \"name\":
+                \"name\",\n    \"preferred_balance_type\":
+                \"current\",\n    \"display_account_type\":
+                \"checking\",\n    \"include_in_dashboard\":
+                true,\n    \"include_in_expenses\":
+                true,\n    \"include_in_budget\":
+                true,\n    \"include_in_cashflow\":
+                true,\n    \"include_in_goals\":
+                true,\n    \"include_in_networth\":
+                true,\n    \"locked_balance\": \"100.0\"\n  }\n}"'
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: account_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/accounts/{account_id}/investments":
+    get:
+      tags:
+        - Users/Accounts
+      summary: investments
+      description: >-
+        api_v2_user_account_investments GET       
+
+        /api/v2/users/:user_id/accounts/:account_id/investments(.:format)                        
+
+        api/v2/users/accounts/investments#index {:format=>"json", :user_id=>/[^\/]+/, :account_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: account_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/accounts/{account_id}/transactions":
+    get:
+      tags:
+        - Users/Accounts
+      summary: transactions
+      description: >-
+        api_v2_user_account_transactions GET       
+
+        /api/v2/users/:user_id/accounts/:account_id/transactions(.:format)                       
+
+        api/v2/users/accounts/transactions#index {:format=>"json", :user_id=>/[^\/]+/, :account_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: account_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/accounts":
+    get:
+      tags:
+        - Users/Accounts
+      summary: index
+      description: >-
+        api_v2_user_accounts GET       
+
+        /api/v2/users/:user_id/accounts(.:format)                                                
+
+        api/v2/users/accounts#index {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    post:
+      tags:
+        - Users/Accounts
+      summary: create
+      description: >-
+        POST      
+
+        /api/v2/users/:user_id/accounts(.:format)                                                
+
+        api/v2/users/accounts#create {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content:
+          "*/*":
+            schema:
+              type: string
+              example: '"{\n  \"accounts\": [\n    {\n      \"name\": \"JW
+                Checking\",\n      \"balance\":
+                \"10.0\",\n      \"reference_id\":
+                \"0001159265-S0001\",\n      \"aggregation_type\":
+                \"partner\",\n      \"state\":
+                \"active\",\n      \"harvest_updated_at\":
+                \"2018-06-18T14:47:18.000Z\",\n      \"account_type\":
+                \"savings\",\n      \"display_account_type\":
+                \"savings\",\n      \"preferred_balance_type\":
+                null,\n      \"include_in_dashboard\":
+                true,\n      \"include_in_expenses\":
+                true,\n      \"include_in_budget\":
+                true,\n      \"include_in_cashflow\":
+                true,\n      \"include_in_goals\":
+                true,\n      \"include_in_networth\":
+                true,\n      \"locked_balance\":
+                \"0.0\",\n      \"account_login_id\":
+                null,\n      \"cashedge_account_type\": null,\n      \"fi\":
+                null,\n      \"other_balances\":
+                [\n        {\n          \"balance_type\":
+                \"current\",\n          \"balance\":
+                \"15.0\"\n        }\n      ]\n    }\n  ]\n}"'
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/accounts/{account_id}":
+    get:
+      tags:
+        - Users/Accounts
+      summary: show
+      description: >-
+        api_v2_user_account GET       
+
+        /api/v2/users/:user_id/accounts/:id(.:format)                                            
+
+        api/v2/users/accounts#show {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: account_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    patch:
+      tags:
+        - Users/Accounts
+      summary: update(patch)
+      description: >-
+        PATCH     
+
+        /api/v2/users/:user_id/accounts/:id(.:format)                                            
+
+        api/v2/users/accounts#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content:
+          "*/*":
+            schema:
+              type: string
+              example: '"{\n  \"accounts\": [\n    {\n      \"name\": \"JW
+                Name\",\n      \"balance\": \"70.0\",\n      \"reference_id\":
+                \"21344166\",\n      \"aggregation_type\":
+                \"partner\",\n      \"state\":
+                \"active\",\n      \"harvest_updated_at\":
+                \"2017-07-20T20:00:00.000Z\",\n      \"account_type\":
+                \"checking\",\n      \"display_account_type\":
+                \"checking\",\n      \"preferred_balance_type\":
+                \"current\",\n      \"include_in_dashboard\":
+                true,\n      \"include_in_expenses\":
+                true,\n      \"include_in_budget\":
+                true,\n      \"include_in_cashflow\":
+                true,\n      \"include_in_goals\":
+                true,\n      \"include_in_networth\":
+                true,\n      \"locked_balance\":
+                \"100.0\",\n      \"account_login_id\":
+                null,\n      \"cashedge_account_type\": null,\n      \"fi\":
+                null,\n      \"other_balances\": []\n    }\n  ]\n}"'
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: account_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Users/Accounts
+      summary: update(put)
+      description: >-
+        PUT       
+
+        /api/v2/users/:user_id/accounts/:id(.:format)                                            
+
+        api/v2/users/accounts#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content:
+          "*/*":
+            schema:
+              type: string
+              example: '"{\n  \"account\": \n    {\n      \"id\": 21344166,\n      \"name\":
+                \"PRIMARY SHARE\",\n      \"balance\":
+                \"10.0\",\n      \"reference_id\":
+                \"0001159265-S0001\",\n      \"aggregation_type\":
+                \"partner\",\n      \"state\":
+                \"active\",\n      \"harvest_updated_at\":
+                \"2018-06-18T14:47:18.000Z\",\n      \"account_type\":
+                \"savings\",\n      \"display_account_type\":
+                \"savings\",\n      \"preferred_balance_type\":
+                null,\n      \"include_in_dashboard\":
+                true,\n      \"include_in_expenses\":
+                true,\n      \"include_in_budget\":
+                true,\n      \"include_in_cashflow\":
+                true,\n      \"include_in_goals\":
+                true,\n      \"include_in_networth\":
+                true,\n      \"locked_balance\":
+                \"0.0\",\n      \"account_login_id\":
+                null,\n      \"cashedge_account_type\": null,\n      \"fi\":
+                null,\n      \"other_balances\":
+                [\n        {\n          \"balance_type\":
+                \"current\",\n          \"balance\":
+                \"15.0\"\n        }\n      ]\n    }\n}"'
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: account_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Users/Accounts
+      summary: delete
+      description: >-
+        DELETE    
+
+        /api/v2/users/:user_id/accounts/:id(.:format)                                            
+
+        api/v2/users/accounts#destroy {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: account_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/activity":
+    get:
+      tags:
+        - Users/Activity
+      summary: index
+      description: >-
+        api_v2_user_activity_index GET       
+
+        /api/v2/users/:user_id/activity(.:format)                                                
+
+        api/v2/users/activity#index {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/ads/{ad_id}/click":
+    get:
+      tags:
+        - Users/Ads
+      summary: click
+      description: >
+        click_api_v2_user_ad GET       
+
+        /api/v2/users/:user_id/ads/:id/click(.:format)                                           
+
+        api/v2/users/ads#click {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: ad_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/ads":
+    get:
+      tags:
+        - Users/Ads
+      summary: index
+      description: >-
+        api_v2_user_ads GET       
+
+        /api/v2/users/:user_id/ads(.:format)                                                     
+
+        api/v2/users/ads#index {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/{user_id}/alerts/account_thresholds":
+    post:
+      tags:
+        - Users/Alerts > Account Thresholds
+      summary: create
+      description: >-
+        api_v2_user_alerts_account_thresholds POST      
+
+        /api/v2/users/:user_id/alerts/account_thresholds(.:format)                               
+
+        api/v2/users/alerts/account_thresholds#create {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/{user_id}/alerts/account_thresholds/{account_threshold_id}":
+    patch:
+      tags:
+        - Users/Alerts > Account Thresholds
+      summary: update(patch)
+      description: >-
+        api_v2_user_alerts_account_threshold PATCH     
+
+        /api/v2/users/:user_id/alerts/account_thresholds/:id(.:format)                           
+
+        api/v2/users/alerts/account_thresholds#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: account_threshold_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Users/Alerts > Account Thresholds
+      summary: update(put)
+      description: >-
+        PUT       
+
+        /api/v2/users/:user_id/alerts/account_thresholds/:id(.:format)                           
+
+        api/v2/users/alerts/account_thresholds#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: account_threshold_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/{user_id}/alerts/destinations":
+    get:
+      tags:
+        - Users/Alerts > Destinations
+      summary: show
+      description: >-
+        api_v2_user_alerts_destinations GET       
+
+        /api/v2/users/:user_id/alerts/destinations(.:format)                                     
+
+        api/v2/users/alerts/destinations#show {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/{user_id}/alerts/destinations/{destination_id}":
+    patch:
+      tags:
+        - Users/Alerts > Destinations
+      summary: update(patch)
+      description: >-
+        PATCH     
+
+        /api/v2/users/:user_id/alerts/destinations(.:format)                                     
+
+        api/v2/users/alerts/destinations#update {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: destination_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Users/Alerts > Destinations
+      summary: update(put)
+      description: >-
+        PUT       
+
+        /api/v2/users/:user_id/alerts/destinations(.:format)                                     
+
+        api/v2/users/alerts/destinations#update {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: destination_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/{user_id}/alerts/goals":
+    post:
+      tags:
+        - Users/Alerts > Goals
+      summary: create
+      description: >-
+        api_v2_user_alerts_goals POST      
+
+        /api/v2/users/:user_id/alerts/goals(.:format)                                            
+
+        api/v2/users/alerts/goals#create {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/{user_id}/alerts/goals/{goal_id}":
+    patch:
+      tags:
+        - Users/Alerts > Goals
+      summary: update(patch)
+      description: >-
+        api_v2_user_alerts_goal PATCH     
+
+        /api/v2/users/:user_id/alerts/goals/:id(.:format)                                        
+
+        api/v2/users/alerts/goals#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: goal_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Users/Alerts > Goals
+      summary: update(put)
+      description: >-
+        PUT       
+
+        /api/v2/users/:user_id/alerts/goals/:id(.:format)                                        
+
+        api/v2/users/alerts/goals#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: goal_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/{user_id}/alerts/merchant_names":
+    post:
+      tags:
+        - Users/Alerts > Merchant Names
+      summary: create
+      description: >-
+        api_v2_user_alerts_merchant_names POST      
+
+        /api/v2/users/:user_id/alerts/merchant_names(.:format)                                   
+
+        api/v2/users/alerts/merchant_names#create {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/{user_id}/alerts/merchant_names/{merchant_name_id}":
+    patch:
+      tags:
+        - Users/Alerts > Merchant Names
+      summary: update(patch)
+      description: >-
+        api_v2_user_alerts_merchant_name PATCH     
+
+        /api/v2/users/:user_id/alerts/merchant_names/:id(.:format)                               
+
+        api/v2/users/alerts/merchant_names#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: merchant_name_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Users/Alerts > Merchant Names
+      summary: update(put)
+      description: >-
+        PUT       
+
+        /api/v2/users/:user_id/alerts/merchant_names/:id(.:format)                               
+
+        api/v2/users/alerts/merchant_names#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: merchant_name_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/{user_id}/alerts/notifications":
+    get:
+      tags:
+        - Users/Alerts > Notifications
+      summary: index
+      description: >-
+        api_v2_user_alerts_notifications GET       
+
+        /api/v2/users/:user_id/alerts/notifications(.:format)                                    
+
+        api/v2/users/alerts/notifications#index {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/{user_id}/alerts/notifications/{notification_id}":
+    get:
+      tags:
+        - Users/Alerts > Notifications
+      summary: show
+      description: >-
+        api_v2_user_alerts_notification GET       
+
+        /api/v2/users/:user_id/alerts/notifications/:id(.:format)                                
+
+        api/v2/users/alerts/notifications#show {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: notification_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Users/Alerts > Notifications
+      summary: delete
+      description: >-
+        DELETE    
+
+        /api/v2/users/:user_id/alerts/notifications/:id(.:format)                                
+
+        api/v2/users/alerts/notifications#destroy {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: notification_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/{user_id}/alerts/spending_targets":
+    post:
+      tags:
+        - Users/Alerts > Spending Targets
+      summary: create
+      description: >-
+        api_v2_user_alerts_spending_targets POST      
+
+        /api/v2/users/:user_id/alerts/spending_targets(.:format)                                 
+
+        api/v2/users/alerts/spending_targets#create {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/{user_id}/alerts/spending_targets/{spending_target_id}":
+    patch:
+      tags:
+        - Users/Alerts > Spending Targets
+      summary: update(patch)
+      description: >-
+        api_v2_user_alerts_spending_target PATCH     
+
+        /api/v2/users/:user_id/alerts/spending_targets/:id(.:format)                             
+
+        api/v2/users/alerts/spending_targets#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: spending_target_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Users/Alerts > Spending Targets
+      summary: update(put)
+      description: >-
+        PUT       
+
+        /api/v2/users/:user_id/alerts/spending_targets/:id(.:format)                             
+
+        api/v2/users/alerts/spending_targets#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: spending_target_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/{user_id}/alerts/transaction_limits":
+    post:
+      tags:
+        - Users/Alerts > Transaction Limits
+      summary: create
+      description: >-
+        api_v2_user_alerts_transaction_limits POST      
+
+        /api/v2/users/:user_id/alerts/transaction_limits(.:format)                               
+
+        api/v2/users/alerts/transaction_limits#create {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/{user_id}/alerts/transaction_limits/{transaction_limit_id}":
+    patch:
+      tags:
+        - Users/Alerts > Transaction Limits
+      summary: update(patch)
+      description: >-
+        api_v2_user_alerts_transaction_limit PATCH     
+
+        /api/v2/users/:user_id/alerts/transaction_limits/:id(.:format)                           
+
+        api/v2/users/alerts/transaction_limits#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: transaction_limit_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Users/Alerts > Transaction Limits
+      summary: update(put)
+      description: >-
+        PUT       
+
+        /api/v2/users/:user_id/alerts/transaction_limits/:id(.:format)                           
+
+        api/v2/users/alerts/transaction_limits#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: transaction_limit_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/{user_id}/alerts/upcoming_bills":
+    post:
+      tags:
+        - Users/Alerts > Upcoming Bills
+      summary: create
+      description: >-
+        api_v2_user_alerts_upcoming_bills POST      
+
+        /api/v2/users/:user_id/alerts/upcoming_bills(.:format)                                   
+
+        api/v2/users/alerts/upcoming_bills#create {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/{user_id}/alerts/upcoming_bills/{upcoming_bill_id}":
+    patch:
+      tags:
+        - Users/Alerts > Upcoming Bills
+      summary: update(patch)
+      description: >-
+        api_v2_user_alerts_upcoming_bill PATCH     
+
+        /api/v2/users/:user_id/alerts/upcoming_bills/:id(.:format)                               
+
+        api/v2/users/alerts/upcoming_bills#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: upcoming_bill_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Users/Alerts > Upcoming Bills
+      summary: update(put)
+      description: >-
+        PUT       
+
+        /api/v2/users/:user_id/alerts/upcoming_bills/:id(.:format)                               
+
+        api/v2/users/alerts/upcoming_bills#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: upcoming_bill_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/{user_id}/alerts":
+    get:
+      tags:
+        - Users/Alerts
+      summary: index
+      description: >-
+        api_v2_user_alerts GET       
+
+        /api/v2/users/:user_id/alerts(.:format)                                                  
+
+        api/v2/users/alerts#index {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/{user_id}/alerts/{alert_id}":
+    get:
+      tags:
+        - Users/Alerts
+      summary: show
+      description: >-
+        api_v2_user_alert GET       
+
+        /api/v2/users/:user_id/alerts/:id(.:format)                                              
+
+        api/v2/users/alerts#show {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: alert_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Users/Alerts
+      summary: delete
+      description: >-
+        DELETE    
+
+        /api/v2/users/:user_id/alerts/:id(.:format)                                              
+
+        api/v2/users/alerts#destroy {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: alert_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/budgets/{budget_id}/transactions":
+    get:
+      tags:
+        - Users/Budgets > Transactions
+      summary: index
+      description: >-
+        api_v2_user_budget_transactions GET       
+
+        /api/v2/users/:user_id/budgets/:budget_id/transactions(.:format)                         
+
+        api/v2/users/budgets/transactions#index {:format=>"json", :user_id=>/[^\/]+/, :budget_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: budget_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/budgets":
+    get:
+      tags:
+        - Users/Budgets
+      summary: index
+      description: >-
+        api_v2_user_budgets GET       
+
+        /api/v2/users/:user_id/budgets(.:format)                                                 
+
+        api/v2/users/budgets#index {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    post:
+      tags:
+        - Users/Budgets
+      summary: create
+      description: >-
+        POST      
+
+        /api/v2/users/:user_id/budgets(.:format)                                                 
+
+        api/v2/users/budgets#create {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content:
+          "*/*":
+            schema:
+              type: string
+              example: '"{\n    \"budget\":\n        {\"name\":\"Postman Test
+                Budget\",\n            \"budget_amount\":100,\n            \"tag_names\":[\"Clothing\"],\n            \"account_list\":[41000240,41000241,41000242]\n        }\n            \n}"'
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/budgets/{budget_id}":
+    get:
+      tags:
+        - Users/Budgets
+      summary: show
+      description: >-
+        api_v2_user_budget GET       
+
+        /api/v2/users/:user_id/budgets/:id(.:format)                                             
+
+        api/v2/users/budgets#show {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: budget_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    patch:
+      tags:
+        - Users/Budgets
+      summary: update(patch)
+      description: >-
+        PATCH     
+
+        /api/v2/users/:user_id/budgets/:id(.:format)                                             
+
+        api/v2/users/budgets#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: budget_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Users/Budgets
+      summary: update(put)
+      description: >-
+        PUT       
+
+        /api/v2/users/:user_id/budgets/:id(.:format)                                             
+
+        api/v2/users/budgets#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: budget_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Users/Budgets
+      summary: delete
+      description: >-
+        DELETE    
+
+        /api/v2/users/:user_id/budgets/:id(.:format)                                             
+
+        api/v2/users/budgets#destroy {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: budget_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/{user_id}/cashblow/bills/{bill_id}/stop":
+    patch:
+      tags:
+        - Users/Cashflow > Bills
+      summary: stop
+      description: >-
+        stop_api_v2_user_cashflow_bill PATCH|PUT 
+
+        /api/v2/users/:user_id/cashflow/bills/:id/stop(.:format)                                 
+
+        api/v2/users/cashflows/bills#stop {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: bill_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/cashflow/bills":
+    get:
+      tags:
+        - Users/Cashflow > Bills
+      summary: index
+      description: >-
+        api_v2_user_cashflow_bills GET       
+
+        /api/v2/users/:user_id/cashflow/bills(.:format)                                          
+
+        api/v2/users/cashflows/bills#index {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/{user_id}/cashflow/bills":
+    post:
+      tags:
+        - Users/Cashflow > Bills
+      summary: create
+      description: >-
+        POST      
+
+        /api/v2/users/:user_id/cashflow/bills(.:format)                                          
+
+        api/v2/users/cashflows/bills#create {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/cashflow/bills/{bill_id}":
+    get:
+      tags:
+        - Users/Cashflow > Bills
+      summary: show
+      description: >-
+        api_v2_user_cashflow_bill GET       
+
+        /api/v2/users/:user_id/cashflow/bills/:id(.:format)                                      
+
+        api/v2/users/cashflows/bills#show {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: bill_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    patch:
+      tags:
+        - Users/Cashflow > Bills
+      summary: update(patch)
+      description: >-
+        PATCH     
+
+        /api/v2/users/:user_id/cashflow/bills/:id(.:format)                                      
+
+        api/v2/users/cashflows/bills#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: bill_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Users/Cashflow > Bills
+      summary: update(put)
+      description: >-
+        PUT       
+
+        /api/v2/users/:user_id/cashflow/bills/:id(.:format)                                      
+
+        api/v2/users/cashflows/bills#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: bill_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Users/Cashflow > Bills
+      summary: delete
+      description: >-
+        DELETE    
+
+        /api/v2/users/:user_id/cashflow/bills/:id(.:format)                                      
+
+        api/v2/users/cashflows/bills#destroy {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: bill_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/cashflow/events":
+    get:
+      tags:
+        - Users/Cashflow > Events
+      summary: index
+      description: >-
+        api_v2_user_cashflow_events GET       
+
+        /api/v2/users/:user_id/cashflow/events(.:format)                                         
+
+        api/v2/users/cashflows/events#index {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/cashflow/events/{event_id}":
+    patch:
+      tags:
+        - Users/Cashflow > Events
+      summary: update(patch)
+      description: >-
+        api_v2_user_cashflow_event PATCH     
+
+        /api/v2/users/:user_id/cashflow/events/:id(.:format)                                     
+
+        api/v2/users/cashflows/events#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: event_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Users/Cashflow > Events
+      summary: update(put)
+      description: >-
+        PUT       
+
+        /api/v2/users/:user_id/cashflow/events/:id(.:format)                                     
+
+        api/v2/users/cashflows/events#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: event_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Users/Cashflow > Events
+      summary: delete
+      description: >-
+        DELETE    
+
+        /api/v2/users/:user_id/cashflow/events/:id(.:format)                                     
+
+        api/v2/users/cashflows/events#destroy {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: event_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/cashflow/incomes/{income_id}":
+    patch:
+      tags:
+        - Users/Cashflow > Incomes
+      summary: update(patch)
+      description: >-
+        PATCH     
+
+        /api/v2/users/:user_id/cashflow/incomes/:id(.:format)                                    
+
+        api/v2/users/cashflows/incomes#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: income_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - Users/Cashflow > Incomes
+      summary: show
+      description: >-
+        api_v2_user_cashflow_income GET       
+
+        /api/v2/users/:user_id/cashflow/incomes/:id(.:format)                                    
+
+        api/v2/users/cashflows/incomes#show {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: income_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Users/Cashflow > Incomes
+      summary: update(put)
+      description: >-
+        PUT      
+
+        /api/v2/users/:user_id/cashflow/incomes/:id(.:format)                                    
+
+        api/v2/users/cashflows/incomes#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: income_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Users/Cashflow > Incomes
+      summary: delete
+      description: >-
+        DELETE    
+
+        /api/v2/users/:user_id/cashflow/incomes/:id(.:format)                                    
+
+        api/v2/users/cashflows/incomes#destroy {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: income_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/cashflow/incomes":
+    get:
+      tags:
+        - Users/Cashflow > Incomes
+      summary: index
+      description: >-
+        api_v2_user_cashflow_incomes GET       
+
+        /api/v2/users/:user_id/cashflow/incomes(.:format)                                        
+
+        api/v2/users/cashflows/incomes#index {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    post:
+      tags:
+        - Users/Cashflow > Incomes
+      summary: create
+      description: >-
+        POST      
+
+        /api/v2/users/:user_id/cashflow/incomes(.:format)                                        
+
+        api/v2/users/cashflows/incomes#create {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/cashflow":
+    get:
+      tags:
+        - Users/Cashflow
+      summary: show
+      description: >-
+        api_v2_user_cashflow GET       
+
+        /api/v2/users/:user_id/cashflow(.:format)                                                
+
+        api/v2/users/cashflows#show {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    patch:
+      tags:
+        - Users/Cashflow
+      summary: update(patch)
+      description: >-
+        PATCH     
+
+        /api/v2/users/:user_id/cashflow(.:format)                                                
+
+        api/v2/users/cashflows#update {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Users/Cashflow
+      summary: update(put)
+      description: >-
+        PUT       
+
+        /api/v2/users/:user_id/cashflow(.:format)                                                
+
+        api/v2/users/cashflows#update {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/ce_fis":
+    post:
+      tags:
+        - Users/CE_FIs
+      summary: create
+      description: >-
+        api_v2_user_ce_fis POST      
+
+        /api/v2/users/:user_id/ce_fis(.:format)                                                  
+
+        api/v2/users/ce_fis#create {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    patch:
+      tags:
+        - Users/CE_FIs
+      summary: update(patch)
+      description: >-
+        api_v2_user_ce_fi PATCH     
+
+        /api/v2/users/:user_id/ce_fis/:id(.:format)                                              
+
+        api/v2/users/ce_fis#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Users/CE_FIs
+      summary: update(put)
+      description: >-
+        PUT       
+
+        /api/v2/users/:user_id/ce_fis/:id(.:format)                                              
+
+        api/v2/users/ce_fis#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v2/users/current/track_login:
+    post:
+      tags:
+        - Users/Current
+      summary: current user track login
+      description: >
+        track_login_api_v2_users_current POST      
+
+        /api/v2/users/current/track_login(.:format)                                              
+
+        api/v2/users/current#track_login {:format=>"json"}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  /api/v2/users/current:
+    post:
+      tags:
+        - Users/Current
+      summary: create
+      description: >
+        POST      
+
+        /api/v2/users/current(.:format)                                                          
+
+        api/v2/users/current#create {:format=>"json"}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - Users/Current
+      summary: show
+      description: >
+        api_v2_users_current GET       
+
+        /api/v2/users/current(.:format)                                                          
+
+        api/v2/users/current#show {:format=>"json"}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    patch:
+      tags:
+        - Users/Current
+      summary: update(patch)
+      description: >
+        PATCH     
+
+        /api/v2/users/current(.:format)                                                          
+
+        api/v2/users/current#update {:format=>"json"}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Users/Current
+      summary: update(put)
+      description: >
+        PUT       
+
+        /api/v2/users/current(.:format)                                                          
+
+        api/v2/users/current#update {:format=>"json"}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Users/Current
+      summary: delete
+      description: >
+        DELETE    
+
+        /api/v2/users/current(.:format)                                                          
+
+        api/v2/users/current#destroy {:format=>"json"}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/expenses":
+    get:
+      tags:
+        - Users/Expenses
+      summary: index
+      description: >-
+        api_v2_user_expenses GET       
+
+        /api/v2/users/:user_id/expenses(.:format)                                                
+
+        api/v2/users/expenses#index {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: threshold
+          in: query
+          schema:
+            type: integer
+          example: "100"
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/expenses/last_month":
+    get:
+      tags:
+        - Users/Expenses
+      summary: last_month
+      description: >-
+        last_month_api_v2_user_expenses GET       
+
+        /api/v2/users/:user_id/expenses/last_month(.:format)                                     
+
+        api/v2/users/expenses#last_month {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/expenses/this_month":
+    get:
+      tags:
+        - Users/Expenses
+      summary: this_month
+      description: >-
+        this_month_api_v2_user_expenses GET       
+
+        /api/v2/users/:user_id/expenses/this_month(.:format)                                     
+
+        api/v2/users/expenses#this_month {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/expenses/last_thirty_days":
+    get:
+      tags:
+        - Users/Expenses
+      summary: last_thirty_days
+      description: >-
+        last_thirty_days_api_v2_user_expenses GET       
+
+        /api/v2/users/:user_id/expenses/last_thirty_days(.:format)                               
+
+        api/v2/users/expenses#last_thirty_days {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/harvest":
+    get:
+      tags:
+        - Users/Harvest
+      summary: show
+      description: >-
+        api_v2_user_harvest GET       
+
+        /api/v2/users/:user_id/harvest(.:format)                                                 
+
+        api/v2/users/harvests#show {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    post:
+      tags:
+        - Users/Harvest
+      summary: create
+      description: >-
+        POST      
+
+        /api/v2/users/:user_id/harvest(.:format)                                                 
+
+        api/v2/users/harvests#create {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/informational_messages":
+    get:
+      tags:
+        - Users/Informational Messages
+      summary: index
+      description: >-
+        api_v2_user_informational_messages GET       
+
+        /api/v2/users/:user_id/informational_messages(.:format)                                  
+
+        api/v2/users/informational_messages#index {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/logout":
+    post:
+      tags:
+        - Users/Logout
+      summary: user logout
+      description: >-
+        logout_api_v2_user POST      
+
+        /api/v2/users/:id/logout(.:format)                                                       
+
+        api/v2/users#logout {:format=>"json", :id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/networth/accounts":
+    get:
+      tags:
+        - Users/Networth > Accounts
+      summary: index
+      description: >-
+        api_v2_user_networth_accounts GET       
+
+        /api/v2/users/:user_id/networth/accounts(.:format)                                       
+
+        api/v2/users/networth/accounts#index {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/{user_id}/networth/accounts":
+    post:
+      tags:
+        - Users/Networth > Accounts
+      summary: create
+      description: >-
+        POST      
+
+        /api/v2/users/:user_id/networth/accounts(.:format)                                       
+
+        api/v2/users/networth/accounts#create {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/networth/accounts/{account_id}":
+    get:
+      tags:
+        - Users/Networth > Accounts
+      summary: show
+      description: >-
+        api_v2_user_networth_account GET       
+
+        /api/v2/users/:user_id/networth/accounts/:id(.:format)                                   
+
+        api/v2/users/networth/accounts#show {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: account_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    patch:
+      tags:
+        - Users/Networth > Accounts
+      summary: update(patch)
+      description: >-
+        PATCH     
+
+        /api/v2/users/:user_id/networth/accounts/:id(.:format)                                   
+
+        api/v2/users/networth/accounts#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: account_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Users/Networth > Accounts
+      summary: update(put)
+      description: >-
+        PUT       
+
+        /api/v2/users/:user_id/networth/accounts/:id(.:format)                                   
+
+        api/v2/users/networth/accounts#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: account_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Users/Networth > Accounts
+      summary: delete
+      description: >-
+        DELETE    
+
+        /api/v2/users/:user_id/networth/accounts/:id(.:format)                                   
+
+        api/v2/users/networth/accounts#destroy {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: account_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/networth":
+    get:
+      tags:
+        - Users/Networth
+      summary: show
+      description: >-
+        api_v2_user_networth GET       
+
+        /api/v2/users/:user_id/networth(.:format)                                                
+
+        api/v2/users/networths#show {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/payoff_goals/{payoff_goal_id}/archive":
+    patch:
+      tags:
+        - Users/Payoff Goals
+      summary: archive
+      description: >-
+        archive_api_v2_user_payoff_goal PATCH|PUT 
+
+        /api/v2/users/:user_id/payoff_goals/:id/archive(.:format)                                
+
+        api/v2/users/payoff_goals#archive {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: payoff_goal_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/payoff_goals":
+    get:
+      tags:
+        - Users/Payoff Goals
+      summary: index
+      description: >-
+        api_v2_user_payoff_goals GET       
+
+        /api/v2/users/:user_id/payoff_goals(.:format)                                            
+
+        api/v2/users/payoff_goals#index {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    post:
+      tags:
+        - Users/Payoff Goals
+      summary: create
+      description: >-
+        POST      
+
+        /api/v2/users/:user_id/payoff_goals(.:format)                                            
+
+        api/v2/users/payoff_goals#create {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/payoff_goals/{payoff_goal_id}":
+    get:
+      tags:
+        - Users/Payoff Goals
+      summary: show
+      description: >-
+        api_v2_user_payoff_goal GET       
+
+        /api/v2/users/:user_id/payoff_goals/:id(.:format)                                        
+
+        api/v2/users/payoff_goals#show {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: payoff_goal_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    patch:
+      tags:
+        - Users/Payoff Goals
+      summary: update(patch)
+      description: >
+        PATCH     
+
+        /api/v2/users/:user_id/payoff_goals/:id(.:format)                                        
+
+        api/v2/users/payoff_goals#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: payoff_goal_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Users/Payoff Goals
+      summary: update(put)
+      description: >
+        PUT       
+
+        /api/v2/users/:user_id/payoff_goals/:id(.:format)                                        
+
+        api/v2/users/payoff_goals#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: payoff_goal_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Users/Payoff Goals
+      summary: delete
+      description: >
+        DELETE    
+
+        /api/v2/users/:user_id/payoff_goals/:id(.:format)                                        
+
+        api/v2/users/payoff_goals#destroy {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: payoff_goal_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/pending_accounts":
+    get:
+      tags:
+        - Users/Pending Accounts
+      summary: index
+      description: >-
+        api_v2_user_pending_accounts GET       
+
+        /api/v2/users/:user_id/pending_accounts(.:format)                                        
+
+        api/v2/users/pending_accounts#index {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/pending_accounts/{pending_account_id}":
+    delete:
+      tags:
+        - Users/Pending Accounts
+      summary: delete
+      description: >-
+        api_v2_user_pending_account DELETE    
+
+        /api/v2/users/:user_id/pending_accounts/:id(.:format)                                    
+
+        api/v2/users/pending_accounts#destroy {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: pending_account_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/tags":
+    get:
+      tags:
+        - Users/Tags
+      summary: show
+      description: >-
+        api_v2_user_tags GET       
+
+        /api/v2/users/:user_id/tags(.:format)                                                    
+
+        api/v2/users/tags#show {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    patch:
+      tags:
+        - Users/Tags
+      summary: update(patch)
+      description: >-
+        PATCH     
+
+        /api/v2/users/:user_id/tags(.:format)                                                    
+
+        api/v2/users/tags#update {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Users/Tags
+      summary: update(put)
+      description: >-
+        PUT       
+
+        /api/v2/users/:user_id/tags(.:format)                                                    
+
+        api/v2/users/tags#update {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/tickets":
+    post:
+      tags:
+        - Users/Tickets
+      summary: create
+      description: >-
+        api_v2_user_tickets POST      
+
+        /api/v2/users/:user_id/tickets(.:format)                                                 
+
+        api/v2/users/tickets#create {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/transactions/search":
+    get:
+      tags:
+        - Users/Transactions
+      summary: search
+      description: >-
+        search_api_v2_user_transactions GET       
+
+        /api/v2/users/:user_id/transactions/search(.:format)                                     
+
+        api/v2/users/transactions#search {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: untagged
+          in: query
+          schema:
+            type: integer
+          example: "0"
+        - name: begin_on
+          in: query
+          schema:
+            type: string
+          example: 2023-03-19
+        - name: end_on
+          in: query
+          schema:
+            type: string
+          example: 2023-04-19
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/transactions":
+    get:
+      tags:
+        - Users/Transactions
+      summary: index
+      description: >-
+        api_v2_user_transactions GET       
+
+        /api/v2/users/:user_id/transactions(.:format)                                           
+
+        api/v2/users/transactions#index {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/transactions/{transaction_id}":
+    patch:
+      tags:
+        - Users/Transactions
+      summary: update(patch)
+      description: >-
+        api_v2_user_transaction PATCH     
+
+        /api/v2/users/:user_id/transactions/:id(.:format)                                        
+
+        api/v2/users/transactions#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: transaction_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Users/Transactions
+      summary: update(put)
+      description: >-
+        PUT       
+
+        /api/v2/users/:user_id/transactions/:id(.:format)                                        
+
+        api/v2/users/transactions#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: transaction_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Users/Transactions
+      summary: delete
+      description: >-
+        DELETE    
+
+        /api/v2/users/:user_id/transactions/:id(.:format)                                        
+
+        api/v2/users/transactions#destroy {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: transaction_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/{user_id}/tile_tracker":
+    post:
+      tags:
+        - Users/Tile Tracker
+      summary: create
+      description: >-
+        api_v2_user_tile_tracker POST      
+
+        /api/v2/users/:user_id/tile_tracker(.:format)                                            
+
+        api/v2/users/tile_tracker#create {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/savings_goals/{saving_goal_id}/archive":
+    patch:
+      tags:
+        - Users/Savings Goals
+      summary: archive
+      description: >-
+        archive_api_v2_user_savings_goal PATCH|PUT 
+
+        /api/v2/users/:user_id/savings_goals/:id/archive(.:format)                               
+
+        api/v2/users/savings_goals#archive {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: saving_goal_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/savings_goals":
+    get:
+      tags:
+        - Users/Savings Goals
+      summary: index
+      description: >-
+        api_v2_user_savings_goals GET       
+
+        /api/v2/users/:user_id/savings_goals(.:format)                                            
+
+        api/v2/users/savings_goals#index {:format=>"json", :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    post:
+      tags:
+        - Users/Savings Goals
+      summary: create
+      description: >-
+        POST      
+
+        /api/v2/users/:user_id/savings_goals(.:format)                                            
+
+        api/v2/users/savings_goals#create {:format=>"json", :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/savings_goals/{saving_goal_id}":
+    get:
+      tags:
+        - Users/Savings Goals
+      summary: show
+      description: >-
+        api_v2_user_savings_goal GET       
+
+        /api/v2/users/:user_id/savings_goals/:id(.:format)                                        
+
+        api/v2/users/savings_goals#show {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: saving_goal_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    patch:
+      tags:
+        - Users/Savings Goals
+      summary: update(patch)
+      description: >
+        PATCH     
+
+        /api/v2/users/:user_id/savings_goals/:id(.:format)                                        
+
+        api/v2/users/savings_goals#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: saving_goal_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Users/Savings Goals
+      summary: update(put)
+      description: >
+        PUT       
+
+        /api/v2/users/:user_id/savings_goals/:id(.:format)                                        
+
+        api/v2/users/savings_goals#update {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      requestBody:
+        content: {}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: saving_goal_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+    delete:
+      tags:
+        - Users/Savings Goals
+      summary: delete
+      description: >
+        DELETE    
+
+        /api/v2/users/:user_id/savings_goals/:id(.:format)                                        
+
+        api/v2/users/savings_goals#destroy {:format=>"json", :id=>/[^\/]+/, :user_id=>/[^\/]+/}
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: saving_goal_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+  "/api/v2/users/{user_id}/":
+    get:
+      tags:
+        - default
+      summary: base
+      security:
+        - basicAuth: []
+      parameters:
+        - name: Content-Type
+          in: header
+          schema:
+            type: string
+          example: application/json
+        - name: user_id
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
