@@ -1,19 +1,26 @@
 import { Request, Response } from 'express';
-import { budgetService } from '../services/budgetService';
+import * as budgetService from '../services/budgetService';
 import { logger } from '../config/logger';
 import { serialize, wrapInArray } from '../utils/serializers';
+import { AuthContext } from '../types/auth';
+
+interface AuthenticatedRequest extends Request {
+  context?: AuthContext;
+}
+
 
 export const getBudgets = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId } = req.params;
     const { start_date, end_date } = req.query;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
     const budgets = await budgetService.getBudgets(
-      userId,
+      BigInt(userId),
       start_date as string,
       end_date as string
     );
@@ -27,13 +34,14 @@ export const getBudgets = async (req: Request, res: Response) => {
 
 export const getBudget = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId, id } = req.params;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const budget = await budgetService.getBudgetById(userId, id);
+    const budget = await budgetService.getBudgetById(BigInt(userId), BigInt(id));
 
     if (!budget) {
       return res.status(404).json({ error: 'Budget not found' });
@@ -49,14 +57,15 @@ export const getBudget = async (req: Request, res: Response) => {
 
 export const createBudget = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId } = req.params;
     const { budget } = req.body;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const created = await budgetService.createBudget(userId, budget);
+    const created = await budgetService.createBudget(BigInt(userId), budget);
 
     const wrapped = wrapInArray(created, 'budgets');
     return res.status(201).json(serialize(wrapped));
@@ -68,14 +77,15 @@ export const createBudget = async (req: Request, res: Response) => {
 
 export const updateBudget = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId, id } = req.params;
     const { budget } = req.body;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    const updated = await budgetService.updateBudget(userId, id, budget);
+    const updated = await budgetService.updateBudget(BigInt(userId), BigInt(id), budget);
 
     const wrapped = wrapInArray(updated, 'budgets');
     return res.json(serialize(wrapped));
@@ -87,13 +97,14 @@ export const updateBudget = async (req: Request, res: Response) => {
 
 export const deleteBudget = async (req: Request, res: Response) => {
   try {
+    const authReq = req as AuthenticatedRequest;
     const { userId, id } = req.params;
 
-    if (userId !== req.context?.userId) {
+    if (userId !== authReq.context?.userId) {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    await budgetService.deleteBudget(userId, id);
+    await budgetService.deleteBudget(BigInt(userId), BigInt(id));
 
     return res.status(204).send();
   } catch (error) {

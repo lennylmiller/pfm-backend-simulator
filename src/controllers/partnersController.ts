@@ -2,10 +2,17 @@ import { Request, Response } from 'express';
 import { prisma } from '../config/database';
 import { logger } from '../config/logger';
 import { serialize, wrapInArray } from '../utils/serializers';
+import { AuthContext } from '../types/auth';
+
+interface AuthenticatedRequest extends Request {
+  context?: AuthContext;
+}
+
 
 export const getCurrentPartner = async (req: Request, res: Response) => {
   try {
-    const { partnerId } = req.context!;
+    const authReq = req as AuthenticatedRequest;
+    const { partnerId } = authReq.context!;
 
     const partner = await prisma.partner.findUnique({
       where: {
@@ -30,7 +37,7 @@ export const getCurrentPartner = async (req: Request, res: Response) => {
       featuredSearches: [],
       modules: {
         aggregation: {
-          type: 'finicity'
+          type: 'finicity',
         },
         mobile: {
           name: partner.name || 'Personal Finance Manager',
@@ -43,14 +50,14 @@ export const getCurrentPartner = async (req: Request, res: Response) => {
           version: 'v2 Single Page Mobile',
           classic_dashboard: false,
           header_style: 'Standard',
-          hide_logout_link: false
-        }
+          hide_logout_link: false,
+        },
       },
       webtrendsDcsId: null,
       webtrendsDomain: null,
       webtrendsTimeZone: null,
       webtrendsReplicateDomain: null,
-      keepaliveUrl: null
+      keepaliveUrl: null,
     };
 
     // Wrap in array and serialize to snake_case for frontend compatibility

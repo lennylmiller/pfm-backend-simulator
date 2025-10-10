@@ -1,19 +1,33 @@
 import { Router } from 'express';
-import accountsRoutes from './accounts';
+import authRoutes from './auth';
 import usersRoutes from './users';
 import partnersRoutes from './partners';
-import budgetsRoutes from './budgets';
-import tagsRoutes from './tags';
+import goalImagesRoutes from './goalImages';
+import cashflowRoutes from './cashflow';
+import alertsRoutes from './alerts';
 import stubRoutes from './stubs';
+import * as tagsController from '../controllers/tagsController';
 
 const router = Router();
+
+// Mount authentication routes (no /api/v2 prefix, just /auth)
+router.use('/auth', authRoutes);
 
 // Mount routes
 router.use('/users', usersRoutes);
 router.use('/partners', partnersRoutes);
 
-// Mount default tags route (no userId)
-router.use('/tags', tagsRoutes);
+// Mount global system tags endpoint (no authentication)
+router.get('/tags', tagsController.listSystemTags);
+
+// Mount goal images routes (no authentication, static data)
+router.use('/', goalImagesRoutes);
+
+// Mount cashflow routes
+router.use('/', cashflowRoutes);
+
+// Mount alert routes
+router.use('/', alertsRoutes);
 
 // Mount stub routes for endpoints not yet implemented
 router.use('/', stubRoutes);

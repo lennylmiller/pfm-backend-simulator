@@ -1,7 +1,9 @@
 import { Router, Request, Response } from 'express';
 import { authenticateJWT } from '../middleware/auth';
+import { AuthContext } from '../types/auth';
 import accountsRoutes from './accounts';
 import budgetsRoutes from './budgets';
+import goalsRoutes from './goals';
 import transactionsRoutes from './transactions';
 import notificationsRoutes from './notifications';
 import tagsRoutes from './tags';
@@ -9,20 +11,27 @@ import expensesRoutes from './expenses';
 import { prisma } from '../config/database';
 import { serialize } from '../utils/serializers';
 import { logger } from '../config/logger';
+import * as networthController from '../controllers/networthController';
+
+// Extend Request type for routes that use authentication
+interface AuthenticatedRequest extends Request {
+  context?: AuthContext;
+}
 
 const router = Router();
 
 // Get current user information
 router.get('/current', authenticateJWT, async (req: Request, res: Response) => {
   try {
-    const userId = req.context?.userId;
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.context?.userId;
 
     if (!userId) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
     const user = await prisma.user.findUnique({
-      where: { id: BigInt(userId) }
+      where: { id: BigInt(userId) },
     });
 
     if (!user) {
@@ -30,15 +39,17 @@ router.get('/current', authenticateJWT, async (req: Request, res: Response) => {
     }
 
     // Serialize with BigInt handling and snake_case conversion
-    res.json(serialize({
-      id: user.id,
-      partnerId: user.partnerId,
-      email: user.email,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt
-    }));
+    res.json(
+      serialize({
+        id: user.id,
+        partnerId: user.partnerId,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      })
+    );
   } catch (error) {
     console.error('Error fetching current user:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -50,6 +61,9 @@ router.use('/:userId/accounts', authenticateJWT, accountsRoutes);
 
 // Nested budget routes
 router.use('/:userId/budgets', authenticateJWT, budgetsRoutes);
+
+// Nested goals routes (payoff_goals and savings_goals)
+router.use('/:userId', authenticateJWT, goalsRoutes);
 
 // Nested transaction routes
 router.use('/:userId/transactions', authenticateJWT, transactionsRoutes);
@@ -63,6 +77,10 @@ router.use('/:userId/tags', authenticateJWT, tagsRoutes);
 // Nested expenses routes
 router.use('/:userId/expenses', authenticateJWT, expensesRoutes);
 
+// Networth routes
+router.get('/:userId/networth', authenticateJWT, networthController.getNetworth);
+router.get('/:userId/networth/details', authenticateJWT, networthController.getNetworthDetails);
+
 // Stub endpoints for responsive-tiles compatibility
 // These return empty responses to prevent frontend errors
 
@@ -74,7 +92,8 @@ router.get('/:userId/informational_messages', authenticateJWT, (req: Request, re
 // Track login activity
 router.post('/current/track_login', authenticateJWT, async (req: Request, res: Response) => {
   try {
-    const userId = req.context?.userId;
+    const authReq = req as AuthenticatedRequest;
+    const userId = authReq.context?.userId;
 
     if (!userId) {
       return res.status(401).json({ error: 'Unauthorized' });
@@ -83,7 +102,7 @@ router.post('/current/track_login', authenticateJWT, async (req: Request, res: R
     // Update last login timestamp
     await prisma.user.update({
       where: { id: BigInt(userId) },
-      data: { updatedAt: new Date() }
+      data: { updatedAt: new Date() },
     });
 
     logger.info({ userId }, 'User login tracked');
@@ -96,7 +115,7 @@ router.post('/current/track_login', authenticateJWT, async (req: Request, res: R
 
 // Harvest status (account aggregation from financial institutions)
 router.get('/:userId/harvest', authenticateJWT, (req: Request, res: Response) => {
-  res.json({ harvest: null });
+  res.json({ harvests: [{ status: 'complete' }] });
 });
 
 // Additional user endpoints will be added here

@@ -14,17 +14,12 @@ interface MigrateConfig {
   partnerId: string;
 }
 
-interface MigrateRequest {
-  config: MigrateConfig;
-  entities: Record<string, boolean>;
-}
-
 /**
  * Generate JWT token for Geezeo API authentication
  */
 function generateJWT(config: MigrateConfig): string {
   const iat = Math.floor(Date.now() / 1000);
-  const exp = iat + (15 * 60); // 15 minutes
+  const exp = iat + 15 * 60; // 15 minutes
 
   return jwt.sign(
     {
@@ -194,7 +189,8 @@ async function runMigration(
             accountType: (account.account_type as AccountType) || AccountType.checking,
             balance: account.balance || '0',
             state: (account.state as AccountState) || AccountState.active,
-            aggregationType: (account.aggregation_type as AggregationType) || AggregationType.manual,
+            aggregationType:
+              (account.aggregation_type as AggregationType) || AggregationType.manual,
             includeInNetworth: account.include_in_networth ?? true,
             includeInCashflow: account.include_in_cashflow ?? true,
             updatedAt: new Date(),
@@ -211,7 +207,8 @@ async function runMigration(
             displayAccountType: account.display_account_type || account.account_type,
             balance: account.balance || '0',
             state: (account.state as AccountState) || AccountState.active,
-            aggregationType: (account.aggregation_type as AggregationType) || AggregationType.manual,
+            aggregationType:
+              (account.aggregation_type as AggregationType) || AggregationType.manual,
             includeInNetworth: account.include_in_networth ?? true,
             includeInCashflow: account.include_in_cashflow ?? true,
             includeInExpenses: account.include_in_expenses ?? true,
@@ -253,7 +250,11 @@ async function runMigration(
       );
       const transactions = data.transactions || [];
 
-      sendProgress(res, { entity: 'transactions', status: 'inserting', total: transactions.length });
+      sendProgress(res, {
+        entity: 'transactions',
+        status: 'inserting',
+        total: transactions.length,
+      });
 
       for (let i = 0; i < transactions.length; i++) {
         const txn = transactions[i];

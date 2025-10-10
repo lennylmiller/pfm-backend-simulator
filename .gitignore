@@ -41,3 +41,6 @@ prisma/migrations/*_migration/
 tmp/
 temp/
 *.tmp
+
+.gemini/
+gha-creds-*.json

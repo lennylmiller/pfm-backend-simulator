@@ -15,11 +15,7 @@ const MERCHANT_CATEGORIES: Record<string, string[]> = {
   Insurance: ['State Farm', 'Geico', 'Progressive', 'Allstate'],
 };
 
-export async function generateTransactions(
-  userId: bigint,
-  accountId: bigint,
-  count: number
-) {
+export async function generateTransactions(userId: bigint, accountId: bigint, count: number) {
   const transactions = [];
 
   for (let i = 0; i < count; i++) {

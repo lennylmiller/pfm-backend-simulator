@@ -10,11 +10,3 @@ export interface AuthContext {
   userId: string;
   partnerId: string;
 }
-
-declare global {
-  namespace Express {
-    interface Request {
-      context?: AuthContext;
-    }
-  }
-}

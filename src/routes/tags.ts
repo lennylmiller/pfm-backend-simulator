@@ -1,16 +1,18 @@
+/**
+ * Tags Routes
+ * Routes for tag operations (both system and user tags)
+ */
+
 import { Router } from 'express';
 import { authenticateJWT } from '../middleware/auth';
 import * as tagsController from '../controllers/tagsController';
 
 const router = Router({ mergeParams: true });
 
-// GET /tags (default tags - no auth required per spec)
-router.get('/default', tagsController.getDefaultTags);
+// GET /users/:userId/tags - Get all tags accessible to user with transaction counts
+router.get('/', authenticateJWT, tagsController.listUserTags);
 
-// GET /users/:userId/tags
-router.get('/', authenticateJWT, tagsController.getUserTags);
-
-// PUT /users/:userId/tags
-router.put('/', authenticateJWT, tagsController.updateUserTags);
+// PUT /users/:userId/tags - Bulk create/update/delete operations
+router.put('/', authenticateJWT, tagsController.bulkUpdateTags);
 
 export default router;
